@@ -10,7 +10,7 @@ public class Test : MonoBehaviour
 
     public float moveSpeed = 5f;
     private Vector3 moveDir;
-    public float rotSpeed = 3f;
+    public float rotSpeed = 0.5f;
 
     private void Awake()
     {
