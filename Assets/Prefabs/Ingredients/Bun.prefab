@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 8270127283909753118}
   - component: {fileID: 6218803197901439917}
   - component: {fileID: 847134078204836763}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bun
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

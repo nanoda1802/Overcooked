@@ -16,9 +16,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "LeftCtrl",
+                    "name": "LeftAlt",
                     "type": "Button",
                     "id": "a79a9a02-8d1e-4ebb-9901-983cadb85caa",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Space",
+                    "type": "Button",
+                    "id": "7c7c134d-b9cf-4b64-9daf-32c954fc7c56",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -84,11 +93,22 @@
                 {
                     "name": "",
                     "id": "3d4cce0e-d0e5-41b4-8126-2be00bdc1ade",
-                    "path": "<Keyboard>/leftCtrl",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "LeftCtrl",
+                    "action": "LeftAlt",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c136e52f-7585-4028-ae04-32ef97f71306",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "Space",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

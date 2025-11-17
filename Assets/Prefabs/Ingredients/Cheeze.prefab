@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 1737922738074319895}
   - component: {fileID: 2195105949507616877}
   - component: {fileID: 8572423772980877837}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cheeze
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
