@@ -122,17 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &18226054 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-  m_PrefabInstance: {fileID: 7439402346399759490}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7985ac1b076ee2142b5ae203a8d44b0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &54817290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1003,73 +992,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2051715068445477126, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_Height
-      value: 1.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2051715068445477126, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_Radius
-      value: 0.35
-      objectReference: {fileID: 0}
     - target: {fileID: 2328292139524303937, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_ActionId
-      value: d00f0b3c-3866-496c-a514-7ab7e36e52ce
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_ActionName
-      value: Player/LeftCtrl[/Keyboard/c]
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 18226054}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnThrow
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: PlayerController, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 6326611014065916027, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: detectDist
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: detectRange.x
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: detectRange.y
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
-      propertyPath: detectRange.z
-      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 7102077388945321086, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: m_LocalPosition.x

@@ -165,8 +165,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.4
-  m_Height: 1.6
+  m_Radius: 0.35
+  m_Height: 1.4
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!114 &6326611014065916027
@@ -230,7 +230,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6371081438917920930}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnGrab
+        m_MethodName: OnPick
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -242,6 +242,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 7c7c134d-b9cf-4b64-9daf-32c954fc7c56
     m_ActionName: Player/Space[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6371081438917920930}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: OnThrow
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: d00f0b3c-3866-496c-a514-7ab7e36e52ce
+    m_ActionName: Player/LeftCtrl[/Keyboard/c]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: PC
   m_DefaultActionMap: Player
@@ -260,17 +276,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  rotRatio: 0.4
+  rotRatio: 0.5
   dashForce: 5
   dashSpeedModifier: 1
   pivot: {fileID: 4884989298701289034}
-  fanAngle: 120
-  rayCount: 7
-  rayDist: 1.5
-  rayOffsetY: 0.1
   targetLayer:
     serializedVersion: 2
     m_Bits: 128
+  detectRange: {x: 0.8, y: 0.7, z: 0.4}
+  detectOffset: 0.8
+  throwForce: 12
 --- !u!1 &4021617750095250983
 GameObject:
   m_ObjectHideFlags: 0
