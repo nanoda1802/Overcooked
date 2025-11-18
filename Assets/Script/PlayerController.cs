@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,14 +21,11 @@ public class PlayerController : MonoBehaviour
     /* 물체 잡기 놓기 */
     [Header("Grab Item")]
     [SF] private Transform pivot;
-    [SF, Range(60f, 180f)] private float fanAngle = 120f;
-    [SF, Range(1, 10)] private int rayCount = 7;
-    [SF, Range(0f, 5f)] private float rayDist = 1.5f;
-    [SF, Range(0f, 1f)] private float rayOffsetY = 0.1f;
+    [SF, Range(0f, 5f)] private float detectOffset = 0.8f;
+    [SF] private Vector3 detectRange; // 0.7 0.7 0.4
     [SF] private LayerMask targetLayer = 1<<7;
-    private Ray _detectRay;
-    private readonly HashSet<Transform> _detectedItems = new();
-    private Rigidbody _itemRb;
+    private readonly Collider[] _detectedItems = new Collider[5];
+    private Item _grabbedItem;
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -44,7 +42,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log($"현재 속도 {_rb.velocity.sqrMagnitude:F1}");
         if (_moveDir.sqrMagnitude <= 0.001f) return;
         Move();
         Rotate();
@@ -69,14 +66,14 @@ public class PlayerController : MonoBehaviour
     public void OnGrab(InputAction.CallbackContext ctx)
     {
         if (!ctx.started) return;
-        if (pivot.childCount > 0)
+        
+        if (_grabbedItem is not null)
         {
             Ungrab();
             return;
         }
-
-        Detect();
-        if (_detectedItems.Count > 0) Grab();
+        
+        if (Detect()) Grab();
     }
     #endregion
     
@@ -91,60 +88,53 @@ public class PlayerController : MonoBehaviour
         Quaternion smoothRot = Quaternion.Slerp(_rb.rotation, Quaternion.LookRotation(_moveDir), rotRatio);
         _rb.MoveRotation(smoothRot);
     }
-    
-    private void Detect()
-    {
-        _detectedItems.Clear();
-        
-        float angleStep = fanAngle / (rayCount - 1); // Ray 간 간격 (각도)
-        for (int i = 0; i < rayCount; i++)
-        {
-            float angle = -fanAngle / 2 + angleStep * i; // 이번 Ray의 Degree
-            _detectRay.origin = transform.position + rayOffsetY * Vector3.up;
-            _detectRay.direction = Quaternion.Euler(0, angle, 0) * transform.forward;
 
-            if (Physics.Raycast(_detectRay, out RaycastHit hit, rayDist, targetLayer))
-            {
-                _detectedItems.Add(hit.collider.transform);
-                Debug.DrawRay(_detectRay.origin, _detectRay.direction * hit.distance, Color.red);
-                Debug.Log("Hit: " + hit.collider.gameObject.name);
-            }
-            else
-            {
-                Debug.DrawRay(_detectRay.origin, _detectRay.direction * rayDist, Color.green);
-            }
-        }
+    private void OnDrawGizmos()
+    {
+        Vector3 offset = (transform.forward + Vector3.up) * detectOffset;
+        Matrix4x4 boxMatrix = Matrix4x4.TRS(transform.position+offset, transform.rotation, Vector3.one);
+        Gizmos.matrix = boxMatrix;
+        Gizmos.DrawWireCube(Vector3.zero, detectRange*2);
+        Gizmos.matrix = Matrix4x4.identity; // 매트릭스를 리셋하여 다른 Gizmos에 영향 안 미치도록 함
+    }
+
+    private bool Detect()
+    {
+        Array.Clear(_detectedItems,0,_detectedItems.Length);
+        Vector3 offset = (transform.forward + Vector3.up) * detectOffset;
+        int hits = Physics.OverlapBoxNonAlloc(transform.position + offset, detectRange, _detectedItems, transform.rotation,targetLayer);
+        return hits > 0;
     }
 
     private void Grab()
     {
         float minDist = float.MaxValue;
-        Transform closest = null;
-
-        foreach (Transform t in _detectedItems)
+        GameObject closest = null;
+        
+        foreach (Collider col in _detectedItems)
         {
-            float dist = (t.position - transform.position).sqrMagnitude;
+            if (col is null) continue;
+            float dist = (_rb.position - col.attachedRigidbody.position).sqrMagnitude;
             if (dist < minDist)
             {
                 minDist = dist;
-                closest = t;
+                closest = col.gameObject;
             }
         }
-
-        if (closest is not null && closest.gameObject.TryGetComponent(out _itemRb))
+        
+        if (closest is not null && closest.TryGetComponent(out _grabbedItem))
         {
-            closest.SetParent(pivot);
-            closest.localPosition = Vector3.zero;
-            closest.localRotation = Quaternion.identity;
-            _itemRb.isKinematic = true;
+            closest.transform.SetParent(pivot);
+            closest.transform.localPosition = Vector3.zero;
+            closest.transform.localRotation = Quaternion.identity;
+            _grabbedItem.rb.isKinematic = _grabbedItem.isGrabbed = true;
         }
     }
 
     private void Ungrab()
     { 
-        Transform curItem = pivot.GetChild(0);
-        curItem.SetParent(null);
-        _itemRb.isKinematic = false;
-        _itemRb = null;
+        _grabbedItem.transform.SetParent(null);
+        _grabbedItem.rb.isKinematic = _grabbedItem.isGrabbed = false;
+        _grabbedItem = null;
     }
 }
