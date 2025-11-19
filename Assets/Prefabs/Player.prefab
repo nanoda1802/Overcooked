@@ -127,7 +127,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2328292139524303937}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 100
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -183,7 +183,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 5f3d81b310bfd4544b9d44735a2524a3, type: 3}
   m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -280,12 +279,17 @@ MonoBehaviour:
   dashForce: 5
   dashSpeedModifier: 1
   pivot: {fileID: 4884989298701289034}
-  targetLayer:
+  itemLayer:
     serializedVersion: 2
     m_Bits: 128
-  detectRange: {x: 0.8, y: 0.7, z: 0.4}
-  detectOffset: 0.8
+  itemDetectRange: {x: 0.8, y: 0.7, z: 0.4}
+  itemDetectOffset: 0.8
   throwForce: 12
+  boxLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  boxDetectDist: 1.5
+  boxDetectOffset: 1
 --- !u!1 &4021617750095250983
 GameObject:
   m_ObjectHideFlags: 0

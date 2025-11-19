@@ -1,11 +1,17 @@
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
+public enum ItemType
+{
+    Bun,Cabbage,Cheese,Meat,Tomato
+}
+
 public class Item : MonoBehaviour
 {
     public Rigidbody rb;
     private TrailRenderer _trail;
-    
+ 
+    public ItemType type;
     public bool isGrabbed = false;
 
     private bool _isThrown;

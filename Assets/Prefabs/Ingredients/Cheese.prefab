@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3822120838703725628}
   - component: {fileID: 2713395962437115376}
   m_Layer: 7
-  m_Name: Cheeze
+  m_Name: Cheese
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -148,8 +148,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 0}
+  type: 2
   isGrabbed: 0
-  isThrown: 0
   throwOrigin: {x: 0, y: 0, z: 0}
   throwDir: {x: 0, y: 0, z: 0}
   throwDamp: 0.4

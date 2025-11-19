@@ -22,15 +22,21 @@ public class PlayerController : MonoBehaviour
     /* 물체 잡기 놓기 */
     [Header("[ Pick & Drop ]")] 
     [SF] private Transform pivot;
-    [SF] private LayerMask targetLayer; // 1<<7
-    [SF] private Vector3 detectRange; // (0.8,0.7,0.4)
-    [SF, Range(0f, 5f)] private float detectOffset; // 0.8;
+    [SF] private LayerMask itemLayer; // 1<<7
+    [SF] private Vector3 itemDetectRange; // (0.8,0.7,0.4)
+    [SF, Range(0f, 5f)] private float itemDetectOffset; // 0.8;
     private readonly Collider[] _detectedItems = new Collider[5];
     private Item _pickedItem;
     private Collider _pickedCol;
     /* 물체 던지기 */
     [Header("[ Throw ]")] 
     [SF,Range(1f,20f)] private float throwForce; // 12f
+    /* 상호작용 */
+    [Header("[ Interact ]")]
+    [SF] private LayerMask boxLayer;
+    [SF,Range(0f, 2f)] private float boxDetectDist; // 1.5f
+    [SF, Range(0f, 2f)] private float boxDetectOffset; // 1f
+    private IBox _detectedBox;
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -54,10 +60,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 offset = (transform.forward + Vector3.up) * detectOffset;
+        Vector3 offset = (transform.forward + Vector3.up) * itemDetectOffset;
         Matrix4x4 boxMatrix = Matrix4x4.TRS(transform.position + offset, transform.rotation, Vector3.one);
         Gizmos.matrix = boxMatrix;
-        Gizmos.DrawWireCube(Vector3.zero, detectRange * 2);
+        Gizmos.DrawWireCube(Vector3.zero, itemDetectRange * 2);
         Gizmos.matrix = Matrix4x4.identity; // 매트릭스를 리셋하여 다른 Gizmos에 영향 안 미치도록 함
     }
     #endregion
@@ -85,7 +91,9 @@ public class PlayerController : MonoBehaviour
             Drop();
             return;
         }
-        if (Detect()) Pick();
+        
+        if (DetectBox()) Interact();
+        else if (DetectItem()) Pick();
     }
     
     public void OnThrow(InputAction.CallbackContext ctx)
@@ -116,12 +124,12 @@ public class PlayerController : MonoBehaviour
         _rb.MoveRotation(smoothRot);
     }
 
-    private bool Detect()
+    private bool DetectItem()
     {
         Array.Clear(_detectedItems, 0, _detectedItems.Length);
-        Vector3 offset = (transform.forward + Vector3.up) * detectOffset;
-        int hits = Physics.OverlapBoxNonAlloc(transform.position + offset, detectRange, _detectedItems,
-            transform.rotation, targetLayer);
+        Vector3 offset = (transform.forward + Vector3.up) * itemDetectOffset;
+        int hits = Physics.OverlapBoxNonAlloc(transform.position + offset, itemDetectRange, _detectedItems,
+            transform.rotation, itemLayer);
         return hits > 0;
     }
 
@@ -166,6 +174,20 @@ public class PlayerController : MonoBehaviour
     {
         item.transform.SetParent(null);
         item.rb.isKinematic = _pickedItem.isGrabbed = false;
+    }
+
+    private bool DetectBox()
+    {
+        Vector3 offset = Vector3.up * boxDetectOffset;
+        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, boxDetectDist,boxLayer);
+        Debug.DrawRay(transform.position + offset, transform.forward,isHit? Color.red: Color.green);
+        return isHit && hit.collider.gameObject.TryGetComponent(out _detectedBox);
+    }
+
+    private void Interact()
+    {
+        _detectedBox.Interact();
+        _detectedBox = null;
     }
 
     private void Throw(Vector3 dir)
