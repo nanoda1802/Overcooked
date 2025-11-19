@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -26,17 +25,16 @@ public class PlayerController : MonoBehaviour
     [SF] private Vector3 itemDetectRange; // (0.8,0.7,0.4)
     [SF, Range(0f, 5f)] private float itemDetectOffset; // 0.8;
     private readonly Collider[] _detectedItems = new Collider[5];
-    private Item _pickedItem;
-    private Collider _pickedCol;
+    [HideInInspector] public Item pickedItem;
     /* 물체 던지기 */
     [Header("[ Throw ]")] 
-    [SF,Range(1f,20f)] private float throwForce; // 12f
+    [SF, Range(1f, 20f)] private float throwForce; // 12f
     /* 상호작용 */
-    [Header("[ Interact ]")]
-    [SF] private LayerMask boxLayer;
-    [SF,Range(0f, 2f)] private float boxDetectDist; // 1.5f
+    [Header("[ Interact ]")] 
+    [SF] private LayerMask boxLayer; // 1<<6
+    [SF, Range(0f, 2f)] private float boxDetectDist; // 0.8f
     [SF, Range(0f, 2f)] private float boxDetectOffset; // 1f
-    private IBox _detectedBox;
+    private IInteractable _detectedBox;
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -48,7 +46,7 @@ public class PlayerController : MonoBehaviour
             _rb.freezeRotation = true;
         }
 
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 60; // 임시
     }
 
     private void FixedUpdate()
@@ -86,19 +84,15 @@ public class PlayerController : MonoBehaviour
     public void OnPick(InputAction.CallbackContext ctx)
     {
         if (!ctx.started) return;
-        if (_pickedItem is not null)
-        {
-            Drop();
-            return;
-        }
-        
+
         if (DetectBox()) Interact();
+        else if (pickedItem is not null) Drop();
         else if (DetectItem()) Pick();
     }
-    
+
     public void OnThrow(InputAction.CallbackContext ctx)
     {
-        if (_pickedItem is null) return;
+        if (pickedItem is null) return;
         if (ctx.interaction is HoldInteraction)
         {
             // 홀드 -> 던질 방향 나오고 떼면 해당 방향으로 던짐
@@ -112,6 +106,7 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
+    #region 이동 메서드
     private void Move()
     {
         Vector3 moveOffset = (moveSpeed * dashSpeedModifier * Time.fixedDeltaTime) * _moveDir;
@@ -123,7 +118,27 @@ public class PlayerController : MonoBehaviour
         Quaternion smoothRot = Quaternion.Slerp(_rb.rotation, Quaternion.LookRotation(_moveDir), rotRatio);
         _rb.MoveRotation(smoothRot);
     }
+    #endregion
 
+    #region 박스 상호작용 메서드
+    private bool DetectBox()
+    {
+        Vector3 offset = Vector3.up * boxDetectOffset;
+        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, boxDetectDist,
+            boxLayer);
+        Debug.DrawRay(transform.position + offset, transform.forward, isHit ? Color.red : Color.green);
+        return isHit && hit.collider.gameObject.TryGetComponent(out _detectedBox);
+    }
+
+    private void Interact()
+    {
+        _detectedBox.Player = this;
+        _detectedBox.Interact();
+        _detectedBox = null;
+    }
+    #endregion
+
+    #region 아이템 들기 놓기 던지기 메서드
     private bool DetectItem()
     {
         Array.Clear(_detectedItems, 0, _detectedItems.Length);
@@ -145,57 +160,43 @@ public class PlayerController : MonoBehaviour
             {
                 minDist = dist;
                 closest = col.gameObject;
-                _pickedCol = col;
             }
         }
-        if (closest is not null && closest.TryGetComponent(out _pickedItem))
+
+        if (closest is not null && closest.TryGetComponent(out Item item))
         {
-            AttachItem(_pickedItem);
-            _pickedCol.enabled = false;
+            AttachItem(item);
         }
     }
 
     private void Drop()
     {
-        DetachItem(_pickedItem);
-        _pickedCol.enabled = true;
-        _pickedItem = null;
-    }
-
-    private void AttachItem(Item item)
-    {
-        item.transform.SetParent(pivot);
-        item.transform.localPosition = Vector3.zero;
-        item.transform.localRotation = Quaternion.identity;
-        item.rb.isKinematic = item.isGrabbed = true;
-    }
-
-    private void DetachItem(Item item)
-    {
-        item.transform.SetParent(null);
-        item.rb.isKinematic = _pickedItem.isGrabbed = false;
-    }
-
-    private bool DetectBox()
-    {
-        Vector3 offset = Vector3.up * boxDetectOffset;
-        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, boxDetectDist,boxLayer);
-        Debug.DrawRay(transform.position + offset, transform.forward,isHit? Color.red: Color.green);
-        return isHit && hit.collider.gameObject.TryGetComponent(out _detectedBox);
-    }
-
-    private void Interact()
-    {
-        _detectedBox.Interact();
-        _detectedBox = null;
+        DetachItem();
     }
 
     private void Throw(Vector3 dir)
     {
-        DetachItem(_pickedItem);
-        _pickedItem.SetThrowValues(pivot.position, dir, throwForce * dashSpeedModifier);
+        pickedItem.SetThrowValues(pivot.position, dir, throwForce * dashSpeedModifier);
+        DetachItem();
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
-        _pickedCol.enabled = true;
-        _pickedItem = null;
     }
+    
+    public void AttachItem(Item item)
+    {
+        item.rb.isKinematic = true;
+        item.col.enabled = false;
+        item.transform.SetParent(pivot);
+        item.transform.localPosition = Vector3.zero;
+        item.transform.localRotation = Quaternion.identity;
+        pickedItem = item;
+    }
+
+    public void DetachItem()
+    {
+        pickedItem.transform.SetParent(null);
+        pickedItem.rb.isKinematic = false;
+        pickedItem.col.enabled = true;
+        pickedItem = null;
+    }
+    #endregion
 }

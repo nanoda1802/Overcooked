@@ -92,13 +92,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7102077388945321086}
+  - component: {fileID: 6371081438917920930}
   - component: {fileID: 5196186138760199806}
   - component: {fileID: 2051715068445477126}
   - component: {fileID: 6326611014065916027}
-  - component: {fileID: 6371081438917920930}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -119,6 +119,35 @@ Transform:
   - {fileID: 8829011814590867653}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6371081438917920930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2328292139524303937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7985ac1b076ee2142b5ae203a8d44b0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  rotRatio: 0.5
+  dashForce: 5
+  dashSpeedModifier: 1
+  pivot: {fileID: 4884989298701289034}
+  itemLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  itemDetectRange: {x: 0.8, y: 0.7, z: 0.4}
+  itemDetectOffset: 0.8
+  pickedItem: {fileID: 0}
+  throwForce: 12
+  boxLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  boxDetectDist: 0.8
+  boxDetectOffset: 1
 --- !u!54 &5196186138760199806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -183,6 +212,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: 5f3d81b310bfd4544b9d44735a2524a3, type: 3}
   m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -262,34 +292,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &6371081438917920930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2328292139524303937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7985ac1b076ee2142b5ae203a8d44b0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
-  rotRatio: 0.5
-  dashForce: 5
-  dashSpeedModifier: 1
-  pivot: {fileID: 4884989298701289034}
-  itemLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  itemDetectRange: {x: 0.8, y: 0.7, z: 0.4}
-  itemDetectOffset: 0.8
-  throwForce: 12
-  boxLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  boxDetectDist: 1.5
-  boxDetectOffset: 1
 --- !u!1 &4021617750095250983
 GameObject:
   m_ObjectHideFlags: 0

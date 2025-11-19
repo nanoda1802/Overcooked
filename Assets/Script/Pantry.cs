@@ -1,27 +1,34 @@
-using System;
 using UnityEngine;
-using SF =  UnityEngine.SerializeField;
+using SF = UnityEngine.SerializeField;
 
-public class Pantry : MonoBehaviour, IBox
+public interface IInteractable
 {
+    public PlayerController Player { get; set; }
+    public void Interact();
+}
+
+public class Pantry : MonoBehaviour, IInteractable
+{
+    public PlayerController Player { get; set; }
     [SF] private ItemType type;
-    [SF] private Transform cover;
+    [SF] private Transform pivot;
     [SF] private GameObject[] items;
-    
+
     private void Awake()
     {
-        cover.GetChild((int)type).gameObject.SetActive(true);
+        pivot.GetChild((int)type).gameObject.SetActive(true);
     }
 
     public void Interact()
     {
-        Debug.Log($"Interact with Pantry {type}");
-        // 일단 Instantiate로... 추후 pool로 변경
-        Instantiate(items[(int)type], cover.position, Quaternion.identity);
-    }
-}
+        if (Player is null || Player.pickedItem is not null) return;
 
-public interface IBox
-{
-    public void Interact();
+        // 일단 Instantiate로... 추후 pool로 변경
+        GameObject itemObj = Instantiate(items[(int)type], pivot.position, Quaternion.identity);
+        if (itemObj.TryGetComponent(out Item item))
+        {
+            Player.pickedItem = item;
+            Player.AttachItem(item);
+        }
+    }
 }
