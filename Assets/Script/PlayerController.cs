@@ -183,19 +183,13 @@ public class PlayerController : MonoBehaviour
     
     public void AttachItem(Item item)
     {
-        item.rb.isKinematic = true;
-        item.col.enabled = false;
-        item.transform.SetParent(pivot);
-        item.transform.localPosition = Vector3.zero;
-        item.transform.localRotation = Quaternion.identity;
+        item.SetParent(pivot);
         pickedItem = item;
     }
 
     public void DetachItem()
     {
-        pickedItem.transform.SetParent(null);
-        pickedItem.rb.isKinematic = false;
-        pickedItem.col.enabled = true;
+        pickedItem.RemoveParent();
         pickedItem = null;
     }
     #endregion

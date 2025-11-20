@@ -1,23 +1,33 @@
+using System.Linq;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
+
+public interface IInteractable
+{
+    public PlayerController Player { get; set; }
+    public void Interact();
+}
 
 public class Box : MonoBehaviour, IInteractable
 {
     public PlayerController Player { get; set; }
     public Item placedItem;
-    [SF] private Transform pivot;
+    [SF] protected Transform pivot;
+    [SF] protected ItemType[] availableItems;
 
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if (placedItem is not null) return;
 
-        if (other.TryGetComponent(out Item item) && (item.isThrown || item.isFalling))
+        if (other.TryGetComponent(out Item item) 
+            && (item.IsThrown || item.IsFalling) 
+            && availableItems.Contains(item.type))
         {
             AttachItem(item);
         }
     }
 
-    public void Interact()
+    public virtual void Interact()
     {
         if (Player is null) return;
 
@@ -27,7 +37,7 @@ public class Box : MonoBehaviour, IInteractable
             DetachItem();
             Player.AttachItem(item);
         }
-        else if (Player.pickedItem is not null && placedItem is null)
+        else if (Player.pickedItem is not null && placedItem is null && availableItems.Contains(Player.pickedItem.type))
         {
             Item item = Player.pickedItem; // detach에서 참조를 끊어서 필요한 변수
             Player.DetachItem();
@@ -35,19 +45,15 @@ public class Box : MonoBehaviour, IInteractable
         }
     }
 
-    private void AttachItem(Item item)
+    protected virtual void AttachItem(Item item)
     {
-        item.rb.isKinematic = true;
-        item.col.enabled = false;
-        item.transform.SetParent(pivot);
-        item.transform.localPosition = Vector3.zero;
-        item.transform.localRotation = Quaternion.identity;
+        item.SetParent(pivot);
         placedItem = item;
     }
 
-    private void DetachItem()
+    protected virtual void DetachItem()
     {
-        placedItem.transform.SetParent(null);
+        placedItem.RemoveParent();
         placedItem = null;
     }
 }

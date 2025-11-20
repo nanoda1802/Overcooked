@@ -1,31 +1,28 @@
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public enum ItemType
-{
-    Bun, Cabbage, Cheese, Meat, Tomato
-}
+public enum ItemType { Bun, Cabbage, Cheese, Meat, Tomato }
 
 public class Item : MonoBehaviour
 {
-    [HideInInspector] public Rigidbody rb;
-    [HideInInspector] public Collider col;
+    private Rigidbody _rb;
+    private Collider _col;
     private TrailRenderer _trail;
 
     public ItemType type;
-
-    public bool isThrown;
-    public bool isFalling;
+    
     [SF] private Vector3 throwOrigin;
     [SF] private Vector3 throwDir;
+    [SF] private float throwForce;
     [SF, Range(0f, 1f)] private float throwDamp; // 0.4
     [SF, Range(5f, 50f)] private float maxThrowDist; // 17
-    private float _throwForce = 10f;
+    public bool IsThrown { get; private set; }
+    public bool IsFalling { get; private set; }
 
     private void Awake()
     {
-        if (!TryGetComponent(out rb)) rb = gameObject.AddComponent<Rigidbody>();
-        TryGetComponent(out col);
+        if (!TryGetComponent(out _rb)) _rb = gameObject.AddComponent<Rigidbody>();
+        TryGetComponent(out _col);
         _trail = GetComponent<TrailRenderer>();
     }
 
@@ -36,44 +33,55 @@ public class Item : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isThrown) return;
+        if (!IsThrown) return;
         Throwing();
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Player")) return;
-        if (isThrown) StopThrowing();
-        if (isFalling) isFalling = false;
+        if (other.gameObject.CompareTag("Player")) return; // 임시
+        if (IsThrown) StopThrowing();
+        if (IsFalling) IsFalling = false;
     }
 
     public void SetThrowValues(Vector3 origin, Vector3 dir, float force)
     {
-        _trail.enabled = isThrown = true;
+        _trail.enabled = IsThrown = true;
         throwOrigin = origin;
         throwDir = dir;
-        _throwForce = force;
+        throwForce = force;
     }
 
     private void Throwing()
     {
-        rb.velocity = _throwForce * throwDir;
-        float curDist = (throwOrigin - rb.position).sqrMagnitude;
+        _rb.velocity = throwForce * throwDir;
+        float curDist = (throwOrigin - _rb.position).sqrMagnitude;
         if (curDist >= maxThrowDist) StopThrowing();
     }
 
     private void StopThrowing()
     {
-        rb.velocity *= throwDamp;
-        _trail.enabled = isThrown = false;
-        isFalling = true;
+        _rb.velocity *= throwDamp;
+        _trail.enabled = IsThrown = false;
+        IsFalling = true;
     }
-    // 그냥 던지기 누르면 바라보는 방향으로 던지고, 꾹 누르면 던질 방향 설정할 수 있네
-    // 플레이어가 달리면서 던지면 좀 더 멀리 간대
-    // 대략 5칸 정도 날아가고 떨어지는 듯? 
 
-    // 날아가다가 박스 or 플레이어와 충돌 (이건 박스와 플레이어에서 해야겠다 isThrown인 Item과 충돌했을 시 ~~)
-    // 박스와 충돌 -> 빈 박스면 위에 올려짐 아니면 평범하게 충돌 (트리거와 콜라이더 둘다 있어야함...)
-    // 용도에 맞는 박스 -> 설치?됨
+    public void SetParent(Transform parent)
+    {
+        _trail.enabled = IsThrown = IsFalling = false;
+        _rb.isKinematic = true;
+        _col.enabled = false;
+        transform.SetParent(parent);
+        transform.localPosition = Vector3.zero;
+        transform.localRotation = Quaternion.identity;
+    }
+
+    public void RemoveParent()
+    {
+        transform.SetParent(null);
+        _rb.isKinematic = false;
+        _col.enabled = true;
+    }
+    
     // 플레이어와 충돌 -> 플레이어가 하던 동작 멈추고 아이템 들게 됨 (이미 들고 있는 아이템 있으면 떨어뜨림)
 }

@@ -1,12 +1,6 @@
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public interface IInteractable
-{
-    public PlayerController Player { get; set; }
-    public void Interact();
-}
-
 public class Pantry : MonoBehaviour, IInteractable
 {
     public PlayerController Player { get; set; }
