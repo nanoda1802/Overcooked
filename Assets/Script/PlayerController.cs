@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     [SF, Range(0f, 2f)] private float boxDetectDist; // 0.8f
     [SF, Range(0f, 2f)] private float boxDetectOffset; // 1f
     private IInteractable _detectedBox;
+    public bool isWorking;
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -69,6 +70,7 @@ public class PlayerController : MonoBehaviour
     #region 인풋 이벤트 메서드
     public void OnMove(InputAction.CallbackContext ctx)
     {
+        if (isWorking) return;
         Vector2 input = ctx.ReadValue<Vector2>();
         _moveDir.x = input.x;
         _moveDir.z = input.y;
@@ -81,13 +83,24 @@ public class PlayerController : MonoBehaviour
         if (ctx.canceled) dashSpeedModifier = 1f;
     }
 
-    public void OnPick(InputAction.CallbackContext ctx)
+    public void OnInteract(InputAction.CallbackContext ctx)
     {
-        if (!ctx.started) return;
-
-        if (DetectBox()) Interact();
-        else if (pickedItem is not null) Drop();
-        else if (DetectItem()) Pick();
+        switch (ctx.interaction)
+        {
+            case HoldInteraction when ctx.performed:
+                if (DetectBox()) BeginWork();
+                break;
+            case HoldInteraction when ctx.canceled:
+                if (_detectedBox is not null) StopWork();
+                break;
+            case PressInteraction when ctx.started:
+            {
+                if (DetectBox()) Interact();
+                else if (pickedItem is not null) Drop();
+                else if (DetectItem()) Pick();
+                break;
+            }
+        }
     }
 
     public void OnThrow(InputAction.CallbackContext ctx)
@@ -132,10 +145,24 @@ public class PlayerController : MonoBehaviour
 
     private void Interact()
     {
-        _detectedBox.Player = this;
-        _detectedBox.Interact();
+        _detectedBox.Interact(this);
         _detectedBox = null;
     }
+
+    private void BeginWork()
+    {
+        isWorking = _detectedBox.BeginWork(this);
+    }
+
+    public void StopWork()
+    {
+        if (!isWorking || _detectedBox is null) return;
+        
+        isWorking = false;
+        _detectedBox.StopWork(this);
+        _detectedBox = null;
+    }
+
     #endregion
 
     #region 아이템 들기 놓기 던지기 메서드

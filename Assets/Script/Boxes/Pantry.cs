@@ -3,7 +3,6 @@ using SF = UnityEngine.SerializeField;
 
 public class Pantry : MonoBehaviour, IInteractable
 {
-    public PlayerController Player { get; set; }
     [SF] private ItemType type;
     [SF] private Transform pivot;
     [SF] private GameObject[] items;
@@ -13,16 +12,15 @@ public class Pantry : MonoBehaviour, IInteractable
         pivot.GetChild((int)type).gameObject.SetActive(true);
     }
 
-    public void Interact()
+    public void Interact(PlayerController player)
     {
-        if (Player is null || Player.pickedItem is not null) return;
+        if (player.pickedItem is not null) return;
 
         // 일단 Instantiate로... 추후 pool로 변경
         GameObject itemObj = Instantiate(items[(int)type], pivot.position, Quaternion.identity);
-        if (itemObj.TryGetComponent(out Item item))
-        {
-            Player.pickedItem = item;
-            Player.AttachItem(item);
-        }
+        if (itemObj.TryGetComponent(out Item item)) player.AttachItem(item);
     }
+
+    public bool BeginWork(PlayerController player) { return false; }
+    public void StopWork(PlayerController player) {}
 }

@@ -3,22 +3,22 @@ using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public interface IInteractable
-{
-    public PlayerController Player { get; set; }
-    public void Interact();
+{ 
+    public void Interact(PlayerController player);
+    public bool BeginWork(PlayerController player);
+    public void StopWork(PlayerController player);
 }
 
 public class Box : MonoBehaviour, IInteractable
 {
-    public PlayerController Player { get; set; }
-    public Item placedItem;
+    [SF] protected Item placedItem;
     [SF] protected Transform pivot;
     [SF] protected ItemType[] availableItems;
 
     protected void OnTriggerEnter(Collider other)
     {
-        if (placedItem is not null) return;
-
+        if (placedItem is not null || !other.CompareTag("Item")) return;
+        
         if (other.TryGetComponent(out Item item) 
             && (item.IsThrown || item.IsFalling) 
             && availableItems.Contains(item.type))
@@ -27,23 +27,24 @@ public class Box : MonoBehaviour, IInteractable
         }
     }
 
-    public virtual void Interact()
+    public virtual void Interact(PlayerController player)
     {
-        if (Player is null) return;
-
-        if (Player.pickedItem is null && placedItem is not null)
+        if (player.pickedItem is null && placedItem is not null)
         {
             Item item = placedItem; // detach에서 참조를 끊어서 필요한 변수
             DetachItem();
-            Player.AttachItem(item);
+            player.AttachItem(item);
         }
-        else if (Player.pickedItem is not null && placedItem is null && availableItems.Contains(Player.pickedItem.type))
+        else if (player.pickedItem is not null && placedItem is null && availableItems.Contains(player.pickedItem.type))
         {
-            Item item = Player.pickedItem; // detach에서 참조를 끊어서 필요한 변수
-            Player.DetachItem();
+            Item item = player.pickedItem; // detach에서 참조를 끊어서 필요한 변수
+            player.DetachItem();
             AttachItem(item);
         }
     }
+
+    public virtual bool BeginWork(PlayerController player) { return false; }
+    public virtual void StopWork(PlayerController player) { }
 
     protected virtual void AttachItem(Item item)
     {

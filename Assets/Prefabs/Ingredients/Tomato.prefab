@@ -131,15 +131,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85980763b0391474cb8d6a4872f2b42d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
-  col: {fileID: 0}
   type: 4
-  isThrown: 0
-  isFalling: 0
   throwOrigin: {x: 0, y: 0, z: 0}
   throwDir: {x: 0, y: 0, z: 0}
+  throwForce: 0
   throwDamp: 0.4
   maxThrowDist: 17
+  status: 0
+  curProgress: 0
+  maxProgress: 1.5
+  mats:
+  - {fileID: 2100000, guid: 44d1c955811b21f4fa11b0513bf5cc99, type: 2}
+  - {fileID: 2100000, guid: 5b71eff92134b5948867e616cad9e9fa, type: 2}
+  matIndex: 0
 --- !u!136 &3612210695911975185
 CapsuleCollider:
   m_ObjectHideFlags: 0

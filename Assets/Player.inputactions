@@ -7,7 +7,7 @@
             "id": "9d2e275b-c1d9-42ed-b29a-e72e0f7da9ec",
             "actions": [
                 {
-                    "name": "Arrows",
+                    "name": "Move",
                     "type": "Value",
                     "id": "a61d7158-8d67-4301-b365-f2b953c367f7",
                     "expectedControlType": "Vector2",
@@ -16,7 +16,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "LeftAlt",
+                    "name": "Dash",
                     "type": "Button",
                     "id": "a79a9a02-8d1e-4ebb-9901-983cadb85caa",
                     "expectedControlType": "",
@@ -25,16 +25,16 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Space",
+                    "name": "Interact",
                     "type": "Button",
                     "id": "7c7c134d-b9cf-4b64-9daf-32c954fc7c56",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
+                    "interactions": "Hold,Press(behavior=1)",
+                    "initialStateCheck": true
                 },
                 {
-                    "name": "LeftCtrl",
+                    "name": "Throw",
                     "type": "Button",
                     "id": "d00f0b3c-3866-496c-a514-7ab7e36e52ce",
                     "expectedControlType": "",
@@ -51,7 +51,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Arrows",
+                    "action": "Move",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -62,7 +62,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "Arrows",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -73,7 +73,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "Arrows",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -84,7 +84,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "Arrows",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -95,7 +95,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "Arrows",
+                    "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -106,7 +106,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "LeftAlt",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -117,7 +117,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "Space",
+                    "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -128,7 +128,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "LeftCtrl",
+                    "action": "Throw",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
