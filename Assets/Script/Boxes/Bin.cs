@@ -7,7 +7,7 @@ public class Bin : MonoBehaviour, IInteractable
     {
         if (!other.CompareTag("Item")) return;
         
-        if (other.TryGetComponent(out Item item) && (item.IsThrown || item.IsFalling))
+        if (other.TryGetComponent(out Item item) && (item.IsThrown || item.IsFalling) && item.type != ItemType.Plate)
         {
             item.DisposeItem();
         }
@@ -15,7 +15,7 @@ public class Bin : MonoBehaviour, IInteractable
     
     public void Interact(PlayerController player)
     {
-        if (player.pickedItem is null) return;
+        if (player.pickedItem is null || player.pickedItem.type == ItemType.Plate) return;
         Item item = player.pickedItem; // Detach에서 참조를 끊어서 필요!
         player.DetachItem();
         item.DisposeItem(); 

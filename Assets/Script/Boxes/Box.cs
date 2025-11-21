@@ -17,6 +17,8 @@ public class Box : MonoBehaviour, IInteractable
     [SF] protected ItemType[] availableItems;
     protected bool IsWorking;
     
+    [SF] protected Canvas canvas;
+    
     protected void OnTriggerEnter(Collider other)
     {
         if (placedItem is not null || !other.CompareTag("Item")) return;
@@ -55,10 +57,26 @@ public class Box : MonoBehaviour, IInteractable
         pivot.localScale *= scaleOffset;
     }
 
-    private void DetachItem()
+    protected virtual void DetachItem()
     {
         pivot.localScale = Vector3.one;
         placedItem.RemoveParent();
         placedItem = null;
+    }
+
+    protected virtual void Work()
+    {
+        IsWorking = !placedItem.IsDone();
+    }
+    
+
+    protected virtual void ActivateCanvas()
+    {
+        canvas?.gameObject.SetActive(true);
+    }
+    
+    protected void DeactivateCanvas()
+    {
+        canvas?.gameObject.SetActive(false);
     }
 }

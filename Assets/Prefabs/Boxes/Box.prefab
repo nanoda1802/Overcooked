@@ -155,7 +155,8 @@ MonoBehaviour:
   placedItem: {fileID: 0}
   pivot: {fileID: 1503104107724884616}
   scaleOffset: 1
-  availableItems: 0000000001000000020000000300000004000000
+  availableItems: 000000000100000002000000030000000400000005000000
+  canvas: {fileID: 0}
 --- !u!65 &7093064201908499242
 BoxCollider:
   m_ObjectHideFlags: 0

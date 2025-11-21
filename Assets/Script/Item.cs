@@ -1,9 +1,9 @@
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public enum ItemType { Bun, Cabbage, Cheese, Meat, Tomato }
+public enum ItemType { Bun, Cabbage, Cheese, Meat, Tomato, Plate }
 
-public enum CookStatus { Raw, WellCooked, OverCooked }
+public enum ItemStatus { Undone, WellDone, Overdone }
 
 public class Item : MonoBehaviour
 {
@@ -25,11 +25,11 @@ public class Item : MonoBehaviour
     public bool IsThrown { get; private set; }
     public bool IsFalling { get; private set; }
     /* 아이템 요리조리 */
-    [Header("[ Cook ]")] 
-    public CookStatus doneness = CookStatus.Raw;
-    [SF] private CookStatus maxDoneness;
+    [Header("[ Doneness ]")] 
+    public ItemStatus doneness = ItemStatus.Undone;
+    [SF] private ItemStatus maxDoneness;
     [SF] private float curProgress;
-    [SF, Range(1f,5f)] private float maxProgress; // 1.5f?
+    [SF, Range(1f,5f)] private float maxProgress;
     [SF] private Material[] mats;
     #endregion
 
@@ -45,7 +45,7 @@ public class Item : MonoBehaviour
     private void Start()
     {
         _trail.enabled = false;
-        _mesh.material = mats[(int)doneness];
+        InitProgress();
     }
 
     private void FixedUpdate()
@@ -63,16 +63,24 @@ public class Item : MonoBehaviour
     #endregion
 
     #region 요리조리 메서드
-    public void Cook()
+    public float Handle()
     {
-        if (doneness == maxDoneness) return;
+        if (IsDone()) return (float) maxDoneness;
         
         curProgress += Time.deltaTime;
-        int idx = (int) (curProgress / maxProgress);
-        doneness = (CookStatus) idx;
-        _mesh.material = mats[idx]; // 부하 심하려나 이거?
         
-        Debug.Log($"{name}({doneness}) 진행도 : {curProgress / maxProgress * 100}%");
+        float ratio = curProgress / maxProgress;
+        doneness = (ItemStatus) ratio;
+        _mesh.material = mats[(int) doneness]; // 부하 심하려나 이거?
+        
+        return ratio;
+    }
+
+    public void InitProgress()
+    {
+        curProgress = 0;
+        doneness = ItemStatus.Undone;
+        _mesh.material = mats[(int)doneness];
     }
 
     public bool IsDone()

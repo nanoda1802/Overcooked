@@ -1,8 +1,10 @@
-using UnityEngine;
+using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
 public class Stove : Box
 {
+    [SF] private Image[] fillBars;
+    
     private void Update()
     {
         if (!IsWorking || placedItem is null) return;
@@ -13,15 +15,38 @@ public class Stove : Box
     {
         if (item.IsDone()) return;
         
+        ActivateCanvas();
         base.AttachItem(item);
         IsWorking = true;
-        Debug.Log("Begin Work");
     }
 
-    private void Work()
+    protected override void DetachItem()
     {
-        placedItem.Cook();
-        IsWorking = !placedItem.IsDone();
-        if (!IsWorking) Debug.Log($"{placedItem.name} 조리 완료!");
+        DeactivateCanvas();
+        base.DetachItem();
+    }
+
+    protected override void Work()
+    {
+        base.Work();
+        float progress = placedItem.Handle();
+        FillImg(progress);
+    }
+    
+    protected override void ActivateCanvas()
+    {
+        base.ActivateCanvas();
+        InitFillAmount();
+    }
+
+    private void InitFillAmount()
+    {
+        foreach (Image fillBar in fillBars) fillBar.fillAmount = 0;
+    }
+    
+    private void FillImg(float ratio)
+    {
+        if (ratio >= fillBars.Length) return;
+        fillBars[(int)ratio].fillAmount = ratio % 1;
     }
 }
