@@ -13,8 +13,10 @@ public class Box : MonoBehaviour, IInteractable
 {
     [SF] protected Item placedItem;
     [SF] protected Transform pivot;
+    [SF,Range(0f,1f)] private float scaleOffset;
     [SF] protected ItemType[] availableItems;
-
+    protected bool IsWorking;
+    
     protected void OnTriggerEnter(Collider other)
     {
         if (placedItem is not null || !other.CompareTag("Item")) return;
@@ -50,10 +52,12 @@ public class Box : MonoBehaviour, IInteractable
     {
         item.SetParent(pivot);
         placedItem = item;
+        pivot.localScale *= scaleOffset;
     }
 
-    protected virtual void DetachItem()
+    private void DetachItem()
     {
+        pivot.localScale = Vector3.one;
         placedItem.RemoveParent();
         placedItem = null;
     }

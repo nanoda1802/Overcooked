@@ -54,14 +54,14 @@ MonoBehaviour:
   throwForce: 0
   throwDamp: 0.4
   maxThrowDist: 17
-  status: 0
+  doneness: 0
+  maxDoneness: 2
   curProgress: 0
-  maxProgress: 1.5
+  maxProgress: 3
   mats:
   - {fileID: 2100000, guid: 37b67a21557161d469e7ce0e034fce7f, type: 2}
   - {fileID: 2100000, guid: ab1481135bbf17b48bf973adf73065a9, type: 2}
   - {fileID: 2100000, guid: 37c6e0d9defdae748b9708752b0bd42a, type: 2}
-  matIndex: 0
 --- !u!65 &6065821949645084484
 BoxCollider:
   m_ObjectHideFlags: 0

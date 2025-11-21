@@ -9,17 +9,16 @@ public class Bin : MonoBehaviour, IInteractable
         
         if (other.TryGetComponent(out Item item) && (item.IsThrown || item.IsFalling))
         {
-            item.StopThrowing();
-            Destroy(item.gameObject); // 임시... 추후 Pool로
+            item.DisposeItem();
         }
     }
     
     public void Interact(PlayerController player)
     {
         if (player.pickedItem is null) return;
-        GameObject itemObj = player.pickedItem.gameObject;
+        Item item = player.pickedItem; // Detach에서 참조를 끊어서 필요!
         player.DetachItem();
-        Destroy(itemObj); // 임시... 추후 Pool로
+        item.DisposeItem(); 
     }
     
     public bool BeginWork(PlayerController player) { return false; }

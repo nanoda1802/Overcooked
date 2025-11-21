@@ -54,13 +54,13 @@ MonoBehaviour:
   throwForce: 0
   throwDamp: 0.4
   maxThrowDist: 17
-  status: 0
+  doneness: 0
+  maxDoneness: 1
   curProgress: 0
   maxProgress: 1.5
   mats:
   - {fileID: 2100000, guid: 23e52cd45cead3046a104005f3a335eb, type: 2}
   - {fileID: 2100000, guid: 7407fc34e20f8ea4fb804fe6a17f6d73, type: 2}
-  matIndex: 0
 --- !u!136 &1946272486160491851
 CapsuleCollider:
   m_ObjectHideFlags: 0

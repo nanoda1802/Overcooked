@@ -26,11 +26,11 @@ public class Item : MonoBehaviour
     public bool IsFalling { get; private set; }
     /* 아이템 요리조리 */
     [Header("[ Cook ]")] 
-    public CookStatus status = CookStatus.Raw;
-    [SF] private float curProgress; // 0f?
+    public CookStatus doneness = CookStatus.Raw;
+    [SF] private CookStatus maxDoneness;
+    [SF] private float curProgress;
     [SF, Range(1f,5f)] private float maxProgress; // 1.5f?
     [SF] private Material[] mats;
-    [SF] private int matIndex;
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -45,7 +45,7 @@ public class Item : MonoBehaviour
     private void Start()
     {
         _trail.enabled = false;
-        _mesh.material = mats[matIndex];
+        _mesh.material = mats[(int)doneness];
     }
 
     private void FixedUpdate()
@@ -63,18 +63,21 @@ public class Item : MonoBehaviour
     #endregion
 
     #region 요리조리 메서드
-    public bool Cook()
+    public void Cook()
     {
-        if (status == CookStatus.WellCooked) return true;
+        if (doneness == maxDoneness) return;
+        
         curProgress += Time.deltaTime;
-        Debug.Log($"{name} 진행도 : {curProgress / maxProgress * 100}%");
-        if (curProgress >= maxProgress)
-        {
-            Debug.Log($"{name} 조리 완료!");
-            status = CookStatus.WellCooked;
-            _mesh.material = mats[Mathf.Clamp(matIndex+1,0,mats.Length-1)];
-        }
-        return curProgress >= maxProgress;
+        int idx = (int) (curProgress / maxProgress);
+        doneness = (CookStatus) idx;
+        _mesh.material = mats[idx]; // 부하 심하려나 이거?
+        
+        Debug.Log($"{name}({doneness}) 진행도 : {curProgress / maxProgress * 100}%");
+    }
+
+    public bool IsDone()
+    {
+        return doneness == maxDoneness;
     }
     #endregion
 
@@ -94,18 +97,32 @@ public class Item : MonoBehaviour
         if (curDist >= maxThrowDist) StopThrowing();
     }
 
-    public void StopThrowing()
+    private void StopThrowing()
     {
         _rb.velocity *= throwDamp;
+        
         _trail.enabled = IsThrown = false;
+        _trail.Clear();
         IsFalling = true;
     }
 
+    public void DisposeItem()
+    {
+        _trail.enabled = false;
+        _trail.Clear();
+        Destroy(_trail);
+        _trail = null;
+        Destroy(gameObject); // 임시... 추후 Pool로
+    }
+    
     public void SetParent(Transform parent)
     {
         _trail.enabled = IsThrown = IsFalling = false;
+        _trail.Clear();
+        
         _rb.isKinematic = true;
         _col.enabled = false;
+        
         transform.SetParent(parent);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
@@ -114,6 +131,7 @@ public class Item : MonoBehaviour
     public void RemoveParent()
     {
         transform.SetParent(null);
+        
         _rb.isKinematic = false;
         _col.enabled = true;
     }

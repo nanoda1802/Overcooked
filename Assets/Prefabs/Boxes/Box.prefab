@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placedItem: {fileID: 0}
   pivot: {fileID: 1503104107724884616}
+  scaleOffset: 1
   availableItems: 0000000001000000020000000300000004000000
 --- !u!65 &7093064201908499242
 BoxCollider:

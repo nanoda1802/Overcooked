@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
                 if (DetectBox()) BeginWork();
                 break;
             case HoldInteraction when ctx.canceled:
-                if (_detectedBox is not null) StopWork();
+                if (isWorking || _detectedBox is not null) StopWork();
                 break;
             case PressInteraction when ctx.started:
             {
@@ -156,8 +156,6 @@ public class PlayerController : MonoBehaviour
 
     public void StopWork()
     {
-        if (!isWorking || _detectedBox is null) return;
-        
         isWorking = false;
         _detectedBox.StopWork(this);
         _detectedBox = null;
