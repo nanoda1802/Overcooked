@@ -12,13 +12,14 @@ public class Pantry : MonoBehaviour, IInteractable
         pivot.GetChild((int)type).gameObject.SetActive(true);
     }
 
-    public void Interact(PlayerController player)
+    public bool Interact(PlayerController player)
     {
-        if (player.pickedItem is not null) return;
+        if (player.pickedItem is not null) return false;
 
         // 일단 Instantiate로... 추후 pool로 변경
         GameObject itemObj = Instantiate(items[(int)type], pivot.position, Quaternion.identity);
         if (itemObj.TryGetComponent(out Item item)) player.AttachItem(item);
+        return true;
     }
 
     public bool BeginWork(PlayerController player) { return false; }

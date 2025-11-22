@@ -11,7 +11,7 @@ public class Stove : Box
         Work();
     }
 
-    protected override void AttachItem(Item item)
+    public override void AttachItem(Item item)
     {
         if (item.IsDone()) return;
         

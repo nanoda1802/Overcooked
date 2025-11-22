@@ -95,8 +95,8 @@ public class PlayerController : MonoBehaviour
                 break;
             case PressInteraction when ctx.started:
             {
-                if (DetectBox()) Interact();
-                else if (pickedItem is not null) Drop();
+                if (DetectBox()) if (Interact()) break;
+                if (pickedItem is not null) Drop();
                 else if (DetectItem()) Pick();
                 break;
             }
@@ -143,10 +143,11 @@ public class PlayerController : MonoBehaviour
         return isHit && hit.collider.gameObject.TryGetComponent(out _detectedBox);
     }
 
-    private void Interact()
+    private bool Interact()
     {
-        _detectedBox.Interact(this);
+        bool hasInteract = _detectedBox.Interact(this);
         _detectedBox = null;
+        return hasInteract;
     }
 
     private void BeginWork()

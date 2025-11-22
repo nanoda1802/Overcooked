@@ -13,6 +13,7 @@ public class Item : MonoBehaviour
     private Collider _col;
     private TrailRenderer _trail;
     private MeshRenderer _mesh;
+    public MeshRenderer Mesh { get => _mesh; }
     /* 아이템 종류 */
     public ItemType type;
     /* 아이템 던지기 */
@@ -46,6 +47,7 @@ public class Item : MonoBehaviour
     {
         _trail.enabled = false;
         InitProgress();
+        SetMaterial();
     }
 
     private void FixedUpdate()
@@ -71,7 +73,7 @@ public class Item : MonoBehaviour
         
         float ratio = curProgress / maxProgress;
         doneness = (ItemStatus) ratio;
-        _mesh.material = mats[(int) doneness]; // 부하 심하려나 이거?
+        SetMaterial(); // 부하 심하려나 이거?
         
         return ratio;
     }
@@ -80,13 +82,18 @@ public class Item : MonoBehaviour
     {
         curProgress = 0;
         doneness = ItemStatus.Undone;
-        _mesh.material = mats[(int)doneness];
     }
 
     public bool IsDone()
     {
         return doneness == maxDoneness;
     }
+
+    public void SetMaterial()
+    {
+        _mesh.material = mats[(int)doneness];
+    }
+
     #endregion
 
     #region 던지기 메서드

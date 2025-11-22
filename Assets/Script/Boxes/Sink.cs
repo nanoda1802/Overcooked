@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -25,22 +24,21 @@ public class Sink : Box
         Work();
     }
     
-    public override void Interact(PlayerController player)
+    public override bool Interact(PlayerController player)
     {
-        if (player.pickedItem is null) return;
+        if (player.pickedItem is not Plate plate || plate.HasIngredient()) return false;
         
-        if (availableItems.Contains(player.pickedItem.type))
-        {
-            Item item = player.pickedItem; // detach에서 참조를 끊어서 필요한 변수
-            player.DetachItem();
-            AttachItem(item);
-        }
+        Item item = player.pickedItem; // detach에서 참조를 끊어서 필요한 변수
+        player.DetachItem();
+        AttachItem(item);
+        return true;
+        
     }
 
-    protected override void AttachItem(Item item)
+    public override void AttachItem(Item item)
     {
         // Sink 만의 attach
-        if (item.type is not ItemType.Plate) return;
+        if (item is not Plate plate || plate.HasIngredient()) return;
         item.SetParent(pivot);
         item.gameObject.SetActive(false);
         item.InitProgress();
@@ -65,6 +63,7 @@ public class Sink : Box
         {
             placedItem = _plates.Dequeue(); // ??= 라는 연산자로 가능한가봐
             placedItem.gameObject.SetActive(true);
+            placedItem.SetMaterial();
         }
         
         IsWorking = true;

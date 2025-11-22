@@ -14,10 +14,11 @@ public class DishRack : MonoBehaviour, IInteractable
     [SF] private float offset;
     private readonly Stack<Item> _plates = new();
     
-    public void Interact(PlayerController player)
+    public bool Interact(PlayerController player)
     {
-        if (player.pickedItem is not null || _plates.Count == 0) return;
+        if (player.pickedItem is not null || _plates.Count == 0) return false;
         player.AttachItem(_plates.Pop());
+        return true;
     }
 
     public void AttachItem(Item item)

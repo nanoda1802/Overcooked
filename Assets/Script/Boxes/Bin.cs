@@ -13,12 +13,18 @@ public class Bin : MonoBehaviour, IInteractable
         }
     }
     
-    public void Interact(PlayerController player)
+    public bool Interact(PlayerController player)
     {
-        if (player.pickedItem is null || player.pickedItem.type == ItemType.Plate) return;
+        if (player.pickedItem is null) return false;
+        if (player.pickedItem is Plate plate)
+        {
+            plate.ClearPlate();
+            return true;
+        } 
         Item item = player.pickedItem; // Detach에서 참조를 끊어서 필요!
         player.DetachItem();
-        item.DisposeItem(); 
+        item.DisposeItem();
+        return true;
     }
     
     public bool BeginWork(PlayerController player) { return false; }
