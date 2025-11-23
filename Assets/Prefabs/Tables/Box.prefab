@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 7093064201908499242}
   m_Layer: 6
   m_Name: Box
-  m_TagString: Box
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -152,11 +152,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed72a90742d0b8c48acbf71b428ecaef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placedItem: {fileID: 0}
   pivot: {fileID: 1503104107724884616}
+  placedItem: {fileID: 0}
   scaleOffset: 1
   availableItems: 000000000100000002000000030000000400000005000000
-  canvas: {fileID: 0}
 --- !u!65 &7093064201908499242
 BoxCollider:
   m_ObjectHideFlags: 0

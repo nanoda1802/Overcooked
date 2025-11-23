@@ -25,6 +25,7 @@ public class Item : MonoBehaviour
     [SF, Range(5f, 50f)] private float maxThrowDist; // 17
     public bool IsThrown { get; private set; }
     public bool IsFalling { get; private set; }
+    public bool IsPlaced { get; set; }
     /* 아이템 요리조리 */
     [Header("[ Doneness ]")] 
     public ItemStatus doneness = ItemStatus.Undone;
@@ -60,7 +61,7 @@ public class Item : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player")) return; // [임시]
         if (IsThrown) StopThrowing();
-        if (IsFalling) IsFalling = false;
+        else if (IsFalling) IsFalling = false;
     }
     #endregion
 
@@ -103,6 +104,7 @@ public class Item : MonoBehaviour
         throwOrigin = origin;
         throwDir = dir;
         throwForce = force;
+        ActivatePhysics();
     }
 
     private void Throwing()
@@ -135,6 +137,7 @@ public class Item : MonoBehaviour
         _trail.enabled = IsThrown = IsFalling = false;
         _trail.Clear();
         
+        _rb.velocity = Vector3.zero;
         _rb.isKinematic = true;
         _col.enabled = false;
         
@@ -146,9 +149,13 @@ public class Item : MonoBehaviour
     public void RemoveParent()
     {
         transform.SetParent(null);
-        
+    }
+
+    public void ActivatePhysics()
+    {
         _rb.isKinematic = false;
         _col.enabled = true;
     }
+
     #endregion
 }

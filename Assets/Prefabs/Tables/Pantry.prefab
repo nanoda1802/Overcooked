@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 6732246247530902020}
   m_Layer: 6
   m_Name: Pantry
-  m_TagString: Box
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -83,8 +83,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf2f7ffa9a579144b8df68eecd6b40c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
   pivot: {fileID: 3834129988665155201}
+  type: 0
   items:
   - {fileID: 4197651994025035912, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
   - {fileID: 3675245381779779352, guid: 4cfb9702c8a68aa458d16f61c114122b, type: 3}

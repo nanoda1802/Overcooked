@@ -1,18 +1,17 @@
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public class Pantry : MonoBehaviour, IInteractable
+public class Pantry : Table
 {
     [SF] private ItemType type;
-    [SF] private Transform pivot;
     [SF] private GameObject[] items;
 
-    private void Awake()
+    private void Start()
     {
         pivot.GetChild((int)type).gameObject.SetActive(true);
     }
 
-    public bool Interact(PlayerController player)
+    public override bool Interact(PlayerController player)
     {
         if (player.pickedItem is not null) return false;
 
@@ -21,7 +20,4 @@ public class Pantry : MonoBehaviour, IInteractable
         if (itemObj.TryGetComponent(out Item item)) player.AttachItem(item);
         return true;
     }
-
-    public bool BeginWork(PlayerController player) { return false; }
-    public void StopWork(PlayerController player) {}
 }

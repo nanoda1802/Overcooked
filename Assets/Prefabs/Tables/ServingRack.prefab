@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 3281804122507862850}
   m_Layer: 6
   m_Name: ServingRack
-  m_TagString: Box
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -237,7 +237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a249cf5a645ac5488f549d1b6ac5663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentScore: 0
+  pivot: {fileID: 0}
   sink: {fileID: 0}
 --- !u!65 &3281804122507862850
 BoxCollider:

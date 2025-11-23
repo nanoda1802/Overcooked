@@ -117,6 +117,14 @@ PrefabInstance:
       propertyPath: dishRackPivot
       value: 
       objectReference: {fileID: 1012103307763756148}
+    - target: {fileID: 8616177341066714204, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
+      propertyPath: barImages.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8616177341066714204, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
+      propertyPath: barImages.Array.data[0]
+      value: 
+      objectReference: {fileID: 6869123253109934630}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

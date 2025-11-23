@@ -31,11 +31,13 @@ public class PlayerController : MonoBehaviour
     [SF, Range(1f, 20f)] private float throwForce; // 12f
     /* 상호작용 */
     [Header("[ Interact ]")] 
-    [SF] private LayerMask boxLayer; // 1<<6
-    [SF, Range(0f, 2f)] private float boxDetectDist; // 0.8f
-    [SF, Range(0f, 2f)] private float boxDetectOffset; // 1f
-    private IInteractable _detectedBox;
+    [SF] private LayerMask tableLayer; // 1<<6
+    [SF, Range(0f, 2f)] private float tableDetectDist; // 0.8f
+    [SF, Range(0f, 2f)] private float tableDetectOffset; // 1f
+    private Table _detectedTable;
     public bool isWorking;
+    public Item handledItem;
+    public Action OnWorkStopped;
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -60,8 +62,8 @@ public class PlayerController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Vector3 offset = (transform.forward + Vector3.up) * itemDetectOffset;
-        Matrix4x4 boxMatrix = Matrix4x4.TRS(transform.position + offset, transform.rotation, Vector3.one);
-        Gizmos.matrix = boxMatrix;
+        Matrix4x4 tableMatrix = Matrix4x4.TRS(transform.position + offset, transform.rotation, Vector3.one);
+        Gizmos.matrix = tableMatrix;
         Gizmos.DrawWireCube(Vector3.zero, itemDetectRange * 2);
         Gizmos.matrix = Matrix4x4.identity; // 매트릭스를 리셋하여 다른 Gizmos에 영향 안 미치도록 함
     }
@@ -88,14 +90,14 @@ public class PlayerController : MonoBehaviour
         switch (ctx.interaction)
         {
             case HoldInteraction when ctx.performed:
-                if (DetectBox()) BeginWork();
+                if (DetectTable() && _detectedTable is WorkTable table) BeginWork(table);
                 break;
             case HoldInteraction when ctx.canceled:
-                if (isWorking || _detectedBox is not null) StopWork();
+                if (isWorking || _detectedTable is not null) StopWork();
                 break;
             case PressInteraction when ctx.started:
             {
-                if (DetectBox()) if (Interact()) break;
+                if (DetectTable()) if (Interact()) break;
                 if (pickedItem is not null) Drop();
                 else if (DetectItem()) Pick();
                 break;
@@ -134,32 +136,39 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region 박스 상호작용 메서드
-    private bool DetectBox()
+    private bool DetectTable()
     {
-        Vector3 offset = Vector3.up * boxDetectOffset;
-        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, boxDetectDist,
-            boxLayer);
+        Vector3 offset = Vector3.up * tableDetectOffset;
+        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, tableDetectDist,
+            tableLayer);
         Debug.DrawRay(transform.position + offset, transform.forward, isHit ? Color.red : Color.green);
-        return isHit && hit.collider.gameObject.TryGetComponent(out _detectedBox);
+        return isHit && hit.collider.gameObject.TryGetComponent(out _detectedTable);
     }
 
     private bool Interact()
     {
-        bool hasInteract = _detectedBox.Interact(this);
-        _detectedBox = null;
+        bool hasInteract = _detectedTable.Interact(this);
+        _detectedTable = null;
         return hasInteract;
     }
 
-    private void BeginWork()
+    private void BeginWork(WorkTable table)
     {
-        isWorking = _detectedBox.BeginWork(this);
+        isWorking = table.BeginWork(this);
     }
 
-    public void StopWork()
+    private void StopWork()
+    {
+        OnWorkStopped?.Invoke();
+        FinishWork();   
+    }
+
+    public void FinishWork()
     {
         isWorking = false;
-        _detectedBox.StopWork(this);
-        _detectedBox = null;
+        _detectedTable = null;
+        handledItem = null;
+        OnWorkStopped = null;
     }
 
     #endregion
@@ -197,7 +206,8 @@ public class PlayerController : MonoBehaviour
 
     private void Drop()
     {
-        DetachItem();
+        Item item = DetachItem();
+        item.ActivatePhysics();
     }
 
     private void Throw(Vector3 dir)
@@ -210,13 +220,22 @@ public class PlayerController : MonoBehaviour
     public void AttachItem(Item item)
     {
         item.SetParent(pivot);
+        item.IsPlaced = false;
         pickedItem = item;
     }
 
-    public void DetachItem()
+    public Item DetachItem()
     {
-        pickedItem.RemoveParent();
+        Item item = pickedItem;
+        item.RemoveParent();
         pickedItem = null;
+        return item;
+    }
+
+    public void GetHandledItem()
+    {
+        if (handledItem is null) return;
+        AttachItem(handledItem);
     }
     #endregion
 }

@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 8215145956697270403}
   - component: {fileID: -5793557991607480041}
   - component: {fileID: 7371169882415418745}
+  - component: {fileID: 416368782741885154}
   m_Layer: 7
   m_Name: Plate
   m_TagString: Item
@@ -179,7 +180,6 @@ MonoBehaviour:
   pivot: {fileID: 645539632157955856}
   offsetY: 0.04
   prefab: {fileID: 5020934527727135508, guid: 93b2a89e4fa1b464faaf8131c8271a50, type: 3}
-  maxIngredient: 4
 --- !u!65 &8215145956697270403
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -341,3 +341,24 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!135 &416368782741885154
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5020934527727135508}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 128
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 127
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.2, z: 0}

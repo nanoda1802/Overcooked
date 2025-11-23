@@ -983,7 +983,7 @@ GameObject:
   - component: {fileID: 664470068792072275}
   m_Layer: 6
   m_Name: Stove
-  m_TagString: Box
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1018,12 +1018,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c754d5a201de634e9863b995234c302, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placedItem: {fileID: 0}
   pivot: {fileID: 3833919147235019637}
+  placedItem: {fileID: 0}
   scaleOffset: 0.6
   availableItems: 03000000
   canvas: {fileID: 26417822045986241}
-  fillBars:
+  barImages:
   - {fileID: 3212028284119786299}
   - {fileID: 4550176872679273383}
 --- !u!65 &664470068792072275
