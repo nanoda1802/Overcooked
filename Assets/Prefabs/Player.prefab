@@ -143,11 +143,12 @@ MonoBehaviour:
   itemDetectOffset: 0.8
   pickedItem: {fileID: 0}
   throwForce: 12
-  boxLayer:
+  tableLayer:
     serializedVersion: 2
     m_Bits: 64
-  boxDetectDist: 0.8
-  boxDetectOffset: 1
+  tableDetectDist: 0.8
+  tableDetectOffset: 1
+  isWorking: 0
 --- !u!54 &5196186138760199806
 Rigidbody:
   m_ObjectHideFlags: 0

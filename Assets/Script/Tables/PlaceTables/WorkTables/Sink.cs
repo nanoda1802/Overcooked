@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
-public class Sink : Box
+public class Sink : WorkTable
 {
     // 편의상 깨끗한 접시 넣어도 같은 동작 (누가 설거지 두 번하래?)
     // 플레이어가 직접 갖다 넣거나, 던지거나, 음식이 제출되고 일정 시간이 지나면 Sink에 접시 들어옴
@@ -14,107 +14,92 @@ public class Sink : Box
     // 큐에 접시가 한개 이상 있을 때, 홀드 상호작용 시도하면 dequeue된 접시가 placedItem에 할당
     // Cook하듯이 진행, 작업 완료되면 접시 오브젝트 활성화 시키고 DishRack의 pivot으로 옮김
 
-    private Action _onStopped;
-    private readonly Queue<Item> _plates = new();
-    [SF] private Image fillBar;
     [SF] private DishRack dishRack;
-    
     [SF] private Canvas sinkCanvas;
     [SF] private Text sinkText;
-    
-    private void Update()
+    private Action _onFinished;
+    private readonly Queue<Item> _plates = new(10);
+
+    private void OnTriggerEnter(Collider other)
     {
-        if (!IsWorking || placedItem is null) return;
-        Work();
+        if (!CheckTriggeredItem(other, out var item) || 
+            item is not Plate plate || 
+            plate.HasIngredient()) 
+            return;
+        PlaceItem(item);
     }
-    
+
     public override bool Interact(PlayerController player)
     {
         if (player.pickedItem is not Plate plate || plate.HasIngredient()) return false;
-        
-        Item item = player.pickedItem; // detach에서 참조를 끊어서 필요한 변수
-        player.DetachItem();
-        AttachItem(item);
+        PlaceItem(player.DetachItem());
         return true;
         
     }
 
-    public override void AttachItem(Item item)
+    public void PutOnPlate(Item plate) // [임시]
     {
-        // Sink 만의 attach
-        if (item is not Plate plate || plate.HasIngredient()) return;
+        PlaceItem(plate);
+    }
+    
+    protected override void PlaceItem(Item item)
+    {
         item.SetParent(pivot);
+        item.IsPlaced = true;
         item.gameObject.SetActive(false);
         item.InitProgress();
+        item.SetMaterial();
         _plates.Enqueue(item);
 
-        if (_plates.Count > 0)
-        {
-            TurnOnPlateCount();
-            UpdatePlateCount();
-        }
+        if (_plates.Count <= 0) return;
+        TurnOnPlateCount();
+        UpdatePlateCount();
     }
-
-    protected override void DetachItem()
+    
+    protected override Item DisplaceItem() // 다시 오자
     {
-        // Sink 만의 Detach
-        DeactivateCanvas();
-        dishRack.AttachItem(placedItem);
+        dishRack.PutOnPlate(placedItem);
         placedItem = null;
         
         UpdatePlateCount();
         if(_plates.Count <= 0) TurnOffPlateCount();
+        
+        return null;
     }
     
     public override bool BeginWork(PlayerController player)
     {
-        if (_plates.Count == 0 && placedItem is null) return false;
-        if (!canvas.gameObject.activeSelf) ActivateCanvas();
+        if (placedItem is null && _plates.Count == 0) return false;
+
+        IsWorking = true;
+        
+        if (!canvas.gameObject.activeSelf) ActivateUI();
+        
         if (placedItem is null) 
         {
-            placedItem = _plates.Dequeue(); // ??= 라는 연산자로 가능한가봐
+            placedItem = _plates.Dequeue();
             placedItem.gameObject.SetActive(true);
-            placedItem.SetMaterial();
         }
+
+        player.OnWorkStopped += StopWork;
+        _onFinished = player.FinishWork;
         
-        IsWorking = true;
-        _onStopped = player.StopWork; // ??
         return true;
     }
 
-    public override void StopWork(PlayerController player)
+    protected override void StopWork()
     {
-        IsWorking = false;
-        _onStopped = null;
+        base.StopWork();
+        _onFinished = null;
     }
 
-    protected override void Work()
+    protected override void FinishWork()
     {
-        base.Work();
-        float progress = placedItem.Handle();
-        FillImg(progress);
-        if (!IsWorking)
-        {
-            _onStopped?.Invoke();
-            DetachItem();
-        }
-    }
-
-    protected override void ActivateCanvas()
-    {
-        base.ActivateCanvas();
-        InitFillAmount();
-    }
-
-    private void InitFillAmount()
-    {
-        fillBar.fillAmount = 0;
-    }
-
-    private void FillImg(float ratio)
-    {
-        if (fillBar is null) return;
-        fillBar.fillAmount = ratio;
+        DeactivateUI();
+        _onFinished.Invoke();
+        _onFinished = null;
+        base.FinishWork();
+        DisplaceItem();
     }
 
     private void TurnOnPlateCount() // [임시]
@@ -127,7 +112,7 @@ public class Sink : Box
         sinkCanvas?.gameObject.SetActive(false);
     }
     
-    private void UpdatePlateCount()
+    private void UpdatePlateCount() // [임시]
     {
         sinkText.text = $"{_plates.Count}";
     }

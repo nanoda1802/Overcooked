@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 2023958274270780325}
   m_Layer: 6
   m_Name: DishRack
-  m_TagString: Box
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -287,9 +287,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f74ac388a896874ca13ce27824401fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 5
   pivot: {fileID: 8701181747951707265}
-  offset: 0.15
+  placedItem: {fileID: 0}
+  scaleOffset: 1
+  availableItems: 05000000
+  offsetY: 0.12
 --- !u!65 &2023958274270780325
 BoxCollider:
   m_ObjectHideFlags: 0

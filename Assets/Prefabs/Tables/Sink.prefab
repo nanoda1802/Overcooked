@@ -604,11 +604,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7985685425306940570}
-  - component: {fileID: 2023958274270780325}
   - component: {fileID: 8616177341066714204}
+  - component: {fileID: 2023958274270780325}
   m_Layer: 6
   m_Name: Sink
-  m_TagString: Box
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -631,6 +631,27 @@ Transform:
   - {fileID: 1716637196033948472}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8616177341066714204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7807546547798535265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e42a8ee547382244192f371f603f2e10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pivot: {fileID: 2413578822422184170}
+  placedItem: {fileID: 0}
+  scaleOffset: 1
+  availableItems: 05000000
+  canvas: {fileID: 0}
+  barImages: []
+  dishRack: {fileID: 0}
+  sinkCanvas: {fileID: 7047687936998075697}
+  sinkText: {fileID: 6071369978114239700}
 --- !u!65 &2023958274270780325
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -652,25 +673,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.4, z: 0}
---- !u!114 &8616177341066714204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7807546547798535265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e42a8ee547382244192f371f603f2e10, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  placedItem: {fileID: 0}
-  pivot: {fileID: 2413578822422184170}
-  scaleOffset: 1
-  availableItems: 05000000
-  canvas: {fileID: 7047687936998075697}
-  fillBar: {fileID: 0}
-  dishRack: {fileID: 0}
 --- !u!1 &8086917320129313613
 GameObject:
   m_ObjectHideFlags: 0

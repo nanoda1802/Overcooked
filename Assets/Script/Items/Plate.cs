@@ -15,9 +15,19 @@ public class Plate : Item
     [SF] private GameObject prefab;
     private readonly List<Ingredient> _ingredients = new(10);
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!IsPlaced || !IsDone() || 
+            !other.CompareTag("Item") || 
+            !other.TryGetComponent(out Item item) || 
+            item is Plate) return;
+        StackIngredient(item);
+    }
+
     public void StackIngredient(Item item)
     {
-        if (item is Plate) return;
+        item.SetParent(pivot); // [임시]
+        item.gameObject.SetActive(false); // [임시]
         
         GameObject ingObj = Instantiate(prefab, pivot); // [임시]
         if (!ingObj.TryGetComponent(out Ingredient ing))
@@ -29,8 +39,6 @@ public class Plate : Item
         ing.SetItemInfo(item.type,item.doneness,item.Mesh.material); 
         _ingredients.Add(ing);
         ingObj.transform.localPosition += offsetY * _ingredients.Count * Vector3.up;
-        
-        InitProgress();
     }
 
     public bool HasIngredient()
@@ -63,6 +71,8 @@ public class Plate : Item
         }
         
         _ingredients.Clear();
+        
+        InitProgress();
         SetMaterial();
     }
 }

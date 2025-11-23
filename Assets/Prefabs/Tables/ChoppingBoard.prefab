@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 1545303299914478099}
   m_Layer: 6
   m_Name: ChoppingBoard
-  m_TagString: Box
+  m_TagString: Table
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,12 +131,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ea64644a9e59294aa9d0957223df96d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  placedItem: {fileID: 0}
   pivot: {fileID: 5085169896251369540}
+  placedItem: {fileID: 0}
   scaleOffset: 0.7
   availableItems: 010000000200000004000000
   canvas: {fileID: 7832359582252983652}
-  fillBar: {fileID: 2327372339560708381}
+  barImages:
+  - {fileID: 2327372339560708381}
 --- !u!65 &1545303299914478099
 BoxCollider:
   m_ObjectHideFlags: 0
