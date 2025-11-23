@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -29,7 +30,13 @@ public class ServingRack : MonoBehaviour, IInteractable
       for (int i = 0; i < orders.Count; i++)
       {
          orders[i].timeCheck += Time.deltaTime;
-         if (orders[i].IsExpired()) expiredOrders.Add(i);
+         if (orders[i].IsExpired(out int score))
+         {
+            currentScore -= score;
+            if (currentScore < 0) currentScore = 0;
+            Debug.Log($"만료로 {score}만큼 감점! 현재 점수는 {currentScore}!");
+            expiredOrders.Add(i);
+         }
       }
 
       if (expiredOrders.Count == 0) return;
@@ -40,8 +47,14 @@ public class ServingRack : MonoBehaviour, IInteractable
    {
       if (sink is null || player.pickedItem is not Plate plate || !plate.HasIngredient()) return false;
 
+      if (orders.Count == 0)
+      {
+         Debug.Log("들어온 주문이 없어!");
+         return false;
+      }
+      
       currentScore += plate.GetPlateScore(orders); // 임시
-      Debug.Log($"현재 점수는 {currentScore}!");
+      Debug.Log($"제출 성공! 현재 점수는 {currentScore}!");
       plate.ClearPlate();
       player.DetachItem();
       sink.AttachItem(plate);
@@ -51,9 +64,16 @@ public class ServingRack : MonoBehaviour, IInteractable
    private void MakeDummyOrder()
    {
       HashSet<ItemType> recipe = new HashSet<ItemType>(3);
-      for (int i = 0; i < 3; i++) recipe.Add((ItemType)i);
+      int rnd = Random.Range(2, 5);
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < rnd; i++)
+      {
+         ItemType type = (ItemType) i;
+         sb.Append(type).Append(',');
+         recipe.Add(type);
+      }
       orders.Add(new FoodOrder(Time.time, recipe));
-      Debug.Log($"새 주문! 빵, 양배추, 치즈! (주문시간:{Time.time})");
+      Debug.Log($"새 주문! {sb}! (주문시간:{Time.time})");
    }
 
 

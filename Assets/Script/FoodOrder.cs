@@ -54,9 +54,10 @@ public class FoodOrder
     }
 
     // 만료 여부 확인
-    public bool IsExpired()
+    public bool IsExpired(out int score)
     {
         if(orderedTime + timeCheck > expiredTime) Debug.Log($"주문 만료! : {orderedTime}");
+        score = baseScore;
         return orderedTime + timeCheck > expiredTime;
     }
 

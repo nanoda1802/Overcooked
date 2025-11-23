@@ -18,6 +18,10 @@ public class Sink : Box
     private readonly Queue<Item> _plates = new();
     [SF] private Image fillBar;
     [SF] private DishRack dishRack;
+    
+    [SF] private Canvas sinkCanvas;
+    [SF] private Text sinkText;
+    
     private void Update()
     {
         if (!IsWorking || placedItem is null) return;
@@ -43,7 +47,12 @@ public class Sink : Box
         item.gameObject.SetActive(false);
         item.InitProgress();
         _plates.Enqueue(item);
-        Debug.Log($"현재 안 닦은 접시 개수 : {_plates.Count}");
+
+        if (_plates.Count > 0)
+        {
+            TurnOnPlateCount();
+            UpdatePlateCount();
+        }
     }
 
     protected override void DetachItem()
@@ -52,7 +61,9 @@ public class Sink : Box
         DeactivateCanvas();
         dishRack.AttachItem(placedItem);
         placedItem = null;
-        Debug.Log($"현재 안 닦은 접시 개수 : {_plates.Count}");
+        
+        UpdatePlateCount();
+        if(_plates.Count <= 0) TurnOffPlateCount();
     }
     
     public override bool BeginWork(PlayerController player)
@@ -104,5 +115,20 @@ public class Sink : Box
     {
         if (fillBar is null) return;
         fillBar.fillAmount = ratio;
+    }
+
+    private void TurnOnPlateCount() // [임시]
+    {
+        sinkCanvas?.gameObject.SetActive(true);
+    }
+
+    private void TurnOffPlateCount() // [임시]
+    {
+        sinkCanvas?.gameObject.SetActive(false);
+    }
+    
+    private void UpdatePlateCount()
+    {
+        sinkText.text = $"{_plates.Count}";
     }
 }

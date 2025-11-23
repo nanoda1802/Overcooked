@@ -40,12 +40,6 @@ public class Plate : Item
 
     public int GetPlateScore(List<FoodOrder> orders)
     {
-        if (orders.Count == 0)
-        {
-            Debug.Log("들어온 주문이 없어!");
-            return 0;
-        }
-        
         // 주문된 음식들을 앞에서부터 순회 (조건부 선입선출이 되도록)
         int orderIdx = -1;
         for (int i = 0; i < orders.Count; i++)
