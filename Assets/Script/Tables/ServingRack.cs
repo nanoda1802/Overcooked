@@ -7,11 +7,10 @@ public class ServingRack : Table
 {
    [SF] private Sink sink;
    private int _curScore; // [임시] 추후 GM으로 이동
-   private List<FoodOrder> _orders;
+   private readonly List<FoodOrder> _orders = new List<FoodOrder>(10);
    
    private void Start()
    {
-      _orders = new List<FoodOrder>(10);
       InvokeRepeating(nameof(MakeDummyOrder),1f,30f); // [임시]
    }
 
@@ -39,8 +38,8 @@ public class ServingRack : Table
 
    public override bool Interact(PlayerController player)
    {
-      if (player.pickedItem is not Plate plate || !plate.HasIngredient()) return false;
-
+      if (player.pickedItem is not Plate plate) return false;
+      if (!plate.HasIngredient()) return false;
       if (_orders.Count == 0)
       {
          Debug.Log("들어온 주문이 없어!");
@@ -51,7 +50,7 @@ public class ServingRack : Table
       Debug.Log($"제출 성공! 현재 점수는 {_curScore}!");
       
       plate.ClearPlate();
-      sink.PutOnPlate(player.DetachItem());
+      sink.PlaceItem(player.DetachItem());
       
       return true;
    }

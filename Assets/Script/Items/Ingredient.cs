@@ -13,14 +13,14 @@ public class Ingredient : MonoBehaviour
         _mesh = GetComponentInChildren<MeshRenderer>();
     }
 
-    public void SetItemInfo(ItemType itemType, ItemStatus itemStatus, Material mat)
+    public void SetInfo(ItemType itemType, ItemStatus itemStatus, Material mat)
     {
         type = itemType;
         doneness = itemStatus;
         _mesh.material = mat;
     }
 
-    public void ResetInfo()
+    public void InitInfo()
     {
         type = 0;
         doneness = 0;

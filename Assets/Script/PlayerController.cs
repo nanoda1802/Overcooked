@@ -16,7 +16,8 @@ public class PlayerController : MonoBehaviour
     [SF, Range(0f, 10f)] private float moveSpeed = 5f;
     [SF, Range(0f, 1f)] private float rotRatio = 0.4f;
     [SF, Range(0f, 10f)] private float dashForce = 5f;
-    [SF] private float dashSpeedModifier = 1f;
+    [SF, Range(0f, 5f)] private float dashSpeed = 1.5f;
+    [SF] private float moveSpeedModifier = 1f;
     private Vector3 _moveDir;
     /* 물체 잡기 놓기 */
     [Header("[ Pick & Drop ]")] 
@@ -36,7 +37,6 @@ public class PlayerController : MonoBehaviour
     [SF, Range(0f, 2f)] private float tableDetectOffset; // 1f
     private Table _detectedTable;
     public bool isWorking;
-    public Item handledItem;
     public Action OnWorkStopped;
     #endregion
 
@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
             _rb.freezeRotation = true;
         }
 
-        Application.targetFrameRate = 60; // 임시
+        Application.targetFrameRate = 60; // [임시]
     }
 
     private void FixedUpdate()
@@ -73,6 +73,7 @@ public class PlayerController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext ctx)
     {
         if (isWorking) return;
+        
         Vector2 input = ctx.ReadValue<Vector2>();
         _moveDir.x = input.x;
         _moveDir.z = input.y;
@@ -81,8 +82,8 @@ public class PlayerController : MonoBehaviour
     public void OnDash(InputAction.CallbackContext ctx)
     {
         if (ctx.started) _rb.AddForce(dashForce * _moveDir, ForceMode.VelocityChange);
-        if (ctx.performed) dashSpeedModifier = 1.5f;
-        if (ctx.canceled) dashSpeedModifier = 1f;
+        if (ctx.performed) moveSpeedModifier = dashSpeed;
+        if (ctx.canceled) moveSpeedModifier = 1f;
     }
 
     public void OnInteract(InputAction.CallbackContext ctx)
@@ -93,30 +94,28 @@ public class PlayerController : MonoBehaviour
                 if (DetectTable() && _detectedTable is WorkTable table) BeginWork(table);
                 break;
             case HoldInteraction when ctx.canceled:
-                if (isWorking || _detectedTable is not null) StopWork();
+                if (isWorking) StopWork();
                 break;
             case PressInteraction when ctx.started:
-            {
-                if (DetectTable()) if (Interact()) break;
+                if (DetectTable() && Interact()) break;
                 if (pickedItem is not null) Drop();
                 else if (DetectItem()) Pick();
                 break;
-            }
         }
     }
 
     public void OnThrow(InputAction.CallbackContext ctx)
     {
         if (pickedItem is null) return;
-        if (ctx.interaction is HoldInteraction)
+        
+        switch (ctx.interaction)
         {
-            // 홀드 -> 던질 방향 나오고 떼면 해당 방향으로 던짐
-            // 홀드 시간 조정해야함 input map 에서
-            // 홀드 시간 동안 방향 조절, 시간 초과시 마지막 방향으로 던짐
-        }
-        else if (ctx.interaction is PressInteraction)
-        {
-            Throw(pivot.forward);
+            case HoldInteraction:
+                // 홀드 시간 동안 방향 조절, 키 떼거나 시간 초과시 마지막 방향으로 던짐
+                break;
+            case PressInteraction:
+                Throw(pivot.forward);
+                break;
         }
     }
     #endregion
@@ -124,7 +123,7 @@ public class PlayerController : MonoBehaviour
     #region 이동 메서드
     private void Move()
     {
-        Vector3 moveOffset = (moveSpeed * dashSpeedModifier * Time.fixedDeltaTime) * _moveDir;
+        Vector3 moveOffset = (moveSpeed * moveSpeedModifier * Time.fixedDeltaTime) * _moveDir;
         _rb.MovePosition(_rb.position + moveOffset);
     }
 
@@ -147,9 +146,9 @@ public class PlayerController : MonoBehaviour
 
     private bool Interact()
     {
-        bool hasInteract = _detectedTable.Interact(this);
+        bool hasInteraction = _detectedTable.Interact(this);
         _detectedTable = null;
-        return hasInteract;
+        return hasInteraction;
     }
 
     private void BeginWork(WorkTable table)
@@ -167,16 +166,15 @@ public class PlayerController : MonoBehaviour
     {
         isWorking = false;
         _detectedTable = null;
-        handledItem = null;
         OnWorkStopped = null;
     }
-
     #endregion
 
     #region 아이템 들기 놓기 던지기 메서드
     private bool DetectItem()
     {
         Array.Clear(_detectedItems, 0, _detectedItems.Length);
+        
         Vector3 offset = (transform.forward + Vector3.up) * itemDetectOffset;
         int hits = Physics.OverlapBoxNonAlloc(transform.position + offset, itemDetectRange, _detectedItems,
             transform.rotation, itemLayer);
@@ -187,21 +185,22 @@ public class PlayerController : MonoBehaviour
     {
         float minDist = float.MaxValue;
         GameObject closest = null;
+        
         foreach (Collider col in _detectedItems)
         {
-            if (col is null) continue;
+            if (col is null) break; // DetectItem에서 0번 인덱스부터 순서대로 채워지기 때문에, null이 등장했다면 이후는 모두 null
+            
             float dist = (_rb.position - col.attachedRigidbody.position).sqrMagnitude;
-            if (dist < minDist)
-            {
-                minDist = dist;
-                closest = col.gameObject;
-            }
+            if (dist >= minDist) continue;
+            
+            minDist = dist;
+            closest = col.gameObject;
         }
 
-        if (closest is not null && closest.TryGetComponent(out Item item))
-        {
-            AttachItem(item);
-        }
+        if (closest is null) return;
+        if (!closest.TryGetComponent(out Item item)) return;
+        
+        AttachItem(item);
     }
 
     private void Drop()
@@ -212,15 +211,13 @@ public class PlayerController : MonoBehaviour
 
     private void Throw(Vector3 dir)
     {
-        pickedItem.SetThrowValues(pivot.position, dir, throwForce * dashSpeedModifier);
-        DetachItem();
+        DetachItem().SetThrowValues(pivot.position, dir, throwForce * moveSpeedModifier);
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
     }
     
     public void AttachItem(Item item)
     {
         item.SetParent(pivot);
-        item.IsPlaced = false;
         pickedItem = item;
     }
 
@@ -234,8 +231,8 @@ public class PlayerController : MonoBehaviour
 
     public void GetHandledItem()
     {
-        if (handledItem is null) return;
-        AttachItem(handledItem);
+        if (_detectedTable is not PlaceTable table) return;
+        AttachItem(table.DisplaceItem());
     }
     #endregion
 }

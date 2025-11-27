@@ -8,11 +8,13 @@ public class ChoppingBoard : WorkTable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (placedItem is not null || !CheckTriggeredItem(other, out var item)) return;
+        if (placedItem is not null) return;
+        if (!CheckTriggeredItem(other, out var item)) return;
+
         PlaceItem(item);
     }
 
-    protected override void PlaceItem(Item item)
+    public override void PlaceItem(Item item)
     {
         if (item.IsDone())
         {
@@ -22,7 +24,7 @@ public class ChoppingBoard : WorkTable
         base.PlaceItem(item);
     }
 
-    protected override Item DisplaceItem()
+    public override Item DisplaceItem()
     {
         DeactivateUI();
         return base.DisplaceItem();
@@ -30,16 +32,16 @@ public class ChoppingBoard : WorkTable
 
     public override bool BeginWork(PlayerController player)
     {
-        bool hasBegun = base.BeginWork(player);
-        if (hasBegun && !canvas.gameObject.activeSelf)
-        {
-            ActivateUI();
-            player.OnWorkStopped += StopWork;
-            _onFinished += player.GetHandledItem;
-            _onFinished += player.FinishWork;
-            player.handledItem = placedItem;
-        }
-        return hasBegun;
+        if (placedItem is null) return false;
+        
+        IsWorking = true;
+        if (!canvas.gameObject.activeSelf) ActivateUI();
+        
+        player.OnWorkStopped += StopWork;
+        _onFinished += player.GetHandledItem;
+        _onFinished += player.FinishWork;
+        
+        return true;
     }
 
     protected override void StopWork()
@@ -50,9 +52,9 @@ public class ChoppingBoard : WorkTable
 
     protected override void FinishWork()
     {
-        DeactivateUI();
         _onFinished?.Invoke();
-        _onFinished = null;
-        base.FinishWork();
+        StopWork();
+        
+        DeactivateUI();
     }
 }
