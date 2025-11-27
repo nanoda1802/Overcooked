@@ -17,10 +17,10 @@ public class Plate : Item
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsPlaced || !IsDone() || 
-            !other.CompareTag("Item") || 
-            !other.TryGetComponent(out Item item) || 
-            item is Plate) return;
+        if (!IsPlaced || !IsDone()) return;
+        if (!other.CompareTag("Item")) return;
+        if (!other.TryGetComponent(out Item item) || item is Plate) return;
+        
         StackIngredient(item);
     }
 
@@ -36,9 +36,10 @@ public class Plate : Item
             return;
         }
         
-        ing.SetItemInfo(item.type,item.doneness,item.Mesh.material); 
+        ing.SetInfo(item.type,item.doneness,item.Mesh.material); 
+        
         _ingredients.Add(ing);
-        ingObj.transform.localPosition += offsetY * _ingredients.Count * Vector3.up;
+        ingObj.transform.localPosition += (offsetY * _ingredients.Count) * Vector3.up;
     }
 
     public bool HasIngredient()
@@ -66,7 +67,7 @@ public class Plate : Item
     {
         foreach (Ingredient ing in _ingredients)
         {
-            ing.ResetInfo();
+            ing.InitInfo();
             Destroy(ing.gameObject); // [임시]
         }
         
