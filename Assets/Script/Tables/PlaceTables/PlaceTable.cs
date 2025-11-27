@@ -22,28 +22,35 @@ public class PlaceTable : Table
         }
         return false;
     }
-    protected virtual void PlaceItem(Item item)
+    
+    public virtual void PlaceItem(Item item)
     {
         item.SetParent(pivot);
         placedItem = item;
         item.IsPlaced = true;
         pivot.localScale *= scaleOffset;
     }
-    protected virtual Item DisplaceItem() { 
+    
+    public virtual Item DisplaceItem() { 
         pivot.localScale = Vector3.one;
+        
         Item item = placedItem;
         placedItem = null;
+        
         item.IsPlaced = false;
         item.RemoveParent();
         return item; 
     }
+    
     protected bool CheckTriggeredItem(Collider other, out Item checkedItem)
     {
         checkedItem = null;
-        if (!other.CompareTag("Item") || 
-            !other.TryGetComponent(out Item item) || 
-            !availableItems.Contains(item.type) || 
-            (!item.IsThrown && !item.IsFalling)) return false;
+        
+        if (!other.CompareTag("Item")) return false;
+        if (!other.TryGetComponent(out Item item)) return false;
+        if (!availableItems.Contains(item.type)) return false;
+        if (!item.IsThrown && !item.IsFalling) return false;
+        
         checkedItem = item;
         return true;
     }

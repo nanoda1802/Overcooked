@@ -22,65 +22,59 @@ public class Sink : WorkTable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!CheckTriggeredItem(other, out var item) || 
-            item is not Plate plate || 
-            plate.HasIngredient()) 
-            return;
+        if (!CheckTriggeredItem(other, out var item)) return;
+        if (item is not Plate plate) return;
+        if (plate.HasIngredient()) return;
+        
         PlaceItem(item);
     }
 
     public override bool Interact(PlayerController player)
     {
-        if (player.pickedItem is not Plate plate || plate.HasIngredient()) return false;
+        if (player.pickedItem is not Plate plate) return false;
+        if (plate.HasIngredient()) return false;
+        
         PlaceItem(player.DetachItem());
         return true;
-        
-    }
-
-    public void PutOnPlate(Item plate) // [임시]
-    {
-        PlaceItem(plate);
     }
     
-    protected override void PlaceItem(Item item)
+    public override void PlaceItem(Item item)
     {
         item.SetParent(pivot);
         item.IsPlaced = true;
         item.gameObject.SetActive(false);
+        
         item.InitProgress();
         item.SetMaterial();
+        
         _plates.Enqueue(item);
 
-        if (_plates.Count <= 0) return;
-        TurnOnPlateCount();
+        if (!sinkCanvas.gameObject.activeSelf) ActivatePlateCount();
         UpdatePlateCount();
     }
     
-    protected override Item DisplaceItem() // 다시 오자
+    public override Item DisplaceItem() // 다시 오자
     {
-        dishRack.PutOnPlate(placedItem);
+        dishRack.PlaceItem(placedItem);
         placedItem = null;
         
         UpdatePlateCount();
-        if(_plates.Count <= 0) TurnOffPlateCount();
+        if(_plates.Count <= 0) DeactivatePlateCount();
         
         return null;
     }
     
     public override bool BeginWork(PlayerController player)
     {
-        if (placedItem is null && _plates.Count == 0) return false;
+        if (placedItem is null) 
+        {
+            if (!_plates.TryDequeue(out placedItem)) return false;
+            placedItem.gameObject.SetActive(true);
+            ActivateUI();
+        }
 
         IsWorking = true;
         
-        if (!canvas.gameObject.activeSelf) ActivateUI();
-        
-        if (placedItem is null) 
-        {
-            placedItem = _plates.Dequeue();
-            placedItem.gameObject.SetActive(true);
-        }
-
         player.OnWorkStopped += StopWork;
         _onFinished = player.FinishWork;
         
@@ -95,19 +89,19 @@ public class Sink : WorkTable
 
     protected override void FinishWork()
     {
-        DeactivateUI();
         _onFinished.Invoke();
-        _onFinished = null;
-        base.FinishWork();
+        StopWork();
+        
+        DeactivateUI();
         DisplaceItem();
     }
 
-    private void TurnOnPlateCount() // [임시]
+    private void ActivatePlateCount() // [임시]
     {
         sinkCanvas?.gameObject.SetActive(true);
     }
 
-    private void TurnOffPlateCount() // [임시]
+    private void DeactivatePlateCount() // [임시]
     {
         sinkCanvas?.gameObject.SetActive(false);
     }

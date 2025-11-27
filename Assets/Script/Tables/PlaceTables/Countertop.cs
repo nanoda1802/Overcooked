@@ -8,19 +8,24 @@ public class Countertop : PlaceTable
         PlaceItem(item);
     }
 
-    protected override void PlaceItem(Item item)
+    public override void PlaceItem(Item item)
     {
-        if (placedItem is Plate plate && item is not Plate)
+        switch (placedItem)
         {
-            plate.StackIngredient(item);
+            case Plate plate when item is not Plate:
+                plate.StackIngredient(item);
+                break;
+            case null when item is Plate && item.IsDone():
+                base.PlaceItem(item);
+                break;
+            default:
+                item.ActivatePhysics();
+                break;
         }
-        else if (placedItem is null && item is Plate && item.IsDone())
-        {
-            base.PlaceItem(item);
-        }
-        else
-        {
-            item.ActivatePhysics();
-        }
+    }
+
+    public override Item DisplaceItem()
+    {
+        return base.DisplaceItem();
     }
 }

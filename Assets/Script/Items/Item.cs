@@ -60,6 +60,7 @@ public class Item : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Player")) return; // [임시]
+        
         if (IsThrown) StopThrowing();
         else if (IsFalling) IsFalling = false;
     }
@@ -74,7 +75,7 @@ public class Item : MonoBehaviour
         
         float ratio = curProgress / maxProgress;
         doneness = (ItemStatus) ratio;
-        SetMaterial(); // 부하 심하려나 이거?
+        SetMaterial();
         
         return ratio;
     }
@@ -100,33 +101,34 @@ public class Item : MonoBehaviour
     #region 던지기 메서드
     public void SetThrowValues(Vector3 origin, Vector3 dir, float force)
     {
-        _trail.enabled = IsThrown = true;
+        IsThrown = true;
         throwOrigin = origin;
         throwDir = dir;
         throwForce = force;
+        ActivateTrail();
         ActivatePhysics();
     }
 
     private void Throwing()
     {
         _rb.velocity = throwForce * throwDir;
-        float curDist = (throwOrigin - _rb.position).sqrMagnitude;
-        if (curDist >= maxThrowDist) StopThrowing();
+        
+        float dist = (throwOrigin - _rb.position).sqrMagnitude;
+        if (dist >= maxThrowDist) StopThrowing();
     }
 
     private void StopThrowing()
     {
         _rb.velocity *= throwDamp;
         
-        _trail.enabled = IsThrown = false;
-        _trail.Clear();
+        IsThrown = false;
         IsFalling = true;
+        DeactivateTrail();
     }
 
     public void DisposeItem()
     {
-        _trail.enabled = false;
-        _trail.Clear();
+        DeactivateTrail();
         Destroy(_trail);
         _trail = null;
         Destroy(gameObject); // 임시... 추후 Pool로
@@ -134,12 +136,10 @@ public class Item : MonoBehaviour
     
     public void SetParent(Transform parent)
     {
-        _trail.enabled = IsThrown = IsFalling = false;
-        _trail.Clear();
+        IsThrown = IsFalling = false;
         
-        _rb.velocity = Vector3.zero;
-        _rb.isKinematic = true;
-        _col.enabled = false;
+        DeactivateTrail();
+        DeactivatePhysics();
         
         transform.SetParent(parent);
         transform.localPosition = Vector3.zero;
@@ -151,10 +151,32 @@ public class Item : MonoBehaviour
         transform.SetParent(null);
     }
 
+    private void ActivateTrail()
+    {
+        _trail.enabled = true;
+    }
+
+    private void DeactivateTrail()
+    {
+        if (!_trail.enabled)  return;
+        
+        _trail.enabled = false;
+        _trail.Clear();
+    }
+
     public void ActivatePhysics()
     {
         _rb.isKinematic = false;
         _col.enabled = true;
+    }
+
+    private void DeactivatePhysics()
+    {
+        if (_rb.isKinematic) return;
+        
+        _rb.velocity = Vector3.zero;
+        _rb.isKinematic = true;
+        _col.enabled = false;
     }
 
     #endregion

@@ -5,11 +5,18 @@ public class Stove : WorkTable
 {
     private void OnTriggerEnter(Collider other)
     {
-        if (placedItem is not null || !CheckTriggeredItem(other, out var item)) return;
+        if (placedItem is not null) return;
+        if (!CheckTriggeredItem(other, out var item)) return;
+        
         PlaceItem(item);
     }
-    
-    protected override void PlaceItem(Item item)
+
+    public override bool Interact(PlayerController player)
+    {
+        return base.Interact(player);
+    }
+
+    public override void PlaceItem(Item item)
     {
         if (item.IsDone())
         {
@@ -21,7 +28,7 @@ public class Stove : WorkTable
         ActivateUI();
     }
 
-    protected override Item DisplaceItem()
+    public override Item DisplaceItem()
     {
         DeactivateUI();
         return base.DisplaceItem();

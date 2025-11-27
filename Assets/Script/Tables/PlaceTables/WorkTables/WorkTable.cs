@@ -10,15 +10,16 @@ public class WorkTable : PlaceTable
     
     protected void Update()
     {
-        if (!IsWorking || placedItem is null) return;
+        if (!IsWorking) return;
+        if (placedItem is null) return;
+        
         Work();
     }
     
     public virtual bool BeginWork(PlayerController player)
     {
         if (placedItem is null) return false;
-        IsWorking = true;
-        return true;
+        return IsWorking = true;
     }
 
     protected virtual void StopWork()
