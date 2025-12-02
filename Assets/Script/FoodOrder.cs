@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -24,10 +26,10 @@ public class FoodOrder : MonoBehaviour
     
     private ScoreManager scoreManager;
     private OrderManager orderManager;
-    private List<ItemType> recipe;
-    private float lifeTime;
+    private Menu foodInfo;
+    private Dictionary<ItemType, int> ingredientInfo;
     private float timerCount;
-    private bool isExpired;
+    private bool isActive;
 
     [SF] private Image foodImage;
     [SF] private Sprite[] foodSprites;
@@ -36,55 +38,125 @@ public class FoodOrder : MonoBehaviour
     [SF] private Sprite[] ingredientSprites;
 
     [SF] private Image timerFillImage;
-    
+
     private void Update()
     {
-        if (isExpired) return;
+        if (!isActive) return;
         UpdateTimer();
     }
 
-    public void Init(ScoreManager sm, OrderManager om, Menu menu)
+    public void Deactivate()
+    {
+        isActive = false;
+        gameObject.SetActive(false);
+        foreach (Image img in ingredientImages)
+        {
+            img.gameObject.SetActive(false);
+        }
+    }
+
+    public void Activate(Menu menu)
+    {
+        foodInfo = menu;
+        timerCount = menu.timer;
+        SetUIImages(menu.num);
+
+        ingredientInfo = menu.GetIngredientInfo();
+        
+        isActive = true;
+        gameObject.SetActive(true);
+    }
+
+    public void Init(ScoreManager sm, OrderManager om)
     {
         scoreManager = sm;
         orderManager = om;
-        recipe = menu.recipe;
-        lifeTime = timerCount = menu.timer;
-        isExpired = false;
-        SetUIImages(menu.num);
     }
 
     private void SetUIImages(int menuIdx)
     {
         foodImage.sprite = foodSprites[menuIdx]; // [임시] 
-        for (int i = 0; i < recipe.Count; i++)
+        for (int i = 0; i < foodInfo.recipe.Count; i++)
         {
-            ingredientImages[i].sprite = ingredientSprites[(int)recipe[i]-1]; // 일단 Bun이 0이라 밀려서 1을 빼야 해... 
+            ingredientImages[i].sprite = ingredientSprites[(int)foodInfo.recipe[i]];
+            ingredientImages[i].gameObject.SetActive(true);
         }
     }
 
     public bool IsMatchingRecipe(List<Ingredient> ings)
     {
-        // recipe를 순회하며...
-        return false;
+        Debug.Log("--필요 재료 목록--");
+        int ii = 1;
+        foreach (var VARIABLE in foodInfo.recipe)
+        {
+            Debug.Log($"{ii++}. {VARIABLE}");
+        }
+
+        foreach (KeyValuePair<ItemType,int> pair in ingredientInfo)
+        {
+            Debug.Log($"{pair.Key}는 {pair.Value} 개 필요함");
+        }
+        
+        if (ingredientInfo.Values.Sum() != ings.Count)
+        {
+            Debug.Log($"받아야할 재료 개수 : {ingredientInfo.Values.Sum()}");
+            Debug.Log($"받은 재료 개수 : {ings.Count}");
+            return false; // 재료 개수가 다름
+        }
+        
+        // 순회 고치는 중!!! activeOrderList가 이상한 거 같은데?
+        foreach (Ingredient ing in ings)
+        {
+            ItemType type = ing.GetType();
+            if (!ingredientInfo.TryGetValue(type, out int count))
+            {
+                Debug.Log($"{type}은 레시피에 포함되지 않아!");
+                return false;
+            }
+            if (count <= 0)
+            {
+                Debug.Log($"{type}은 이미 충분해!");
+                return false;
+            }
+            if (ing.GetDoneness() != ItemStatus.WellDone && type != ItemType.Bun)
+            {
+                Debug.Log($"{type} 조리가 덜 됐어!");
+                return false; // 조리가 덜 됨
+            }
+            
+            ingredientInfo[type] -= 1;
+            Debug.Log("<남은 재료>");
+            foreach (KeyValuePair<ItemType,int> pair in ingredientInfo)
+            {
+                if (pair.Value <= 0) continue;
+                Debug.Log($"{pair.Key}는 {pair.Value} 개 필요함");
+            }
+        }
+        
+        return ingredientInfo.Values.Sum() <= 0;
     }
 
     private void UpdateTimer()
     {
         timerCount -= Time.deltaTime;
         UpdateFillImage();
-        
-        if (timerCount <= 0) Expire();
+
+        if (timerCount <= 0)
+        {
+            scoreManager.ApplyScore(-1);
+            Deactivate();
+            orderManager.RemoveOrder(this);
+        }
     }
 
-    private void Expire()
+    public float CalculateTimerRatio()
     {
-        isExpired = true;
-        orderManager.RemoveOrder(this);
+        return timerCount / foodInfo.timer;
     }
 
     private void UpdateFillImage()
     {
-        float ratio = timerCount / lifeTime;
+        float ratio = CalculateTimerRatio();
         timerFillImage.fillAmount = ratio;
         timerFillImage.color = Color.Lerp(Color.red, Color.yellow, ratio);
     }
@@ -93,7 +165,7 @@ public class FoodOrder : MonoBehaviour
     private void UpdateFillImageSmooth()
     {
         // 1. ratio 계산 (1.0에서 0.0으로 감소)
-        float ratio = timerCount / lifeTime;
+        float ratio = CalculateTimerRatio();
         timerFillImage.fillAmount = ratio;
         
         // 2. Color.Lerp를 사용하여 색상 보간

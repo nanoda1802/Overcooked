@@ -47,23 +47,11 @@ public class Plate : Item
         return _ingredients.Count > 0;
     }
 
-    public int GetPlateScore(List<FoodOrder> orders)
+    public List<Ingredient> GetIngredientInfos()
     {
-        // 주문된 음식들을 앞에서부터 순회 (조건부 선입선출이 되도록)
-        int orderIdx = -1;
-        for (int i = 0; i < orders.Count; i++)
-        {
-            if (!orders[i].IsMatchingRecipe(_ingredients)) continue;
-            orderIdx = i; break;
-        }
-        if (orderIdx < 0) return 0;
-        
-        // int score = orders[orderIdx].CalculateScore(Time.time);
-        int score = 0;
-        orders.RemoveAt(orderIdx); // [임시] 추후 매니저 단에서 제거하도록 수정
-        return score;
+        return _ingredients;
     }
-
+    
     public void ClearPlate()
     {
         foreach (Ingredient ing in _ingredients)
