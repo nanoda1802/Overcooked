@@ -53,12 +53,13 @@ public class Plate : Item
         int orderIdx = -1;
         for (int i = 0; i < orders.Count; i++)
         {
-            if (!orders[i].IsMatchRecipe(_ingredients)) continue;
+            if (!orders[i].IsMatchingRecipe(_ingredients)) continue;
             orderIdx = i; break;
         }
         if (orderIdx < 0) return 0;
         
-        int score = orders[orderIdx].CalculateScore(Time.time);
+        // int score = orders[orderIdx].CalculateScore(Time.time);
+        int score = 0;
         orders.RemoveAt(orderIdx); // [임시] 추후 매니저 단에서 제거하도록 수정
         return score;
     }

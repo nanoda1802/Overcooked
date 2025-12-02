@@ -9,32 +9,32 @@ public class ServingRack : Table
    private int _curScore; // [임시] 추후 GM으로 이동
    private readonly List<FoodOrder> _orders = new List<FoodOrder>(10);
    
-   private void Start()
-   {
-      InvokeRepeating(nameof(MakeDummyOrder),1f,30f); // [임시]
-   }
-
-   private void Update() // [임시]
-   {
-      if (_orders.Count == 0) return;
-      
-      List<int> expiredOrders = new List<int>(_orders.Count);
-      
-      for (int i = 0; i < _orders.Count; i++)
-      {
-         _orders[i].timeCheck += Time.deltaTime;
-         if (_orders[i].IsExpired(out int score))
-         {
-            _curScore -= score;
-            if (_curScore < 0) _curScore = 0;
-            Debug.Log($"만료로 {score}만큼 감점! 현재 점수는 {_curScore}!");
-            expiredOrders.Add(i);
-         }
-      }
-
-      if (expiredOrders.Count == 0) return;
-      foreach (int i in expiredOrders) _orders.RemoveAt(i);
-   }
+   // private void Start()
+   // {
+   //    InvokeRepeating(nameof(MakeDummyOrder),1f,30f); // [임시]
+   // }
+   //
+   // private void Update() // [임시]
+   // {
+   //    if (_orders.Count == 0) return;
+   //    
+   //    List<int> expiredOrders = new List<int>(_orders.Count);
+   //    
+   //    for (int i = 0; i < _orders.Count; i++)
+   //    {
+   //       _orders[i].timeCheck += Time.deltaTime;
+   //       if (_orders[i].IsExpired(out int score))
+   //       {
+   //          _curScore -= score;
+   //          if (_curScore < 0) _curScore = 0;
+   //          Debug.Log($"만료로 {score}만큼 감점! 현재 점수는 {_curScore}!");
+   //          expiredOrders.Add(i);
+   //       }
+   //    }
+   //
+   //    if (expiredOrders.Count == 0) return;
+   //    foreach (int i in expiredOrders) _orders.RemoveAt(i);
+   // }
 
    public override bool Interact(PlayerController player)
    {
@@ -66,7 +66,7 @@ public class ServingRack : Table
          sb.Append(type).Append(',');
          recipe.Add(type);
       }
-      _orders.Add(new FoodOrder(Time.time, recipe));
+      // _orders.Add(new FoodOrder(Time.time, recipe));
       Debug.Log($"새 주문! {sb}! (주문시간:{Time.time})");
    }
 }
