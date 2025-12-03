@@ -34,8 +34,6 @@ public class Pantry : Table
         item.Activate();
         player.AttachItem(item);
         
-        // GameObject itemObj = Instantiate(items[(int)type], pivot.position, Quaternion.identity);
-        // if (itemObj.TryGetComponent(out Item item)) player.AttachItem(item);
         return true;
     }
 

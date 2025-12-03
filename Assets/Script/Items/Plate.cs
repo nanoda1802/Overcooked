@@ -1,20 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
 public class Plate : Item
 {
-    // ingredient 오브젝트 생성해 피벗의 자식으로 넣고
-    // item 속성도 주입 (type, doneness, material)
-    // 리스트에 들어온 아이템 넣기
-    // 오브젝트에 로컬 포지션 오프셋만큼 이동 offsetY * items.Count
-    // 접시 더럽히기
-    
+    [Header("[Plate Only]")]
     [SF] private Transform pivot;
     [SF] private float offsetY; // 0.04f
     [SF] private GameObject prefab;
-    private readonly List<Ingredient> _ingredients = new(10);
-
+    [SF] private int maxIngredientCount;
+    private List<Ingredient> _ingredients;
+    
+    [Header("[UI]")]
+    [SF] private Canvas ingredientCanvas;
+    [SF] private Sprite[] ingredientSprites;
+    [SF] private Image[] ingredientImages;
+    
     private void Awake()
     {
         InitComponents(null);
@@ -25,6 +27,8 @@ public class Plate : Item
         InitProgress();
         SetMaterial();
         DeactivateTrail();
+        DeactivateIngredientUI();
+        _ingredients = new List<Ingredient>(maxIngredientCount);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -51,6 +55,7 @@ public class Plate : Item
         
         _ingredients.Add(ing);
         ingObj.transform.localPosition += (offsetY * _ingredients.Count) * Vector3.up;
+        UpdateIngredientUI(item.type);
     }
 
     public bool HasIngredient()
@@ -67,7 +72,7 @@ public class Plate : Item
     {
         foreach (Ingredient ing in _ingredients)
         {
-            ing.InitInfo();
+            // ing.InitInfo();
             Destroy(ing.gameObject); // [임시]
         }
         
@@ -75,5 +80,21 @@ public class Plate : Item
         
         InitProgress();
         SetMaterial();
+        DeactivateIngredientUI();
+    }
+
+    private void UpdateIngredientUI(ItemType itemType)
+    {
+        if (_ingredients.Count >= maxIngredientCount) return;
+        if (!ingredientCanvas.gameObject.activeSelf) ingredientCanvas.gameObject.SetActive(true);
+        if (itemType == ItemType.Bun) return;
+        ingredientImages[_ingredients.Count - 1].sprite = ingredientSprites[(int) itemType];
+        ingredientImages[_ingredients.Count - 1].gameObject.SetActive(true);
+    }
+
+    private void DeactivateIngredientUI()
+    {
+        ingredientCanvas.gameObject.SetActive(false);
+        foreach (Image img in ingredientImages) img.gameObject.SetActive(false);
     }
 }
