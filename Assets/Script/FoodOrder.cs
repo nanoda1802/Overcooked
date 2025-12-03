@@ -85,29 +85,16 @@ public class FoodOrder : MonoBehaviour
 
     public bool IsMatchingRecipe(List<Ingredient> ings)
     {
-        Debug.Log("--필요 재료 목록--");
-        int ii = 1;
-        foreach (var VARIABLE in foodInfo.recipe)
-        {
-            Debug.Log($"{ii++}. {VARIABLE}");
-        }
-
-        foreach (KeyValuePair<ItemType,int> pair in ingredientInfo)
-        {
-            Debug.Log($"{pair.Key}는 {pair.Value} 개 필요함");
-        }
-        
         if (ingredientInfo.Values.Sum() != ings.Count)
         {
-            Debug.Log($"받아야할 재료 개수 : {ingredientInfo.Values.Sum()}");
-            Debug.Log($"받은 재료 개수 : {ings.Count}");
-            return false; // 재료 개수가 다름
+            Debug.Log($"받아야할 재료는 {ingredientInfo.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
+            return false;
         }
         
-        // 순회 고치는 중!!! activeOrderList가 이상한 거 같은데?
         foreach (Ingredient ing in ings)
         {
             ItemType type = ing.GetType();
+            
             if (!ingredientInfo.TryGetValue(type, out int count))
             {
                 Debug.Log($"{type}은 레시피에 포함되지 않아!");
@@ -121,16 +108,10 @@ public class FoodOrder : MonoBehaviour
             if (ing.GetDoneness() != ItemStatus.WellDone && type != ItemType.Bun)
             {
                 Debug.Log($"{type} 조리가 덜 됐어!");
-                return false; // 조리가 덜 됨
+                return false;
             }
             
             ingredientInfo[type] -= 1;
-            Debug.Log("<남은 재료>");
-            foreach (KeyValuePair<ItemType,int> pair in ingredientInfo)
-            {
-                if (pair.Value <= 0) continue;
-                Debug.Log($"{pair.Key}는 {pair.Value} 개 필요함");
-            }
         }
         
         return ingredientInfo.Values.Sum() <= 0;
@@ -143,7 +124,7 @@ public class FoodOrder : MonoBehaviour
 
         if (timerCount <= 0)
         {
-            scoreManager.ApplyScore(-1);
+            scoreManager.ApplyScore(GetBaseScore(),-1);
             Deactivate();
             orderManager.RemoveOrder(this);
         }
@@ -152,6 +133,11 @@ public class FoodOrder : MonoBehaviour
     public float CalculateTimerRatio()
     {
         return timerCount / foodInfo.timer;
+    }
+
+    public int GetBaseScore()
+    {
+        return foodInfo.baseScore;
     }
 
     private void UpdateFillImage()

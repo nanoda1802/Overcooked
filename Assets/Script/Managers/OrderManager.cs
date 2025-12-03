@@ -6,12 +6,14 @@ using SF = UnityEngine.SerializeField;
 public struct Menu // [임시]
 {
     public int num;
+    public int baseScore;
     public List<ItemType> recipe;
     public float timer;
 
-    public Menu(int num, List<ItemType> recipe, float timer)
+    public Menu(int num, int baseScore, List<ItemType> recipe, float timer)
     {
         this.num = num;
+        this.baseScore = baseScore;
         this.recipe = recipe;
         this.timer = timer;
     }
@@ -34,12 +36,12 @@ public class OrderManager : MonoBehaviour
 {
     [SF] private ScoreManager scoreManager;
     
-    private int maxOrderCount;
+    [SF] private int maxOrderCount;
     private List<FoodOrder> activeOrderList;
     private List<Menu> availableMenu; // 임시
 
-    private float newOrderInterval;
-    private float intervalCount;
+    [SF] private float newOrderInterval;
+    [SF] private float intervalCount;
 
     [SF] private Transform orderGroupUI;
     private List<FoodOrder> orderGroupChilds;
@@ -73,9 +75,9 @@ public class OrderManager : MonoBehaviour
         
         availableMenu = new List<Menu>() // [임시]...
         {
-            new Menu(0,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato,ItemType.Meat,ItemType.Cheese},45),
-            new Menu(1,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato},45),
-            new Menu(2,new List<ItemType>{ItemType.Bun,ItemType.Meat,ItemType.Cheese,ItemType.Meat},45)
+            new Menu(0,150,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato,ItemType.Meat,ItemType.Cheese},45),
+            new Menu(1,120,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato},45),
+            new Menu(2,100,new List<ItemType>{ItemType.Bun,ItemType.Meat,ItemType.Cheese,ItemType.Meat},45)
         };
     }
 
@@ -86,8 +88,6 @@ public class OrderManager : MonoBehaviour
 
     private void AddOrder() 
     {
-        int randomNum = Random.Range(0, availableMenu.Count);
-
         FoodOrder order = null;
         int minIndex = maxOrderCount;
         
@@ -103,6 +103,7 @@ public class OrderManager : MonoBehaviour
         }
 
         if (order is null) return;
+        int randomNum = Random.Range(0, availableMenu.Count);
         order.Activate(availableMenu[randomNum]);
         activeOrderList.Add(order);
     }
@@ -113,30 +114,21 @@ public class OrderManager : MonoBehaviour
         CycleOrderGroupUI(order);
     }
 
-    public bool FindMatchingOrder(List<Ingredient> ings, out float remainingTimeRatio)
+    public bool FindMatchingOrder(List<Ingredient> ings, out int baseScore, out float remainingTimeRatio)
     {
         remainingTimeRatio = -1;
-
-        for (int i = 0; i < activeOrderList.Count; i++)
+        baseScore = 0;
+        
+        foreach (var order in activeOrderList)
         {
-            Debug.Log($"~~~ {i+1} 번 주문 ~~~");
-            
-            FoodOrder order = activeOrderList[i];
             if(!order.IsMatchingRecipe(ings)) continue;
             remainingTimeRatio = order.CalculateTimerRatio();
+            baseScore = order.GetBaseScore();
             order.Deactivate();
             RemoveOrder(order);
             break;
         }
-
-        // foreach (FoodOrder order in activeOrderList)
-        // {
-        //     if(!order.IsMatchingRecipe(ings)) continue;
-        //     remainingTimeRatio = order.CalculateTimerRatio();
-        //     order.Deactivate();
-        //     RemoveOrder(order);
-        //     break;
-        // }
+        
         return remainingTimeRatio > 0;
     }
 
