@@ -143,6 +143,7 @@ MonoBehaviour:
   maxProgress: 1.5
   mats:
   - {fileID: 2100000, guid: c8f50261f4141fd43af2c793048509d9, type: 2}
+  - {fileID: 2100000, guid: c8f50261f4141fd43af2c793048509d9, type: 2}
 --- !u!136 &6218803197901439917
 CapsuleCollider:
   m_ObjectHideFlags: 0

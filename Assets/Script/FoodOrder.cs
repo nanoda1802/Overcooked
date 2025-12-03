@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -106,7 +105,7 @@ public class FoodOrder : MonoBehaviour
                 Debug.Log($"{type}은 이미 충분해!");
                 return false;
             }
-            if (ing.GetDoneness() != ItemStatus.WellDone && type != ItemType.Bun)
+            if (ing.GetDoneness() != ItemStatus.WellDone)
             {
                 Debug.Log($"{type} 조리가 덜 됐어!");
                 return false;

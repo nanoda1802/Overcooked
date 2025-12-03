@@ -75,9 +75,9 @@ public class OrderManager : MonoBehaviour
         
         availableMenu = new List<Menu>() // [임시]...
         {
-            new Menu(0,150,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato,ItemType.Meat,ItemType.Cheese},45),
+            new Menu(0,150,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato,ItemType.Meat,ItemType.Cheese},60),
             new Menu(1,120,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato},45),
-            new Menu(2,100,new List<ItemType>{ItemType.Bun,ItemType.Meat,ItemType.Cheese,ItemType.Meat},45)
+            new Menu(2,100,new List<ItemType>{ItemType.Bun,ItemType.Meat,ItemType.Cheese,ItemType.Meat},50)
         };
     }
 

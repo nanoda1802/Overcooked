@@ -7,7 +7,7 @@ public class Bin : Table
         if (player.pickedItem is null) return false;
         
         if (player.pickedItem is Plate plate) plate.ClearPlate();
-        else player.DetachItem().DisposeItem();
+        else player.DetachItem().Deactivate();
         
         return true;
     }

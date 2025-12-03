@@ -5,7 +5,7 @@ public enum ItemType { Bun, Cabbage, Cheese, Meat, Tomato, Plate }
 
 public enum ItemStatus { Undone, WellDone, Overdone }
 
-public class Item : MonoBehaviour
+public class Item : MonoBehaviour, IPoolable
 {
     #region 필드와 프로퍼티
     /* 컴포넌트 */
@@ -14,6 +14,7 @@ public class Item : MonoBehaviour
     private TrailRenderer _trail;
     private MeshRenderer _mesh;
     public MeshRenderer Mesh { get => _mesh; }
+    private Pantry _pantry;
     /* 아이템 종류 */
     public ItemType type;
     /* 아이템 던지기 */
@@ -36,20 +37,20 @@ public class Item : MonoBehaviour
     #endregion
 
     #region 유니티 이벤트 메서드
-    private void Awake()
-    {
-        if (!TryGetComponent(out _rb)) _rb = gameObject.AddComponent<Rigidbody>();
-        _col = GetComponent<Collider>();
-        _mesh = GetComponentInChildren<MeshRenderer>();
-        _trail = GetComponent<TrailRenderer>();
-    }
-
-    private void Start()
-    {
-        _trail.enabled = false;
-        InitProgress();
-        SetMaterial();
-    }
+    // private void Awake()
+    // {
+    //     if (!TryGetComponent(out _rb)) _rb = gameObject.AddComponent<Rigidbody>();
+    //     _col = GetComponent<Collider>();
+    //     _mesh = GetComponentInChildren<MeshRenderer>();
+    //     _trail = GetComponent<TrailRenderer>();
+    // }
+    //
+    // private void Start()
+    // {
+    //     _trail.enabled = false;
+    //     InitProgress();
+    //     SetMaterial();
+    // }
 
     private void FixedUpdate()
     {
@@ -83,7 +84,7 @@ public class Item : MonoBehaviour
     public void InitProgress()
     {
         curProgress = 0;
-        doneness = ItemStatus.Undone;
+        doneness = type == ItemType.Bun ? ItemStatus.WellDone : ItemStatus.Undone;
     }
 
     public bool IsDone()
@@ -125,14 +126,6 @@ public class Item : MonoBehaviour
         IsFalling = true;
         DeactivateTrail();
     }
-
-    public void DisposeItem()
-    {
-        DeactivateTrail();
-        Destroy(_trail);
-        _trail = null;
-        Destroy(gameObject); // 임시... 추후 Pool로
-    }
     
     public void SetParent(Transform parent)
     {
@@ -156,10 +149,9 @@ public class Item : MonoBehaviour
         _trail.enabled = true;
     }
 
-    private void DeactivateTrail()
+    protected void DeactivateTrail()
     {
         if (!_trail.enabled)  return;
-        
         _trail.enabled = false;
         _trail.Clear();
     }
@@ -173,11 +165,32 @@ public class Item : MonoBehaviour
     private void DeactivatePhysics()
     {
         if (_rb.isKinematic) return;
-        
         _rb.velocity = Vector3.zero;
         _rb.isKinematic = true;
         _col.enabled = false;
     }
 
     #endregion
+
+    public void InitComponents(Pantry pantry)
+    {
+        if (!TryGetComponent(out _rb)) _rb = gameObject.AddComponent<Rigidbody>();
+        _col = GetComponent<Collider>();
+        _mesh = GetComponentInChildren<MeshRenderer>();
+        _trail = GetComponent<TrailRenderer>();
+        _pantry = pantry;
+    }
+
+    public void Activate()
+    {
+        InitProgress();
+        SetMaterial();
+        gameObject.SetActive(true);
+    }
+
+    public void Deactivate()
+    {
+        _pantry.ReturnToPool(this);
+        gameObject.SetActive(false);
+    }
 }

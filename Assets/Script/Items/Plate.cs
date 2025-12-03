@@ -15,6 +15,18 @@ public class Plate : Item
     [SF] private GameObject prefab;
     private readonly List<Ingredient> _ingredients = new(10);
 
+    private void Awake()
+    {
+        InitComponents(null);
+    }
+
+    private void Start()
+    {
+        InitProgress();
+        SetMaterial();
+        DeactivateTrail();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!IsPlaced || !IsDone()) return;
@@ -26,8 +38,7 @@ public class Plate : Item
 
     public void StackIngredient(Item item)
     {
-        item.SetParent(pivot); // [임시]
-        item.gameObject.SetActive(false); // [임시]
+        item.Deactivate();
         
         GameObject ingObj = Instantiate(prefab, pivot); // [임시]
         if (!ingObj.TryGetComponent(out Ingredient ing))
