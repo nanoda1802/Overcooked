@@ -208,7 +208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.46483883, b: 0.27843142, a: 1}
+  m_Color: {r: 1, g: 0.36976555, b: 0.27843142, a: 0.74509805}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -220,7 +220,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 0.805
+  m_FillAmount: 0.815
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -312,6 +312,7 @@ GameObject:
   - component: {fileID: 4069962796418948065}
   - component: {fileID: 5093713464144844728}
   - component: {fileID: 344228595712305108}
+  - component: {fileID: 3454083643116830236}
   m_Layer: 5
   m_Name: FoodOrderUI
   m_TagString: Untagged
@@ -379,6 +380,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 800a562ae8924684bafea96d16ba9d45, type: 3}
   - {fileID: 21300000, guid: 35c08c08a2eb6cc4b8096d9b9ae6afb8, type: 3}
   timerFillImage: {fileID: 3694186560933505794}
+  fillColors:
+  - serializedVersion: 2
+    rgba: 3357226981
+  - serializedVersion: 2
+    rgba: 3360876699
 --- !u!114 &344228595712305108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,15 +398,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.3137255}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.15686275}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
+  m_Sprite: {fileID: 21300000, guid: f85829ee2c7016c429250e0b7cd16a5c, type: 3}
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -409,6 +415,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3454083643116830236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6214117583995003945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 1
 --- !u!1 &6885127558486993532
 GameObject:
   m_ObjectHideFlags: 0

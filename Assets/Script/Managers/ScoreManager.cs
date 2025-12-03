@@ -36,6 +36,7 @@ public class ScoreManager : MonoBehaviour
         int point = CalculatePoint(baseScore, ratio);
         _scoreTxtAnim.SetTrigger(point <= 0 ? _deductParamHash : _addParamHash);
         _curScore += point;
+        if (_curScore < 0) _curScore = 0;
         scoreTxt.text = $"{_curScore}";
     }
 
