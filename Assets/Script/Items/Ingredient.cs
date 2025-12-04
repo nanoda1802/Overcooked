@@ -27,7 +27,7 @@ public class Ingredient : MonoBehaviour
         _mesh.material = defaultMaterial;
     }
 
-    public new ItemType GetType()
+    public ItemType GetItemType()
     {
         return type;
     }

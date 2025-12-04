@@ -8,18 +8,16 @@ public class Plate : Item
     [Header("[Plate Only]")]
     [SF] private Transform pivot;
     [SF] private float offsetY; // 0.04f
-    [SF] private GameObject prefab;
-    [SF] private int maxIngredientCount;
-    private List<Ingredient> _ingredients;
+    [SF] private GameObject ingredientPrefab;
     
     [Header("[UI]")]
-    [SF] private Canvas ingredientCanvas;
-    [SF] private Sprite[] ingredientSprites;
-    [SF] private Image[] ingredientImages;
+    [SF] private MovableUIPool uiPool;
+    [SF] private IngredientsInfo ingredientsInfo;
     
     private void Awake()
     {
         InitComponents(null);
+        uiPool = GameObject.Find("SubCanvas").GetComponent<MovableUIPool>(); // [임시]
     }
 
     private void Start()
@@ -27,8 +25,6 @@ public class Plate : Item
         InitProgress();
         SetMaterial();
         DeactivateTrail();
-        DeactivateIngredientUI();
-        _ingredients = new List<Ingredient>(maxIngredientCount);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -42,59 +38,45 @@ public class Plate : Item
 
     public void StackIngredient(Item item)
     {
+        if (ingredientsInfo is null)
+        {
+            if (!uiPool.TryGetUI(out ingredientsInfo)) return;
+            ingredientsInfo.ConnectWithPlate(this);
+        }
+        
+        if (ingredientsInfo.IsFull()) return;
+        if (item.type is ItemType.Bun && ingredientsInfo.HasBun) return;
+        
         item.Deactivate();
         
-        GameObject ingObj = Instantiate(prefab, pivot); // [임시]
+        GameObject ingObj = Instantiate(ingredientPrefab, pivot); // [임시]
         if (!ingObj.TryGetComponent(out Ingredient ing))
         {
             Destroy(ingObj);
             return;
         }
-        
         ing.SetInfo(item.type,item.doneness,item.Mesh.material); 
         
-        _ingredients.Add(ing);
-        ingObj.transform.localPosition += (offsetY * _ingredients.Count) * Vector3.up;
-        UpdateIngredientUI(item.type);
+        ingredientsInfo.AddIngredient(ing);
+        ingObj.transform.localPosition += (offsetY * ingredientsInfo.GetIngredientCount()) * Vector3.up;
     }
 
     public bool HasIngredient()
     {
-        return _ingredients.Count > 0;
+        return ingredientsInfo is not null && ingredientsInfo.GetIngredientCount() > 0;
     }
 
-    public List<Ingredient> GetIngredientInfos()
+    public List<Ingredient> GetIngredients()
     {
-        return _ingredients;
+        return ingredientsInfo.GetIngredientList();
     }
     
     public void ClearPlate()
     {
-        foreach (Ingredient ing in _ingredients)
-        {
-            // ing.InitInfo();
-            Destroy(ing.gameObject); // [임시]
-        }
-        
-        _ingredients.Clear();
-        
         InitProgress();
         SetMaterial();
-        DeactivateIngredientUI();
-    }
-
-    private void UpdateIngredientUI(ItemType itemType)
-    {
-        if (_ingredients.Count >= maxIngredientCount) return;
-        if (!ingredientCanvas.gameObject.activeSelf) ingredientCanvas.gameObject.SetActive(true);
-        if (itemType == ItemType.Bun) return;
-        ingredientImages[_ingredients.Count - 1].sprite = ingredientSprites[(int) itemType];
-        ingredientImages[_ingredients.Count - 1].gameObject.SetActive(true);
-    }
-
-    private void DeactivateIngredientUI()
-    {
-        ingredientCanvas.gameObject.SetActive(false);
-        foreach (Image img in ingredientImages) img.gameObject.SetActive(false);
+        
+        ingredientsInfo.Deactivate();
+        ingredientsInfo = null;
     }
 }

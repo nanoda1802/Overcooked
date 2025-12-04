@@ -43,7 +43,11 @@ public class Pantry : Table
         for (int i = 0; i < poolSize; i++)
         {
             GameObject itemObj = Instantiate(items[(int)type], poolPivot);
-            if (!itemObj.TryGetComponent(out Item item)) continue;
+            if (!itemObj.TryGetComponent(out Item item))
+            {
+                Destroy(itemObj);
+                continue;
+            }
             itemObj.name = $"{type}_{i}";
             item.InitComponents(this);
             item.Deactivate();

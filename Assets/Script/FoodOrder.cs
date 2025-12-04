@@ -6,27 +6,10 @@ using SF = UnityEngine.SerializeField;
 
 public class FoodOrder : MonoBehaviour
 {
-    // 다 임시 형태
-    // 지금은 테스트용으로 ServingRack에서 주문들 일괄 시간 체크하고 있는데,
-    // 나ㅣ중에 주문 UI 만들면 FoodOrder애ㅔ Monobehaviour 붙이고,
-    // 여기서 Update로 시간 체크하고,
-    // 주문 UI 오브젝트에 컴포넌트로 붙이자
-    // 기본 점수
-    // private int baseScore = 100;
-    // // 주문 시간
-    // private float orderedTime;
-    // // 마감 시간
-    // private float expiredTime;
-    // // 시간 체크 지표
-    // public float timeCheck = 0f;
-    // // 레시피
-    // HashSet<ItemType> tempRecipe;
-
-    
     private ScoreManager scoreManager;
     private OrderManager orderManager;
     private Menu foodInfo;
-    private Dictionary<ItemType, int> ingredientInfo;
+    private Dictionary<ItemType, int> ingredientCount;
     private float timerCount;
     private bool isActive;
 
@@ -61,7 +44,7 @@ public class FoodOrder : MonoBehaviour
         timerCount = menu.timer;
         SetUIImages(menu.num);
 
-        ingredientInfo = menu.GetIngredientInfo();
+        ingredientCount = menu.GetIngredientCount();
         
         isActive = true;
         gameObject.SetActive(true);
@@ -85,17 +68,17 @@ public class FoodOrder : MonoBehaviour
 
     public bool IsMatchingRecipe(List<Ingredient> ings)
     {
-        if (ingredientInfo.Values.Sum() != ings.Count)
+        if (ingredientCount.Values.Sum() != ings.Count)
         {
-            Debug.Log($"받아야할 재료는 {ingredientInfo.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
+            Debug.Log($"받아야할 재료는 {ingredientCount.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
             return false;
         }
         
         foreach (Ingredient ing in ings)
         {
-            ItemType type = ing.GetType();
+            ItemType type = ing.GetItemType();
             
-            if (!ingredientInfo.TryGetValue(type, out int count))
+            if (!ingredientCount.TryGetValue(type, out int count))
             {
                 Debug.Log($"{type}은 레시피에 포함되지 않아!");
                 return false;
@@ -111,10 +94,10 @@ public class FoodOrder : MonoBehaviour
                 return false;
             }
             
-            ingredientInfo[type] -= 1;
+            ingredientCount[type] -= 1;
         }
         
-        return ingredientInfo.Values.Sum() <= 0;
+        return ingredientCount.Values.Sum() <= 0;
     }
 
     private void UpdateTimer()

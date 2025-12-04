@@ -18,17 +18,17 @@ public struct Menu // [임시]
         this.timer = timer;
     }
     
-    public Dictionary<ItemType, int> GetIngredientInfo()
+    public Dictionary<ItemType, int> GetIngredientCount()
     {
-        Dictionary<ItemType, int> ingredientInfo = new Dictionary<ItemType, int>();
+        Dictionary<ItemType, int> ingredientCount = new Dictionary<ItemType, int>();
         
         foreach (ItemType ing in recipe)
         {
-            if (ingredientInfo.TryAdd(ing,1)) continue;
-            ingredientInfo[ing] += 1;
+            if (ingredientCount.TryAdd(ing,1)) continue;
+            ingredientCount[ing] += 1;
         }
         
-        return ingredientInfo;
+        return ingredientCount;
     }
 }
 

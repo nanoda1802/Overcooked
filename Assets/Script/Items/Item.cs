@@ -84,7 +84,7 @@ public class Item : MonoBehaviour, IPoolable
     public void InitProgress()
     {
         curProgress = 0;
-        doneness = type == ItemType.Bun ? ItemStatus.WellDone : ItemStatus.Undone;
+        doneness = type is ItemType.Bun ? ItemStatus.WellDone : ItemStatus.Undone;
     }
 
     public bool IsDone()

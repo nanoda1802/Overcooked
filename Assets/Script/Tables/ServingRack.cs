@@ -15,7 +15,7 @@ public class ServingRack : Table
       if (!plate.HasIngredient()) return false;
       if (!orderManager.HasActiveOrder()) return false;
 
-      if (!orderManager.FindMatchingOrder(plate.GetIngredientInfos(), out int baseScore, out float ratio)) return true;
+      if (!orderManager.FindMatchingOrder(plate.GetIngredients(), out int baseScore, out float ratio)) return true;
       scoreManager.ApplyScore(baseScore, ratio);
       
       plate.ClearPlate();

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -7,7 +8,7 @@ public class WorkTable : PlaceTable
     protected bool IsWorking;
     [SF] protected Canvas canvas;
     [SF] protected Image[] barImages;
-    
+
     protected void Update()
     {
         if (!IsWorking) return;
