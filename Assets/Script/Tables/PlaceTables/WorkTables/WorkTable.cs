@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -36,7 +35,7 @@ public class WorkTable : PlaceTable
     private void Work()
     {
         FillBarImg(placedItem.Handle());
-        if (placedItem.IsDone()) FinishWork();
+        if (placedItem.IsMaxDone()) FinishWork();
     }
 
     protected void ActivateUI()

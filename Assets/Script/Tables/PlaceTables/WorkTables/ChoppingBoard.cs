@@ -16,7 +16,7 @@ public class ChoppingBoard : WorkTable
 
     public override void PlaceItem(Item item)
     {
-        if (item.IsDone())
+        if (item.IsMaxDone())
         {
             item.ActivatePhysics();
             return;

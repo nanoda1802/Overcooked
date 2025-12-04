@@ -32,26 +32,11 @@ public class Item : MonoBehaviour, IPoolable
     public ItemStatus doneness = ItemStatus.Undone;
     [SF] private ItemStatus maxDoneness;
     [SF] private float curProgress;
-    [SF, Range(1f,5f)] private float maxProgress;
+    [SF, Range(0.1f,5f)] private float maxProgress;
     [SF] private Material[] mats;
     #endregion
 
     #region 유니티 이벤트 메서드
-    // private void Awake()
-    // {
-    //     if (!TryGetComponent(out _rb)) _rb = gameObject.AddComponent<Rigidbody>();
-    //     _col = GetComponent<Collider>();
-    //     _mesh = GetComponentInChildren<MeshRenderer>();
-    //     _trail = GetComponent<TrailRenderer>();
-    // }
-    //
-    // private void Start()
-    // {
-    //     _trail.enabled = false;
-    //     InitProgress();
-    //     SetMaterial();
-    // }
-
     private void FixedUpdate()
     {
         if (!IsThrown) return;
@@ -70,7 +55,7 @@ public class Item : MonoBehaviour, IPoolable
     #region 요리조리 메서드
     public float Handle()
     {
-        if (IsDone()) return (float) maxDoneness;
+        if (IsMaxDone()) return (float) maxDoneness;
         
         curProgress += Time.deltaTime;
         
@@ -87,9 +72,14 @@ public class Item : MonoBehaviour, IPoolable
         doneness = type is ItemType.Bun ? ItemStatus.WellDone : ItemStatus.Undone;
     }
 
-    public bool IsDone()
+    public bool IsMaxDone()
     {
         return doneness == maxDoneness;
+    }
+
+    public bool IsWellDone()
+    {
+        return doneness == ItemStatus.WellDone;
     }
 
     public void SetMaterial()

@@ -173,14 +173,14 @@ MonoBehaviour:
   doneness: 0
   maxDoneness: 1
   curProgress: 0
-  maxProgress: 2
+  maxProgress: 0.8
   mats:
   - {fileID: 2100000, guid: 8ec0e1b86f886a3489434d88701373e9, type: 2}
   - {fileID: 2100000, guid: c28400b014521c24d911e741078e9b8a, type: 2}
   pivot: {fileID: 645539632157955856}
   offsetY: 0.04
   ingredientPrefab: {fileID: 5020934527727135508, guid: 93b2a89e4fa1b464faaf8131c8271a50, type: 3}
-  uiManager: {fileID: 0}
+  uiPool: {fileID: 0}
   ingredientsInfo: {fileID: 0}
 --- !u!65 &8215145956697270403
 BoxCollider:

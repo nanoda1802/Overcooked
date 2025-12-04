@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
 public class Plate : Item
@@ -9,6 +8,7 @@ public class Plate : Item
     [SF] private Transform pivot;
     [SF] private float offsetY; // 0.04f
     [SF] private GameObject ingredientPrefab;
+    public bool IsInDishRack { get; set; }
     
     [Header("[UI]")]
     [SF] private MovableUIPool uiPool;
@@ -29,9 +29,10 @@ public class Plate : Item
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsPlaced || !IsDone()) return;
+        if (!IsPlaced || IsInDishRack || !IsMaxDone()) return;
         if (!other.CompareTag("Item")) return;
         if (!other.TryGetComponent(out Item item) || item is Plate) return;
+        if (!item.IsWellDone()) return;
         
         StackIngredient(item);
     }

@@ -21,7 +21,7 @@ public class DishRack : PlaceTable
         if (item is not Plate plate) return;
         
         plate.SetParent(pivot);
-        plate.IsPlaced = true;
+        plate.IsInDishRack = true;
         
         Vector3 localPos = _plates.TryPeek(out Plate peekPlate) ? peekPlate.transform.localPosition : Vector3.zero;
         localPos.y += offsetY;
@@ -32,9 +32,9 @@ public class DishRack : PlaceTable
 
     public override Item DisplaceItem()
     {
-        Item item = _plates.Pop();
-        item.IsPlaced = false;
-        item.RemoveParent();
-        return item;
+        Plate plate = _plates.Pop();
+        plate.IsInDishRack = plate.IsPlaced = false;
+        plate.RemoveParent();
+        return plate;
     }
 }

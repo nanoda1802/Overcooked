@@ -12,10 +12,10 @@ public class Countertop : PlaceTable
     {
         switch (placedItem)
         {
-            case Plate plate when item is not Plate:
+            case Plate plate when item is not Plate && item.IsWellDone():
                 plate.StackIngredient(item);
                 break;
-            case null when item is Plate && item.IsDone():
+            case null when item is Plate && item.IsMaxDone():
                 base.PlaceItem(item);
                 break;
             default:

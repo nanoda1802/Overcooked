@@ -140,7 +140,7 @@ MonoBehaviour:
   doneness: 0
   maxDoneness: 1
   curProgress: 0
-  maxProgress: 1.5
+  maxProgress: 0.5
   mats:
   - {fileID: 2100000, guid: 44d1c955811b21f4fa11b0513bf5cc99, type: 2}
   - {fileID: 2100000, guid: 5b71eff92134b5948867e616cad9e9fa, type: 2}

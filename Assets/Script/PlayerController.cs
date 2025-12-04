@@ -184,7 +184,7 @@ public class PlayerController : MonoBehaviour
     private void Pick()
     {
         float minDist = float.MaxValue;
-        GameObject closest = null;
+        GameObject closestObj = null;
         
         foreach (Collider col in _detectedItems)
         {
@@ -194,11 +194,12 @@ public class PlayerController : MonoBehaviour
             if (dist >= minDist) continue;
             
             minDist = dist;
-            closest = col.gameObject;
+            closestObj = col.gameObject;
         }
 
-        if (closest is null) return;
-        if (!closest.TryGetComponent(out Item item)) return;
+        if (closestObj is null) return;
+        if (!closestObj.TryGetComponent(out Item item)) return;
+        if (item.IsPlaced) return; // 버그 해결 핵심 분기...!
         
         AttachItem(item);
     }

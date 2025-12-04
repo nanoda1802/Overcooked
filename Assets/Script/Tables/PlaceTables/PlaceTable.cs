@@ -20,6 +20,7 @@ public class PlaceTable : Table
             PlaceItem(player.DetachItem());
             return true;
         }
+        
         return false;
     }
     
