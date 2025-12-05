@@ -7,6 +7,7 @@ public class Ingredient : MonoBehaviour
     [SF] private ItemType type;
     [SF] private ItemStatus doneness;
     [SF] private Material defaultMaterial;
+    [SF] private GameObject[] models;
     
     private void Awake()
     {
@@ -17,7 +18,13 @@ public class Ingredient : MonoBehaviour
     {
         type = itemType;
         doneness = itemStatus;
-        _mesh.material = mat;
+        // _mesh.material = mat;
+        ActivateModel((int) itemType);
+    }
+
+    private void ActivateModel(int idx)
+    {
+        models[idx].SetActive(true);   
     }
 
     public void InitInfo()

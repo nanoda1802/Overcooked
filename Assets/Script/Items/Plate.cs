@@ -59,7 +59,7 @@ public class Plate : Item
         ing.SetInfo(item.type,item.doneness,item.Mesh.material); 
         
         ingredientsInfo.AddIngredient(ing);
-        ingObj.transform.localPosition += (offsetY * ingredientsInfo.GetIngredientCount()) * Vector3.up;
+        SetLocalPos(item.type, ingObj);
     }
 
     public bool HasIngredient()
@@ -71,7 +71,23 @@ public class Plate : Item
     {
         return ingredientsInfo.GetIngredientList();
     }
-    
+
+    private void SetLocalPos(ItemType itemType, GameObject ingObj)
+    {
+        if (itemType is ItemType.Bun)
+        {
+            ingObj.transform.localPosition += offsetY * Vector3.up;
+        }
+        else
+        {
+            int floor = ingredientsInfo.HasBun
+                ? ingredientsInfo.GetIngredientCount()
+                : ingredientsInfo.GetIngredientCount() + 1;
+            ingObj.transform.localPosition += (offsetY * floor) * Vector3.up;
+        }
+    }
+
+
     public void ClearPlate()
     {
         InitProgress();

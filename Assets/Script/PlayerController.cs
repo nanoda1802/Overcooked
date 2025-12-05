@@ -190,7 +190,7 @@ public class PlayerController : MonoBehaviour
         {
             if (col is null) break; // DetectItem에서 0번 인덱스부터 순서대로 채워지기 때문에, null이 등장했다면 이후는 모두 null
             
-            float dist = (_rb.position - col.attachedRigidbody.position).sqrMagnitude;
+            float dist = (_rb.position - col.transform.position).sqrMagnitude;
             if (dist >= minDist) continue;
             
             minDist = dist;

@@ -164,7 +164,11 @@ public class Item : MonoBehaviour, IPoolable
 
     public void InitComponents(Pantry pantry)
     {
-        if (!TryGetComponent(out _rb)) _rb = gameObject.AddComponent<Rigidbody>();
+        if (!TryGetComponent(out _rb))
+        {
+            _rb = gameObject.AddComponent<Rigidbody>();
+            _rb.angularDrag = 5f;
+        }
         _col = GetComponent<Collider>();
         _mesh = GetComponentInChildren<MeshRenderer>();
         _trail = GetComponent<TrailRenderer>();
