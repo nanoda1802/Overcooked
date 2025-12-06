@@ -5,10 +5,12 @@ using SF = UnityEngine.SerializeField;
 public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
 {
     [SF] private GameObject ingredientsInfoPrefab;
-    [SF] private int poolSize;
-    private Queue<IngredientsInfo> _ingredientInfoPool;
+    [SF] private int ingredientsInfoPoolSize;
+    private Queue<IngredientsInfo> _ingredientsInfoPool;
     
-    // RespawnTimer UI 추가 예정
+    [SF] private GameObject respawnTimerPrefab;
+    [SF] private int respawnTimerPoolSize;
+    private Queue<RespawnTimer> _respawnTimerPool;
     
     private void Awake()
     {
@@ -17,7 +19,7 @@ public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
     
     public bool TryGetItem(out IngredientsInfo ui)
     {
-        if (_ingredientInfoPool.TryDequeue(out IngredientsInfo poolUi))
+        if (_ingredientsInfoPool.TryDequeue(out IngredientsInfo poolUi))
         {
             ui = poolUi;
             return true;
@@ -37,15 +39,42 @@ public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
         return true;
     }
     
+    public bool TryGetItem(out RespawnTimer ui)
+    {
+        if (_respawnTimerPool.TryDequeue(out RespawnTimer poolUi))
+        {
+            ui = poolUi;
+            return true;
+        }
+        
+        GameObject uiObj = Instantiate(respawnTimerPrefab, transform);
+        if (!uiObj.TryGetComponent(out RespawnTimer instantUi))
+        {
+            Destroy(uiObj);
+            ui = null;
+            return false;
+        }
+        uiObj.name = $"RespawnTimer_Instant";
+        
+        instantUi.Init(this);
+        ui = instantUi;
+        return true;
+    }
+    
     public void ReturnToPool(IngredientsInfo ui)
     {
-        _ingredientInfoPool.Enqueue(ui);
+        _ingredientsInfoPool.Enqueue(ui);
+    }
+    
+    public void ReturnToPool(RespawnTimer ui)
+    {
+        _respawnTimerPool.Enqueue(ui);
     }
     
     public void InitPool()
     {
-        _ingredientInfoPool = new Queue<IngredientsInfo>(poolSize);
-        for (int i = 0; i < poolSize; i++)
+        _ingredientsInfoPool = new Queue<IngredientsInfo>(ingredientsInfoPoolSize);
+        for (int i = 0; i < ingredientsInfoPoolSize; i++)
         {
             GameObject uiObj = Instantiate(ingredientsInfoPrefab, transform);
             if (!uiObj.TryGetComponent(out IngredientsInfo ui))
@@ -54,6 +83,20 @@ public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
                 continue;
             }
             uiObj.name = $"IngredientsInfo_{i}";
+            ui.Init(this);
+            ui.Deactivate();
+        }
+        
+        _respawnTimerPool = new Queue<RespawnTimer>(respawnTimerPoolSize);
+        for (int i = 0; i < respawnTimerPoolSize; i++)
+        {
+            GameObject uiObj = Instantiate(respawnTimerPrefab, transform);
+            if (!uiObj.TryGetComponent(out RespawnTimer ui))
+            {
+                Destroy(uiObj);
+                continue;
+            }
+            uiObj.name = $"RespawnTimer_{i}";
             ui.Init(this);
             ui.Deactivate();
         }

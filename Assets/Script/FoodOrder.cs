@@ -6,12 +6,12 @@ using SF = UnityEngine.SerializeField;
 
 public class FoodOrder : MonoBehaviour
 {
-    private ScoreManager scoreManager;
-    private OrderManager orderManager;
-    private Menu foodInfo;
-    private Dictionary<ItemType, int> ingredientCount;
-    private float timerCount;
-    private bool isActive;
+    private ScoreManager _scoreManager;
+    private OrderManager _orderManager;
+    private Menu _foodInfo;
+    private Dictionary<ItemType, int> _ingredientCount;
+    private float _timerCount;
+    private bool _isActive;
 
     [SF] private Image foodImage;
     [SF] private Sprite[] foodSprites;
@@ -24,13 +24,13 @@ public class FoodOrder : MonoBehaviour
     
     private void Update()
     {
-        if (!isActive) return;
+        if (!_isActive) return;
         UpdateTimer();
     }
 
     public void Deactivate()
     {
-        isActive = false;
+        _isActive = false;
         gameObject.SetActive(false);
         foreach (Image img in ingredientImages)
         {
@@ -40,37 +40,37 @@ public class FoodOrder : MonoBehaviour
 
     public void Activate(Menu menu)
     {
-        foodInfo = menu;
-        timerCount = menu.timer;
+        _foodInfo = menu;
+        _timerCount = menu.timer;
         SetUIImages(menu.num);
 
-        ingredientCount = menu.GetIngredientCount();
+        _ingredientCount = menu.GetIngredientCount();
         
-        isActive = true;
+        _isActive = true;
         gameObject.SetActive(true);
     }
 
     public void Init(ScoreManager sm, OrderManager om)
     {
-        scoreManager = sm;
-        orderManager = om;
+        _scoreManager = sm;
+        _orderManager = om;
     }
 
     private void SetUIImages(int menuIdx)
     {
         foodImage.sprite = foodSprites[menuIdx]; // [임시] 
-        for (int i = 0; i < foodInfo.recipe.Count; i++)
+        for (int i = 0; i < _foodInfo.recipe.Count; i++)
         {
-            ingredientImages[i].sprite = ingredientSprites[(int)foodInfo.recipe[i]];
+            ingredientImages[i].sprite = ingredientSprites[(int)_foodInfo.recipe[i]];
             ingredientImages[i].gameObject.SetActive(true);
         }
     }
 
     public bool IsMatchingRecipe(List<Ingredient> ings)
     {
-        if (ingredientCount.Values.Sum() != ings.Count)
+        if (_ingredientCount.Values.Sum() != ings.Count)
         {
-            Debug.Log($"받아야할 재료는 {ingredientCount.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
+            Debug.Log($"받아야할 재료는 {_ingredientCount.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
             return false;
         }
         
@@ -78,7 +78,7 @@ public class FoodOrder : MonoBehaviour
         {
             ItemType type = ing.GetItemType();
             
-            if (!ingredientCount.TryGetValue(type, out int count))
+            if (!_ingredientCount.TryGetValue(type, out int count))
             {
                 Debug.Log($"{type}은 레시피에 포함되지 않아!");
                 return false;
@@ -94,33 +94,33 @@ public class FoodOrder : MonoBehaviour
                 return false;
             }
             
-            ingredientCount[type] -= 1;
+            _ingredientCount[type] -= 1;
         }
         
-        return ingredientCount.Values.Sum() <= 0;
+        return _ingredientCount.Values.Sum() <= 0;
     }
 
     private void UpdateTimer()
     {
-        timerCount -= Time.deltaTime;
+        _timerCount -= Time.deltaTime;
         UpdateFillImage();
 
-        if (timerCount <= 0)
+        if (_timerCount <= 0)
         {
-            scoreManager.ApplyScore(GetBaseScore(),-1);
+            _scoreManager.ApplyScore(GetBaseScore(),-1);
             Deactivate();
-            orderManager.RemoveOrder(this);
+            _orderManager.RemoveOrder(this);
         }
     }
 
     public float CalculateTimerRatio()
     {
-        return timerCount / foodInfo.timer;
+        return _timerCount / _foodInfo.timer;
     }
 
     public int GetBaseScore()
     {
-        return foodInfo.baseScore;
+        return _foodInfo.baseScore;
     }
 
     private void UpdateFillImage()

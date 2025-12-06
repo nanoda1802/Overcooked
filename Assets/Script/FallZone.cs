@@ -1,8 +1,15 @@
 using UnityEngine;
+using SF = UnityEngine.SerializeField;
 
 public class FallZone : MonoBehaviour
 {
-    private Canvas subCanvas;
+    [SF] private MovableUIPool uiPool;
+
+    private void Start()
+    {
+        if (uiPool is not null) return;
+        uiPool = GameObject.Find("SubCanvas").GetComponent<MovableUIPool>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,10 +21,12 @@ public class FallZone : MonoBehaviour
 
         if (other.CompareTag("Player") && other.TryGetComponent(out PlayerController player))
         {
-            
+            player.WaitForRespawn();
             Vector3 respawnPos = player.CalculateRespawnPosition();
             
-            // 그리고 해당 블록 위치에 타이머 UI 
+            if (!uiPool.TryGetItem(out RespawnTimer ui)) return;
+            ui.Activate();
+            ui.SetRespawnValues(respawnPos, player);
         }
     }
 }

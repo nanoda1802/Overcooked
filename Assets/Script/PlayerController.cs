@@ -63,7 +63,11 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         if (!other.gameObject.CompareTag("Ground")) return;
-        _recentTile = other.gameObject.transform;
+        
+        Transform otherTransform = other.gameObject.transform;
+        if (otherTransform.position.y + 0.8f * otherTransform.localScale.y > _rb.position.y) return;
+        
+        _recentTile = otherTransform;
     }
 
     private void OnDrawGizmos()
@@ -140,6 +144,16 @@ public class PlayerController : MonoBehaviour
         _rb.MoveRotation(smoothRot);
     }
 
+    public void WaitForRespawn()
+    {
+        gameObject.SetActive(false);
+
+        if (pickedItem is null) return;
+        
+        Item item = DetachItem();
+        item.Deactivate();
+    }
+
     public Vector3 CalculateRespawnPosition()
     {
         Vector3 respawnPos;
@@ -158,11 +172,10 @@ public class PlayerController : MonoBehaviour
         return respawnPos;
     }
 
-    public void Respawn(Vector3 pos)
+    public void Respawn(Vector3 respawnPos)
     {
-        
-        
-        
+        gameObject.SetActive(true);
+        _rb.position = respawnPos;
     }
     #endregion
 

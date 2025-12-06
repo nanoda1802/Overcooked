@@ -43,7 +43,7 @@ public class Plate : Item
             Destroy(ingObj);
             return;
         }
-        ing.SetInfo(item.type,item.doneness,item.Mesh.material); 
+        ing.SetInfo(item.type,item.doneness); 
         
         ingredientsInfo.AddIngredient(ing);
         SetLocalPos(item.type, ingObj);

@@ -152,12 +152,8 @@ public class Sink : WorkTable, IPool<Item>
 
     public void ReturnToPool(Item item)
     {
-        // if (item is not Plate)
-        // {
-        //     Destroy(item.gameObject);
-        //     return;
-        // }
         item.SetParent(poolPivot);
         _pool.Enqueue(item);
+        UpdatePlateCount();
     }
 }

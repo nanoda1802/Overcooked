@@ -7,7 +7,7 @@ public class Ingredient : MonoBehaviour
     [SF] private ItemStatus doneness;
     [SF] private GameObject[] models;
 
-    public void SetInfo(ItemType itemType, ItemStatus itemStatus, Material mat)
+    public void SetInfo(ItemType itemType, ItemStatus itemStatus)
     {
         type = itemType;
         doneness = itemStatus;

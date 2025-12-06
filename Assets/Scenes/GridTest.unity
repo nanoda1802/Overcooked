@@ -4354,7 +4354,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 976929751}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -4367,7 +4367,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 3b541b1a8e54800419ca5df7c2b6776e, type: 2}
+  - {fileID: 2100000, guid: fb94d0456c71f9d4d8ebceb4c61361c1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4424,6 +4424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21656905c8823f84bbdebe617a032e04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uiPool: {fileID: 0}
 --- !u!1001 &986386154
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7445,7 +7446,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1935675248485482102, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: type
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4140863123615490672, guid: 4dac95cc3fb6b054dbbaf958eb46aab2, type: 3}
       propertyPath: m_Name
@@ -7854,7 +7855,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ingredientsInfoPrefab: {fileID: 1333407681010973131, guid: 2947e938c19881149aca4a19c64fb081, type: 3}
-  poolSize: 10
+  ingredientsInfoPoolSize: 10
+  respawnTimerPrefab: {fileID: 2056087921750999705, guid: 5e33581bde3063242a338b9ff49f0c90, type: 3}
+  respawnTimerPoolSize: 4
 --- !u!114 &1639228158
 MonoBehaviour:
   m_ObjectHideFlags: 0

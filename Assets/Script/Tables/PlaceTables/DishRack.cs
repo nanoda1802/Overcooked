@@ -20,6 +20,8 @@ public class DishRack : PlaceTable
     {
         if (item is not Plate plate) return;
         
+        plate.IsPlaced = true;
+        
         plate.SetParent(pivot);
         SetLocalPos(plate);
         

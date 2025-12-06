@@ -85,11 +85,6 @@ public class Pantry : Table, IPool<Item>
 
     public void ReturnToPool(Item item)
     {
-        // if (item.type != type)
-        // {
-        //     Destroy(item.gameObject);
-        //     return;
-        // }
         item.SetParent(poolPivot);
         _pool.Enqueue(item);
     }
