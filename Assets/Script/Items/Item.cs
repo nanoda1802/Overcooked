@@ -14,7 +14,7 @@ public class Item : MonoBehaviour, IPoolable
     private TrailRenderer _trail;
     private MeshRenderer _mesh;
     public MeshRenderer Mesh { get => _mesh; }
-    private Pantry _pantry;
+    protected IPool<Item> Pool;
     /* 아이템 종류 */
     public ItemType type;
     /* 아이템 던지기 */
@@ -35,7 +35,7 @@ public class Item : MonoBehaviour, IPoolable
     [SF, Range(0.1f,5f)] private float maxProgress;
     [SF] private Material[] mats;
     #endregion
-
+    
     #region 유니티 이벤트 메서드
     private void FixedUpdate()
     {
@@ -162,7 +162,7 @@ public class Item : MonoBehaviour, IPoolable
 
     #endregion
 
-    public void InitComponents(Pantry pantry)
+    public virtual void InitComponents(IPool<Item> pool)
     {
         if (!TryGetComponent(out _rb))
         {
@@ -172,19 +172,20 @@ public class Item : MonoBehaviour, IPoolable
         _col = GetComponent<Collider>();
         _mesh = GetComponentInChildren<MeshRenderer>();
         _trail = GetComponent<TrailRenderer>();
-        _pantry = pantry;
+        Pool = pool;
     }
 
-    public void Activate()
+    public virtual void Activate()
     {
         InitProgress();
         SetMaterial();
         gameObject.SetActive(true);
     }
 
-    public void Deactivate()
+    public virtual void Deactivate()
     {
-        _pantry.ReturnToPool(this);
+        DeactivateTrail();
+        Pool.ReturnToPool(this);
         gameObject.SetActive(false);
     }
 }

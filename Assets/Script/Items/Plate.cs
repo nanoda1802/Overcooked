@@ -13,19 +13,6 @@ public class Plate : Item
     [Header("[UI]")]
     [SF] private MovableUIPool uiPool;
     [SF] private IngredientsInfo ingredientsInfo;
-    
-    private void Awake()
-    {
-        InitComponents(null);
-        uiPool = GameObject.Find("SubCanvas").GetComponent<MovableUIPool>(); // [임시]
-    }
-
-    private void Start()
-    {
-        InitProgress();
-        SetMaterial();
-        DeactivateTrail();
-    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -41,7 +28,7 @@ public class Plate : Item
     {
         if (ingredientsInfo is null)
         {
-            if (!uiPool.TryGetUI(out ingredientsInfo)) return;
+            if (!uiPool.TryGetItem(out ingredientsInfo)) return;
             ingredientsInfo.ConnectWithPlate(this);
         }
         
@@ -86,14 +73,31 @@ public class Plate : Item
             ingObj.transform.localPosition += (offsetY * floor) * Vector3.up;
         }
     }
-
-
+    
     public void ClearPlate()
     {
         InitProgress();
         SetMaterial();
-        
+
+        if (ingredientsInfo is null) return;
         ingredientsInfo.Deactivate();
         ingredientsInfo = null;
+    }
+
+    public override void InitComponents(IPool<Item> pool)
+    {
+        base.InitComponents(pool);
+        uiPool = GameObject.Find("SubCanvas").GetComponent<MovableUIPool>(); // [임시]
+    }
+
+    public override void Activate()
+    {
+        base.Activate();
+    }
+
+    public override void Deactivate()
+    {
+        ClearPlate();
+        base.Deactivate();
     }
 }

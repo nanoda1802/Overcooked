@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0d7596d743c1d745bf280adabe09733, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetY: 30
+  offsetY: 60
   ingredientSprites:
   - {fileID: 21300000, guid: 283b422b74bacd54d85e07e22b459a67, type: 3}
   - {fileID: 21300000, guid: 05f567c43a74a5443b66207da99b130e, type: 3}

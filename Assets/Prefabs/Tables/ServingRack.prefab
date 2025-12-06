@@ -153,7 +153,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.4, z: 0}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1 &6502068773177445752
 GameObject:
   m_ObjectHideFlags: 0
@@ -334,7 +334,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: ea79703f896bbe44fa4d2e5f6145a068, type: 2}
     - target: {fileID: 2130745786113780676, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
       propertyPath: m_Name
-      value: fastfood_Box_Burger_Top
+      value: Model
       objectReference: {fileID: 0}
     - target: {fileID: 4373062968682616710, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
       propertyPath: m_LocalScale.x
@@ -354,7 +354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4373062968682616710, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.23
+      value: 0.01999998
       objectReference: {fileID: 0}
     - target: {fileID: 4373062968682616710, guid: a98b53fd8287ba54788a647b8f77833f, type: 3}
       propertyPath: m_LocalPosition.z

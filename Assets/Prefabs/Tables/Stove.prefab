@@ -113,7 +113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: 1.25}
   m_SizeDelta: {x: 1, y: 0.2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &26417822045986241
@@ -280,8 +280,8 @@ Transform:
   m_GameObject: {fileID: 4055623517690253925}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.25, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0.25, z: 0}
+  m_LocalScale: {x: 0.45, y: 0.25, z: 0.45}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7499507892162169652}
@@ -308,8 +308,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.1, y: 2.1, z: 2.1}
-  m_Center: {x: 0, y: 0.1, z: 0}
+  m_Size: {x: 2.1, y: 1.8, z: 2.1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4642378962314365703
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +335,7 @@ Transform:
   m_GameObject: {fileID: 4642378962314365703}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 0.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -468,7 +468,7 @@ MonoBehaviour:
   placedItem: {fileID: 0}
   scaleOffset: 0.6
   availableItems: 03000000
-  canvas: {fileID: 26417822045986241}
+  fillBarCanvas: {fileID: 26417822045986241}
   barImages:
   - {fileID: 3212028284119786299}
   - {fileID: 4550176872679273383}
@@ -492,7 +492,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0.4, z: 0}
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1001 &4176935532246561169
 PrefabInstance:
   m_ObjectHideFlags: 0

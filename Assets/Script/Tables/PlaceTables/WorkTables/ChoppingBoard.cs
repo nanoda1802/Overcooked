@@ -35,7 +35,7 @@ public class ChoppingBoard : WorkTable
         if (placedItem is null) return false;
         
         IsWorking = true;
-        if (!canvas.gameObject.activeSelf) ActivateUI();
+        if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
         
         player.OnWorkStopped += StopWork;
         _onFinished += player.GetHandledItem;

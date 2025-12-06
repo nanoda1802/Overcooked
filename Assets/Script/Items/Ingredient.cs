@@ -3,22 +3,14 @@ using SF = UnityEngine.SerializeField;
 
 public class Ingredient : MonoBehaviour
 {
-    private MeshRenderer _mesh;
     [SF] private ItemType type;
     [SF] private ItemStatus doneness;
-    [SF] private Material defaultMaterial;
     [SF] private GameObject[] models;
-    
-    private void Awake()
-    {
-        _mesh = GetComponentInChildren<MeshRenderer>();
-    }
 
     public void SetInfo(ItemType itemType, ItemStatus itemStatus, Material mat)
     {
         type = itemType;
         doneness = itemStatus;
-        // _mesh.material = mat;
         ActivateModel((int) itemType);
     }
 
@@ -31,7 +23,6 @@ public class Ingredient : MonoBehaviour
     {
         type = 0;
         doneness = 0;
-        _mesh.material = defaultMaterial;
     }
 
     public ItemType GetItemType()

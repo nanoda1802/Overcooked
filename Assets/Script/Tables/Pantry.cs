@@ -8,7 +8,14 @@ public interface IPoolable
     public void Deactivate();
 }
 
-public class Pantry : Table
+public interface IPool<T>
+{
+    public void InitPool();
+    public bool TryGetItem(out T poolable);
+    public void ReturnToPool(T poolable);
+}
+
+public class Pantry : Table, IPool<Item>
 {
     [SF] private ItemType type;
     [SF] private GameObject[] items;
@@ -37,7 +44,7 @@ public class Pantry : Table
         return true;
     }
 
-    private void InitPool()
+    public void InitPool()
     {
         _pool = new Queue<Item>(poolSize);
         for (int i = 0; i < poolSize; i++)
@@ -54,7 +61,7 @@ public class Pantry : Table
         }
     }
 
-    private bool TryGetItem(out Item item)
+    public bool TryGetItem(out Item item)
     {
         if (_pool.TryDequeue(out Item poolItem))
         {
@@ -78,11 +85,11 @@ public class Pantry : Table
 
     public void ReturnToPool(Item item)
     {
-        if (item.type != type)
-        {
-            Destroy(item.gameObject);
-            return;
-        }
+        // if (item.type != type)
+        // {
+        //     Destroy(item.gameObject);
+        //     return;
+        // }
         item.SetParent(poolPivot);
         _pool.Enqueue(item);
     }

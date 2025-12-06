@@ -84,7 +84,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: -6038754365277113221, guid: 367bab942037468409d91209a6d73770, type: 3}
+  m_Mesh: {fileID: -8794997232909900580, guid: 367bab942037468409d91209a6d73770, type: 3}
 --- !u!54 &3200179922966722731
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -214,13 +214,13 @@ TrailRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.3
-        inSlope: 0
-        outSlope: 0
+        value: 0.25
+        inSlope: -0.44470993
+        outSlope: -0.44470993
         tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
-        outWeight: 0.33333334
+        outWeight: 0.16277559
       - serializedVersion: 3
         time: 1
         value: 0

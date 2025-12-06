@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SF, Range(0f, 5f)] private float dashSpeed = 1.5f;
     [SF] private float moveSpeedModifier = 1f;
     private Vector3 _moveDir;
+    private Transform _recentTile;
     /* 물체 잡기 놓기 */
     [Header("[ Pick & Drop ]")] 
     [SF] private Transform pivot;
@@ -57,6 +58,12 @@ public class PlayerController : MonoBehaviour
         if (_moveDir.sqrMagnitude <= 0.001f) return;
         Move();
         Rotate();
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (!other.gameObject.CompareTag("Ground")) return;
+        _recentTile = other.gameObject.transform;
     }
 
     private void OnDrawGizmos()
@@ -131,6 +138,31 @@ public class PlayerController : MonoBehaviour
     {
         Quaternion smoothRot = Quaternion.Slerp(_rb.rotation, Quaternion.LookRotation(_moveDir), rotRatio);
         _rb.MoveRotation(smoothRot);
+    }
+
+    public Vector3 CalculateRespawnPosition()
+    {
+        Vector3 respawnPos;
+        
+        if (_recentTile is null)
+        {
+            respawnPos = Vector3.one;
+        }
+        else
+        {
+            Vector3 temp = _recentTile.position;
+            temp.y += _recentTile.localScale.y;
+            respawnPos = temp;
+        }
+        
+        return respawnPos;
+    }
+
+    public void Respawn(Vector3 pos)
+    {
+        
+        
+        
     }
     #endregion
 

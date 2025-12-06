@@ -118,6 +118,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1012103307763756148}
     - target: {fileID: 8616177341066714204, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
+      propertyPath: fillBarCanvas
+      value: 
+      objectReference: {fileID: 5543722057714431409}
+    - target: {fileID: 8616177341066714204, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
       propertyPath: barImages.Array.size
       value: 1
       objectReference: {fileID: 0}

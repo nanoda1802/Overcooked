@@ -14,7 +14,7 @@ public class IngredientsInfo : MonoBehaviour, IPoolable
     private Camera _mainCam;
     // ui display
     private int _displayCount;
-    [SF] private float offsetY; // 30
+    [SF] private float offsetY; // ??
     [SF] private Sprite[] ingredientSprites;
     [SF] private Image[] ingredientImages;
     // list

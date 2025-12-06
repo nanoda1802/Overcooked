@@ -4,19 +4,34 @@ using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
-public class Sink : WorkTable
+public class Sink : WorkTable, IPool<Item>
 {
     [SF] private DishRack dishRack;
     [SF] private Canvas sinkCanvas;
     [SF] private Text sinkText;
     private Action _onFinished;
-    private readonly Queue<Item> _plates = new(10);
+
+    [SF] private GameObject platePrefab;
+    [SF] private Transform poolPivot;
+    [SF] private int poolSize;
+    private Queue<Item> _pool;
+
+    private void Awake()
+    {
+        InitPool();
+    }
+
+    private void Start()
+    {
+        UpdatePlateCount();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!CheckTriggeredItem(other, out var item)) return;
         if (item is not Plate plate) return;
         if (plate.HasIngredient()) return;
+        if (IsFull()) return;
         
         PlaceItem(item);
     }
@@ -25,6 +40,7 @@ public class Sink : WorkTable
     {
         if (player.pickedItem is not Plate plate) return false;
         if (plate.HasIngredient()) return false;
+        if (IsFull()) return false;
         
         PlaceItem(player.DetachItem());
         return true;
@@ -32,26 +48,23 @@ public class Sink : WorkTable
     
     public override void PlaceItem(Item item)
     {
-        item.SetParent(pivot);
-        item.gameObject.SetActive(false);
-        item.IsPlaced = true;
+        if (item is not Plate plate) return;
         
-        item.InitProgress();
-        item.SetMaterial();
+        plate.IsPlaced = true;
         
-        _plates.Enqueue(item);
+        plate.Deactivate();
 
         if (!sinkCanvas.gameObject.activeSelf) ActivatePlateCount();
         UpdatePlateCount();
     }
     
-    public override Item DisplaceItem() // 다시 오자
+    public override Item DisplaceItem()
     {
         dishRack.PlaceItem(placedItem);
         placedItem = null;
         
         UpdatePlateCount();
-        if(_plates.Count <= 0) DeactivatePlateCount();
+        if(_pool.Count <= 0) DeactivatePlateCount();
         
         return null;
     }
@@ -60,8 +73,8 @@ public class Sink : WorkTable
     {
         if (placedItem is null) 
         {
-            if (!_plates.TryDequeue(out placedItem)) return false;
-            placedItem.gameObject.SetActive(true);
+            if (!TryGetItem(out placedItem)) return false;
+            placedItem.Activate();
             ActivateUI();
         }
 
@@ -100,6 +113,51 @@ public class Sink : WorkTable
     
     private void UpdatePlateCount() // [임시]
     {
-        sinkText.text = $"{_plates.Count}";
+        sinkText.text = $"{_pool.Count}";
+    }
+
+    private bool IsFull()
+    {
+        return _pool.Count >= poolSize;
+    }
+
+    public void InitPool()
+    {
+        _pool = new Queue<Item>(poolSize);
+        for (int i = 0; i < poolSize; i++)
+        {
+            GameObject plateObj = Instantiate(platePrefab, poolPivot);
+            if (!plateObj.TryGetComponent(out Plate plate))
+            {
+                Destroy(plateObj);
+                continue;
+            }
+            plateObj.name = $"Plate_{i}";
+            plate.InitComponents(this);
+            plate.Deactivate();
+        }
+    }
+
+    public bool TryGetItem(out Item item)
+    {
+        if (_pool.TryDequeue(out Item poolItem))
+        {
+            item = poolItem;
+            return true;
+        }
+
+        item = null;
+        return false;
+    }
+
+    public void ReturnToPool(Item item)
+    {
+        // if (item is not Plate)
+        // {
+        //     Destroy(item.gameObject);
+        //     return;
+        // }
+        item.SetParent(poolPivot);
+        _pool.Enqueue(item);
     }
 }
