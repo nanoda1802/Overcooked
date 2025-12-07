@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 5196186138760199806}
   - component: {fileID: 2051715068445477126}
   - component: {fileID: 6326611014065916027}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
@@ -134,9 +134,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7985ac1b076ee2142b5ae203a8d44b0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 4
   rotRatio: 0.5
-  dashForce: 5
+  dashForce: 4
   dashSpeed: 1.5
   moveSpeedModifier: 1
   pivot: {fileID: 4884989298701289034}
@@ -150,7 +150,7 @@ MonoBehaviour:
   tableLayer:
     serializedVersion: 2
     m_Bits: 64
-  tableDetectDist: 0.8
+  tableDetectDist: 1
   tableDetectOffset: 1
   isWorking: 0
 --- !u!54 &5196186138760199806
