@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d2253ad9290ef49b01f4692cc32e60, type: 3}
+  m_Name: Patty
+  m_EditorClassIdentifier: 
+  itemType: 3
+  initialDoneness: 0
+  maxDoneness: 2
+  maxProgress: 3
+  mats:
+  - {fileID: 2100000, guid: 37b67a21557161d469e7ce0e034fce7f, type: 2}
+  - {fileID: 2100000, guid: b3737475b3717db4cabb07581e28a3bf, type: 2}
+  - {fileID: 2100000, guid: 37c6e0d9defdae748b9708752b0bd42a, type: 2}
+  throwForce: 12
+  throwDamp: 0.4
+  maxThrowDistance: 15
+  ingredientOffsetY: 0
+  ingredientPrefab: {fileID: 0}
