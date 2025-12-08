@@ -18,8 +18,8 @@ public class IngredientsInfo : MonoBehaviour, IPoolable
     [SF] private Sprite[] ingredientSprites;
     [SF] private Image[] ingredientImages;
     // list
-    public bool HasBun => _hasBun;
     private bool _hasBun;
+    public bool HasBun => _hasBun;
     private List<Ingredient> _ingredientList;
     // pool
     private MovableUIPool _uiPool;

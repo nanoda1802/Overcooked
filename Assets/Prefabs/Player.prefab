@@ -134,24 +134,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7985ac1b076ee2142b5ae203a8d44b0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 4
-  rotRatio: 0.5
-  dashForce: 4
-  dashSpeed: 1.5
-  moveSpeedModifier: 1
+  moveData: {fileID: 11400000, guid: 1ac7603815979984ab1cab9b1f511ab1, type: 2}
+  detectData: {fileID: 11400000, guid: eef123bc93ed3034ca89464c2a45a112, type: 2}
   pivot: {fileID: 4884989298701289034}
-  itemLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  itemDetectRange: {x: 0.8, y: 0.7, z: 0.4}
-  itemDetectOffset: 0.8
   pickedItem: {fileID: 0}
-  throwForce: 12
-  tableLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  tableDetectDist: 1
-  tableDetectOffset: 1
   isWorking: 0
 --- !u!54 &5196186138760199806
 Rigidbody:

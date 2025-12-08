@@ -13,31 +13,21 @@ public class PlayerController : MonoBehaviour
     private Rigidbody _rb;
     /* 이동 */
     [Header("[ Move ]")] 
-    [SF, Range(0f, 10f)] private float moveSpeed = 5f;
-    [SF, Range(0f, 1f)] private float rotRatio = 0.4f;
-    [SF, Range(0f, 10f)] private float dashForce = 5f;
-    [SF, Range(0f, 5f)] private float dashSpeed = 1.5f;
-    [SF] private float moveSpeedModifier = 1f;
+    [SF] private PlayerMovementData moveData;
     private Vector3 _moveDir;
+    private float _moveSpeedModifier = 1f;
     private Transform _recentTile;
-    /* 물체 잡기 놓기 */
+    /* 아이템 및 테이블 감지 */
+    [Header("[ Detect ]")]
+    [SF] private PlayerDetectionData detectData;
+    private readonly Collider[] _detectedItems = new Collider[5];
+    private Table _detectedTable;
+    /* 아이템 줍기 내려놓기 */
     [Header("[ Pick & Drop ]")] 
     [SF] private Transform pivot;
-    [SF] private LayerMask itemLayer; // 1<<7
-    [SF] private Vector3 itemDetectRange; // (0.8,0.7,0.4)
-    [SF, Range(0f, 5f)] private float itemDetectOffset; // 0.8;
-    private readonly Collider[] _detectedItems = new Collider[5];
-    [HideInInspector] public Item pickedItem;
-    /* 물체 던지기 */
-    [Header("[ Throw ]")] 
-    [SF, Range(1f, 20f)] private float throwForce; // 12f
-    /* 상호작용 */
-    [Header("[ Interact ]")] 
-    [SF] private LayerMask tableLayer; // 1<<6
-    [SF, Range(0f, 2f)] private float tableDetectDist; // 0.8f
-    [SF, Range(0f, 2f)] private float tableDetectOffset; // 1f
-    private Table _detectedTable;
-    public bool isWorking;
+    public Item pickedItem;
+    /* 작업 */
+    [HideInInspector] public bool isWorking;
     public Action OnWorkStopped;
     #endregion
 
@@ -49,8 +39,6 @@ public class PlayerController : MonoBehaviour
             _rb = gameObject.AddComponent<Rigidbody>();
             _rb.freezeRotation = true;
         }
-
-        Application.targetFrameRate = 60; // [임시]
     }
 
     private void FixedUpdate()
@@ -72,10 +60,10 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 offset = (transform.forward + Vector3.up) * itemDetectOffset;
+        Vector3 offset = (transform.forward + Vector3.up) * detectData.DetectBoxOffset;
         Matrix4x4 tableMatrix = Matrix4x4.TRS(transform.position + offset, transform.rotation, Vector3.one);
         Gizmos.matrix = tableMatrix;
-        Gizmos.DrawWireCube(Vector3.zero, itemDetectRange * 2);
+        Gizmos.DrawWireCube(Vector3.zero, detectData.DetectBoxSize * 2);
         Gizmos.matrix = Matrix4x4.identity; // 매트릭스를 리셋하여 다른 Gizmos에 영향 안 미치도록 함
     }
     #endregion
@@ -92,9 +80,9 @@ public class PlayerController : MonoBehaviour
 
     public void OnDash(InputAction.CallbackContext ctx)
     {
-        if (ctx.started) _rb.AddForce(dashForce * _moveDir, ForceMode.VelocityChange);
-        if (ctx.performed) moveSpeedModifier = dashSpeed;
-        if (ctx.canceled) moveSpeedModifier = 1f;
+        if (ctx.started) _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
+        if (ctx.performed) _moveSpeedModifier = moveData.RunSpeedMultiplier;
+        if (ctx.canceled) _moveSpeedModifier = 1f;
     }
 
     public void OnInteract(InputAction.CallbackContext ctx)
@@ -134,13 +122,13 @@ public class PlayerController : MonoBehaviour
     #region 이동 메서드
     private void Move()
     {
-        Vector3 moveOffset = (moveSpeed * moveSpeedModifier * Time.fixedDeltaTime) * _moveDir;
+        Vector3 moveOffset = (moveData.MoveSpeed * _moveSpeedModifier * Time.fixedDeltaTime) * _moveDir;
         _rb.MovePosition(_rb.position + moveOffset);
     }
 
     private void Rotate()
     {
-        Quaternion smoothRot = Quaternion.Slerp(_rb.rotation, Quaternion.LookRotation(_moveDir), rotRatio);
+        Quaternion smoothRot = Quaternion.Slerp(_rb.rotation, Quaternion.LookRotation(_moveDir), moveData.RotRatio);
         _rb.MoveRotation(smoothRot);
     }
 
@@ -179,12 +167,12 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    #region 박스 상호작용 메서드
+    #region 테이블 상호작용 메서드
     private bool DetectTable()
     {
-        Vector3 offset = Vector3.up * tableDetectOffset;
-        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, tableDetectDist,
-            tableLayer);
+        Vector3 offset = Vector3.up * detectData.DetectRayOffsetY;
+        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, detectData.DetectRayDistance,
+            detectData.TableLayer);
         Debug.DrawRay(transform.position + offset, transform.forward, isHit ? Color.red : Color.green);
         return isHit && hit.collider.gameObject.TryGetComponent(out _detectedTable);
     }
@@ -220,9 +208,9 @@ public class PlayerController : MonoBehaviour
     {
         Array.Clear(_detectedItems, 0, _detectedItems.Length);
         
-        Vector3 offset = (transform.forward + Vector3.up) * itemDetectOffset;
-        int hits = Physics.OverlapBoxNonAlloc(transform.position + offset, itemDetectRange, _detectedItems,
-            transform.rotation, itemLayer);
+        Vector3 offset = (transform.forward + Vector3.up) * detectData.DetectBoxOffset;
+        int hits = Physics.OverlapBoxNonAlloc(transform.position + offset, detectData.DetectBoxSize, _detectedItems,
+            transform.rotation, detectData.ItemLayer);
         return hits > 0;
     }
 
@@ -257,7 +245,7 @@ public class PlayerController : MonoBehaviour
 
     private void Throw(Vector3 dir)
     {
-        DetachItem().SetThrowValues(pivot.position, dir, throwForce * moveSpeedModifier);
+        DetachItem().SetThrowValues(pivot.position, dir, _moveSpeedModifier);
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
     }
     

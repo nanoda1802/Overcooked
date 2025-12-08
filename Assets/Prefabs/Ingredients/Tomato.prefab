@@ -133,19 +133,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85980763b0391474cb8d6a4872f2b42d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 4
+  data: {fileID: 11400000, guid: b98ec004a4880ad4ba4e10903cb4249b, type: 2}
   throwOrigin: {x: 0, y: 0, z: 0}
   throwDir: {x: 0, y: 0, z: 0}
   throwForce: 0
-  throwDamp: 0.4
-  maxThrowDist: 17
-  doneness: 0
-  maxDoneness: 1
   curProgress: 0
-  maxProgress: 0.5
-  mats:
-  - {fileID: 2100000, guid: 5b71eff92134b5948867e616cad9e9fa, type: 2}
-  - {fileID: 2100000, guid: b3737475b3717db4cabb07581e28a3bf, type: 2}
+  curDoneness: 0
 --- !u!64 &8790229360840270275
 MeshCollider:
   m_ObjectHideFlags: 0

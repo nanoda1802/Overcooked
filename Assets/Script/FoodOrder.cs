@@ -8,10 +8,8 @@ public class FoodOrder : MonoBehaviour
 {
     private ScoreManager _scoreManager;
     private OrderManager _orderManager;
-    private Menu _foodInfo;
-    private Dictionary<ItemType, int> _ingredientCount;
+    private MenuData _menu;
     private float _timerCount;
-    private bool _isActive;
 
     [SF] private Image foodImage;
     [SF] private Sprite[] foodSprites;
@@ -24,13 +22,12 @@ public class FoodOrder : MonoBehaviour
     
     private void Update()
     {
-        if (!_isActive) return;
+        if (!gameObject.activeSelf) return;
         UpdateTimer();
     }
 
     public void Deactivate()
     {
-        _isActive = false;
         gameObject.SetActive(false);
         foreach (Image img in ingredientImages)
         {
@@ -38,15 +35,12 @@ public class FoodOrder : MonoBehaviour
         }
     }
 
-    public void Activate(Menu menu)
+    public void Activate(MenuData menu)
     {
-        _foodInfo = menu;
-        _timerCount = menu.timer;
-        SetUIImages(menu.num);
-
-        _ingredientCount = menu.GetIngredientCount();
+        _menu = menu;
+        _timerCount = menu.Duration;
+        SetUIImages(menu.SpriteIndex);
         
-        _isActive = true;
         gameObject.SetActive(true);
     }
 
@@ -59,18 +53,20 @@ public class FoodOrder : MonoBehaviour
     private void SetUIImages(int menuIdx)
     {
         foodImage.sprite = foodSprites[menuIdx]; // [임시] 
-        for (int i = 0; i < _foodInfo.recipe.Count; i++)
+        for (int i = 0; i < _menu.Recipe.Length; i++)
         {
-            ingredientImages[i].sprite = ingredientSprites[(int)_foodInfo.recipe[i]];
+            ingredientImages[i].sprite = ingredientSprites[(int)_menu.Recipe[i]];
             ingredientImages[i].gameObject.SetActive(true);
         }
     }
 
     public bool IsMatchingRecipe(List<Ingredient> ings)
     {
-        if (_ingredientCount.Values.Sum() != ings.Count)
+        Dictionary<ItemType, int> ingCounts = _menu.GetIngredientCounts();
+        
+        if (ingCounts.Values.Sum() != ings.Count)
         {
-            Debug.Log($"받아야할 재료는 {_ingredientCount.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
+            Debug.Log($"받아야할 재료는 {ingCounts.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
             return false;
         }
         
@@ -78,7 +74,7 @@ public class FoodOrder : MonoBehaviour
         {
             ItemType type = ing.GetItemType();
             
-            if (!_ingredientCount.TryGetValue(type, out int count))
+            if (!ingCounts.TryGetValue(type, out int count))
             {
                 Debug.Log($"{type}은 레시피에 포함되지 않아!");
                 return false;
@@ -94,10 +90,10 @@ public class FoodOrder : MonoBehaviour
                 return false;
             }
             
-            _ingredientCount[type] -= 1;
+            ingCounts[type] -= 1;
         }
         
-        return _ingredientCount.Values.Sum() <= 0;
+        return ingCounts.Values.Sum() <= 0;
     }
 
     private void UpdateTimer()
@@ -115,12 +111,12 @@ public class FoodOrder : MonoBehaviour
 
     public float CalculateTimerRatio()
     {
-        return _timerCount / _foodInfo.timer;
+        return _timerCount / _menu.Duration;
     }
 
     public int GetBaseScore()
     {
-        return _foodInfo.baseScore;
+        return _menu.BaseScore;
     }
 
     private void UpdateFillImage()

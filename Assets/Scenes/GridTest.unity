@@ -3816,6 +3816,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8999055361515015736, guid: 043f898391d4f87449242b2e8e8d2880, type: 3}
   m_PrefabInstance: {fileID: 881520889}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &891756092
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 891756093}
+  - component: {fileID: 891756094}
+  m_Layer: 0
+  m_Name: PoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &891756093
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891756092}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 992935537}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &891756094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891756092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7611bfa225a9c934c85aafa6bb98f3b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &897158021
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4407,7 +4451,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 50, y: 1, z: 50}
+  m_LocalScale: {x: 40, y: 1, z: 40}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4496,8 +4540,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 992935537}
+  - component: {fileID: 992935538}
   m_Layer: 0
-  m_Name: Managers
+  m_Name: StageManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4518,8 +4563,25 @@ Transform:
   m_Children:
   - {fileID: 1287589741}
   - {fileID: 1067675856}
+  - {fileID: 891756093}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &992935538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992935536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8bd29ae10231c34f9a9b07d66e53232, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stageInfo: {fileID: 11400000, guid: 0a0f7b535e1596f4899a5d92164d88dd, type: 2}
+  scoreManager: {fileID: 1287589740}
+  orderManager: {fileID: 1067675855}
+  poolManager: {fileID: 0}
 --- !u!1001 &1001672818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4797,10 +4859,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0655252e93c204b969a6c14a5e1d0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scoreManager: {fileID: 1287589740}
-  maxOrderCount: 0
-  newOrderInterval: 0
-  intervalCount: 0
   orderGroupUI: {fileID: 1342313614}
 --- !u!4 &1067675856
 Transform:

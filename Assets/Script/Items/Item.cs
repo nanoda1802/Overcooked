@@ -1,10 +1,6 @@
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public enum ItemType { Bun, Cabbage, Cheese, Meat, Tomato, Plate }
-
-public enum ItemStatus { Undone, WellDone, Overdone }
-
 public class Item : MonoBehaviour, IPoolable
 {
     #region 필드와 프로퍼티
@@ -13,27 +9,24 @@ public class Item : MonoBehaviour, IPoolable
     private Collider _col;
     private TrailRenderer _trail;
     private MeshRenderer _mesh;
-    public MeshRenderer Mesh { get => _mesh; }
-    protected IPool<Item> Pool;
-    /* 아이템 종류 */
-    public ItemType type;
+    /* 아이템 데이터 */
+    [SF] protected ItemData data;
+    public ItemData Data => data;
+    /* 오브젝트 풀 */
+    private IPool<Item> _pool;
     /* 아이템 던지기 */
     [Header("[ Throw ]")] 
     [SF] private Vector3 throwOrigin;
     [SF] private Vector3 throwDir;
-    [SF] private float throwForce;
-    [SF, Range(0f, 1f)] private float throwDamp; // 0.4
-    [SF, Range(5f, 50f)] private float maxThrowDist; // 17
+    [SF] private float throwForceModifier;
     public bool IsThrown { get; private set; }
     public bool IsFalling { get; private set; }
     public bool IsPlaced { get; set; }
     /* 아이템 요리조리 */
     [Header("[ Doneness ]")] 
-    public ItemStatus doneness = ItemStatus.Undone;
-    [SF] private ItemStatus maxDoneness;
     [SF] private float curProgress;
-    [SF, Range(0.1f,5f)] private float maxProgress;
-    [SF] private Material[] mats;
+    [SF] private ItemStatus curDoneness;
+    public ItemStatus CurDoneness => curDoneness;
     #endregion
     
     #region 유니티 이벤트 메서드
@@ -55,62 +48,62 @@ public class Item : MonoBehaviour, IPoolable
     #region 요리조리 메서드
     public float Handle()
     {
-        if (IsMaxDone()) return (float) maxDoneness;
+        if (IsMaxDone()) return (float) data.MaxDoneness;
         
         curProgress += Time.deltaTime;
         
-        float ratio = curProgress / maxProgress;
-        doneness = (ItemStatus) ratio;
+        float ratio = curProgress / data.MaxProgress;
+        curDoneness = (ItemStatus) ratio;
         SetMaterial();
         
         return ratio;
     }
 
-    public void InitProgress()
+    protected void InitProgress()
     {
         curProgress = 0;
-        doneness = type is ItemType.Bun ? ItemStatus.WellDone : ItemStatus.Undone;
+        curDoneness = data.InitialDoneness;
     }
 
     public bool IsMaxDone()
     {
-        return doneness == maxDoneness;
+        return curDoneness == data.MaxDoneness;
     }
 
     public bool IsWellDone()
     {
-        return doneness == ItemStatus.WellDone;
+        return curDoneness == ItemStatus.WellDone;
     }
 
-    public void SetMaterial()
+    protected void SetMaterial()
     {
-        _mesh.material = mats[(int)doneness];
+        _mesh.material = data.Mats[(int)curDoneness];
     }
 
     #endregion
 
     #region 던지기 메서드
-    public void SetThrowValues(Vector3 origin, Vector3 dir, float force)
+    public void SetThrowValues(Vector3 origin, Vector3 dir, float forceModifier)
     {
         IsThrown = true;
         throwOrigin = origin;
         throwDir = dir;
-        throwForce = force;
+        throwForceModifier = forceModifier;
         ActivateTrail();
         ActivatePhysics();
     }
 
     private void Throwing()
     {
-        _rb.velocity = throwForce * throwDir;
+        _rb.velocity = data.ThrowForce * throwForceModifier * throwDir;
         
         float dist = (throwOrigin - _rb.position).sqrMagnitude;
-        if (dist >= maxThrowDist) StopThrowing();
+        if (dist >= data.MaxThrowDistance) StopThrowing();
     }
 
     private void StopThrowing()
     {
-        _rb.velocity *= throwDamp;
+        _rb.velocity *= data.ThrowDamp;
         
         IsThrown = false;
         IsFalling = true;
@@ -139,9 +132,9 @@ public class Item : MonoBehaviour, IPoolable
         _trail.enabled = true;
     }
 
-    protected void DeactivateTrail()
+    private void DeactivateTrail()
     {
-        if (!_trail.enabled)  return;
+        if (!_trail.enabled) return;
         _trail.enabled = false;
         _trail.Clear();
     }
@@ -159,9 +152,9 @@ public class Item : MonoBehaviour, IPoolable
         _rb.isKinematic = true;
         _col.enabled = false;
     }
-
     #endregion
 
+    #region 초기화, 활성화, 비활성화
     public virtual void InitComponents(IPool<Item> pool)
     {
         if (!TryGetComponent(out _rb))
@@ -172,7 +165,7 @@ public class Item : MonoBehaviour, IPoolable
         _col = GetComponent<Collider>();
         _mesh = GetComponentInChildren<MeshRenderer>();
         _trail = GetComponent<TrailRenderer>();
-        Pool = pool;
+        _pool = pool;
     }
 
     public virtual void Activate()
@@ -185,7 +178,8 @@ public class Item : MonoBehaviour, IPoolable
     public virtual void Deactivate()
     {
         DeactivateTrail();
-        Pool.ReturnToPool(this);
+        _pool.ReturnToPool(this);
         gameObject.SetActive(false);
     }
+    #endregion
 }

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 950cac4ef2b5e934c8fab5778e94e642, type: 3}
+  m_Name: OrderInfoData_Burger
+  m_EditorClassIdentifier: 
+  stageName: Hamburger
+  maxOrderCount: 4
+  availableMenu:
+  - {fileID: 11400000, guid: 0df9067cd7120b947a7cb54143cd38d3, type: 2}
+  - {fileID: 11400000, guid: 82e00fadde0ea524c89c5b4880c58ec9, type: 2}
+  - {fileID: 11400000, guid: ed8eb17dc7c2cc9408806dc817511b1a, type: 2}
+  newOrderInterval: 10

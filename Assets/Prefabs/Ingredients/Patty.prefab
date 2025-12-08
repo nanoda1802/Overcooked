@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7502346992934260745}
   - component: {fileID: 7211441686569318510}
   m_Layer: 7
-  m_Name: Meat
+  m_Name: Patty
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -49,20 +49,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85980763b0391474cb8d6a4872f2b42d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 3
+  data: {fileID: 11400000, guid: a494a9c196124b74997d3d1f4311528c, type: 2}
   throwOrigin: {x: 0, y: 0, z: 0}
   throwDir: {x: 0, y: 0, z: 0}
   throwForce: 0
-  throwDamp: 0.4
-  maxThrowDist: 17
-  doneness: 0
-  maxDoneness: 2
   curProgress: 0
-  maxProgress: 3
-  mats:
-  - {fileID: 2100000, guid: 37b67a21557161d469e7ce0e034fce7f, type: 2}
-  - {fileID: 2100000, guid: b3737475b3717db4cabb07581e28a3bf, type: 2}
-  - {fileID: 2100000, guid: 37c6e0d9defdae748b9708752b0bd42a, type: 2}
+  curDoneness: 0
 --- !u!64 &6628247987146644034
 MeshCollider:
   m_ObjectHideFlags: 0

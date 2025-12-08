@@ -6,13 +6,9 @@ public class Plate : Item
 {
     [Header("[Plate Only]")]
     [SF] private Transform pivot;
-    [SF] private float offsetY; // 0.04f
-    [SF] private GameObject ingredientPrefab;
-    public bool IsInDishRack { get; set; }
-    
-    [Header("[UI]")]
     [SF] private MovableUIPool uiPool;
-    [SF] private IngredientsInfo ingredientsInfo;
+    private IngredientsInfo _ingredientsInfo;
+    public bool IsInDishRack { get; set; }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -26,51 +22,51 @@ public class Plate : Item
 
     public void StackIngredient(Item item)
     {
-        if (ingredientsInfo is null)
+        if (_ingredientsInfo is null)
         {
-            if (!uiPool.TryGetItem(out ingredientsInfo)) return;
-            ingredientsInfo.ConnectWithPlate(this);
+            if (!uiPool.TryGetItem(out _ingredientsInfo)) return;
+            _ingredientsInfo.ConnectWithPlate(this);
         }
         
-        if (ingredientsInfo.IsFull()) return;
-        if (item.type is ItemType.Bun && ingredientsInfo.HasBun) return;
+        if (_ingredientsInfo.IsFull()) return;
+        if (item.Data.ItemType is ItemType.Bun && _ingredientsInfo.HasBun) return;
         
         item.Deactivate();
         
-        GameObject ingObj = Instantiate(ingredientPrefab, pivot); // [임시]
+        GameObject ingObj = Instantiate(data.IngredientPrefab, pivot); // [임시]
         if (!ingObj.TryGetComponent(out Ingredient ing))
         {
             Destroy(ingObj);
             return;
         }
-        ing.SetInfo(item.type,item.doneness); 
+        ing.SetInfo(item.Data.ItemType, item.CurDoneness); 
         
-        ingredientsInfo.AddIngredient(ing);
-        SetLocalPos(item.type, ingObj);
+        _ingredientsInfo.AddIngredient(ing);
+        SetLocalPos(item.Data.ItemType, ingObj);
     }
 
     public bool HasIngredient()
     {
-        return ingredientsInfo is not null && ingredientsInfo.GetIngredientCount() > 0;
+        return _ingredientsInfo is not null && _ingredientsInfo.GetIngredientCount() > 0;
     }
 
     public List<Ingredient> GetIngredients()
     {
-        return ingredientsInfo.GetIngredientList();
+        return _ingredientsInfo.GetIngredientList();
     }
 
     private void SetLocalPos(ItemType itemType, GameObject ingObj)
     {
         if (itemType is ItemType.Bun)
         {
-            ingObj.transform.localPosition += offsetY * Vector3.up;
+            ingObj.transform.localPosition += data.IngredientOffsetY * Vector3.up;
         }
         else
         {
-            int floor = ingredientsInfo.HasBun
-                ? ingredientsInfo.GetIngredientCount()
-                : ingredientsInfo.GetIngredientCount() + 1;
-            ingObj.transform.localPosition += (offsetY * floor) * Vector3.up;
+            int floor = _ingredientsInfo.HasBun
+                ? _ingredientsInfo.GetIngredientCount()
+                : _ingredientsInfo.GetIngredientCount() + 1;
+            ingObj.transform.localPosition += (data.IngredientOffsetY * floor) * Vector3.up;
         }
     }
     
@@ -79,9 +75,9 @@ public class Plate : Item
         InitProgress();
         SetMaterial();
 
-        if (ingredientsInfo is null) return;
-        ingredientsInfo.Deactivate();
-        ingredientsInfo = null;
+        if (_ingredientsInfo is null) return;
+        _ingredientsInfo.Deactivate();
+        _ingredientsInfo = null;
     }
 
     public override void InitComponents(IPool<Item> pool)

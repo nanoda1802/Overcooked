@@ -15,7 +15,7 @@ public class PlaceTable : Table
             player.AttachItem(DisplaceItem());
             return true;
         }
-        if (player.pickedItem is not null && placedItem is null && availableItems.Contains(player.pickedItem.type))
+        if (player.pickedItem is not null && placedItem is null && availableItems.Contains(player.pickedItem.Data.ItemType))
         {
             PlaceItem(player.DetachItem());
             return true;
@@ -49,7 +49,7 @@ public class PlaceTable : Table
         
         if (!other.CompareTag("Item")) return false;
         if (!other.TryGetComponent(out Item item)) return false;
-        if (!availableItems.Contains(item.type)) return false;
+        if (!availableItems.Contains(item.Data.ItemType)) return false;
         if (!item.IsThrown && !item.IsFalling) return false;
         
         checkedItem = item;

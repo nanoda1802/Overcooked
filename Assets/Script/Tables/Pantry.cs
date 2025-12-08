@@ -2,19 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public interface IPoolable
-{
-    public void Activate();
-    public void Deactivate();
-}
-
-public interface IPool<T>
-{
-    public void InitPool();
-    public bool TryGetItem(out T poolable);
-    public void ReturnToPool(T poolable);
-}
-
 public class Pantry : Table, IPool<Item>
 {
     [SF] private ItemType type;

@@ -3,95 +3,52 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
 
-public struct Menu // [임시]
-{
-    public int num;
-    public int baseScore;
-    public List<ItemType> recipe;
-    public float timer;
-
-    public Menu(int num, int baseScore, List<ItemType> recipe, float timer)
-    {
-        this.num = num;
-        this.baseScore = baseScore;
-        this.recipe = recipe;
-        this.timer = timer;
-    }
-    
-    public Dictionary<ItemType, int> GetIngredientCount()
-    {
-        Dictionary<ItemType, int> ingredientCount = new Dictionary<ItemType, int>();
-        
-        foreach (ItemType ing in recipe)
-        {
-            if (ingredientCount.TryAdd(ing,1)) continue;
-            ingredientCount[ing] += 1;
-        }
-        
-        return ingredientCount;
-    }
-}
-
 public class OrderManager : MonoBehaviour
 {
-    [SF] private ScoreManager scoreManager;
-    
-    [SF] private int maxOrderCount;
-    private List<FoodOrder> activeOrderList;
-    private List<Menu> availableMenu; // 임시
-
-    [SF] private float newOrderInterval;
-    [SF] private float intervalCount;
-
+    /* 참조 */
+    private ScoreManager _scoreManager;
+    private OrderInfoData _orderInfo;
+    /* 주문 생성 */
+    private List<FoodOrder> _activeOrderList;
+    private float _intervalCount;
+    /* UI */
     [SF] private Transform orderGroupUI;
-    private List<FoodOrder> orderGroupChilds;
-
-    private void Awake()
-    {
-        Init(); // [임시] StageManager에서 호출돼야 함
-    }
+    private List<FoodOrder> _orderGroupChildren;
 
     private void Update()
     {
         UpdateOrderInterval();
     }
 
-    public void Init() // [임시] StageManager에게 데이터 받아야 함
+    public void Init(ScoreManager sm, OrderInfoData data)
     {
-        maxOrderCount = 4;
-        activeOrderList = new List<FoodOrder>(maxOrderCount);
+        _scoreManager = sm;
+        _orderInfo = data;
         
-        newOrderInterval = 10;
-        intervalCount = newOrderInterval;
+        _activeOrderList = new List<FoodOrder>(_orderInfo.MaxOrderCount);
+        _intervalCount = _orderInfo.NewOrderInterval;
 
-        orderGroupChilds =  new List<FoodOrder>(maxOrderCount);
+        _orderGroupChildren =  new List<FoodOrder>(_orderInfo.MaxOrderCount);
         for (int i = 0; i < orderGroupUI.childCount; i++)
         {
             if (!orderGroupUI.GetChild(i).TryGetComponent(out FoodOrder order)) continue;
-            orderGroupChilds.Add(order);
-            order.Init(scoreManager,this);
+            _orderGroupChildren.Add(order);
+            order.Init(_scoreManager,this);
             order.Deactivate();
         }
-        
-        availableMenu = new List<Menu>() // [임시]...
-        {
-            new Menu(0,150,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato,ItemType.Meat,ItemType.Cheese},60),
-            new Menu(1,120,new List<ItemType>{ItemType.Bun,ItemType.Cabbage,ItemType.Tomato},45),
-            new Menu(2,100,new List<ItemType>{ItemType.Bun,ItemType.Meat,ItemType.Cheese,ItemType.Meat},50)
-        };
     }
 
     public bool HasActiveOrder()
     {
-        return activeOrderList.Count > 0;
+        return _activeOrderList.Count > 0;
     }
 
     private void AddOrder() 
     {
         FoodOrder order = null;
-        int minIndex = maxOrderCount;
+        int minIndex = _orderInfo.MaxOrderCount;
         
-        foreach (FoodOrder child in orderGroupChilds)      
+        foreach (FoodOrder child in _orderGroupChildren)      
         {
             if (child.gameObject.activeSelf) continue;
 
@@ -103,15 +60,15 @@ public class OrderManager : MonoBehaviour
         }
 
         if (order is null) return;
-        int randomNum = Random.Range(0, availableMenu.Count);
-        order.Activate(availableMenu[randomNum]);
-        activeOrderList.Add(order);
+        int randomIdx = Random.Range(0, _orderInfo.AvailableMenu.Length);
+        order.Activate(_orderInfo.AvailableMenu[randomIdx]);
+        _activeOrderList.Add(order);
     }
 
     public void RemoveOrder(FoodOrder order)
     {
-        activeOrderList.Remove(order);
-        CycleOrderGroupUI(order);
+        _activeOrderList.Remove(order);
+        CycleOrderGroupUIs(order);
     }
 
     public bool FindMatchingOrder(List<Ingredient> ings, out int baseScore, out float remainingTimeRatio)
@@ -119,7 +76,7 @@ public class OrderManager : MonoBehaviour
         remainingTimeRatio = -1;
         baseScore = 0;
         
-        foreach (var order in activeOrderList)
+        foreach (var order in _activeOrderList)
         {
             if(!order.IsMatchingRecipe(ings)) continue;
             remainingTimeRatio = order.CalculateTimerRatio();
@@ -134,16 +91,14 @@ public class OrderManager : MonoBehaviour
 
     private void UpdateOrderInterval()
     {
-        intervalCount -= Time.deltaTime;
+        _intervalCount -= Time.deltaTime;
+        if (_intervalCount > 0) return; 
         
-        if (intervalCount > 0) return;
-        intervalCount = newOrderInterval;
-        
-        if (activeOrderList.Count >= maxOrderCount) return;
-        AddOrder();
+        _intervalCount = _orderInfo.NewOrderInterval;
+        if (_activeOrderList.Count < _orderInfo.MaxOrderCount) AddOrder();
     }
 
-    private void CycleOrderGroupUI(FoodOrder order)
+    private void CycleOrderGroupUIs(FoodOrder order)
     {
         order.transform.SetAsLastSibling();
     }

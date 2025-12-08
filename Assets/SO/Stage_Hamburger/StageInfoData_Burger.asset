@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae08caddcf705d348b52f69f563a442f, type: 3}
+  m_Name: StageInfoData_Burger
+  m_EditorClassIdentifier: 
+  stageName: Burger
+  stageDuration: 300
+  gridInfos: []
+  orderInfoData: {fileID: 11400000, guid: d363296185e771049911670253c78af7, type: 2}

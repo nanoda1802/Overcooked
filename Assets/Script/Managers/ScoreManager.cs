@@ -7,8 +7,8 @@ using SF = UnityEngine.SerializeField;
 
 public class ScoreManager : MonoBehaviour
 {
-    private int _curScore = 0;
-    private int _comboCount = 0;
+    private int _curScore;
+    private int _comboCount;
     private const float COMBO_MODIFIER = 0.2f;
     
     [SF] private Text scoreTxt;
@@ -21,13 +21,9 @@ public class ScoreManager : MonoBehaviour
     
     [SF] private Color[] comboTxtColors;
 
-    private void Awake()
+    public void Init()
     {
         _scoreTxtAnim = scoreTxt.GetComponent<Animator>();
-    }
-
-    private void Start()
-    {
         ResetComboCount();
     }
 
