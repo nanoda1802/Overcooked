@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: StageInfoData_Burger
   m_EditorClassIdentifier: 
   stageName: Burger
-  stageDuration: 300
+  stageDuration: 60
   gridInfos: []
   orderInfoData: {fileID: 11400000, guid: d363296185e771049911670253c78af7, type: 2}

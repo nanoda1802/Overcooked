@@ -51,14 +51,14 @@ public class ScoreManager : MonoBehaviour
     private void AddComboCount()
     {
         _comboCount++;
-        fireImg.gameObject.SetActive(true);
+        fireImg?.gameObject.SetActive(true);
         UpdateComboText();
     }
 
     private void ResetComboCount()
     {
         _comboCount = 0;
-        fireImg.gameObject.SetActive(false);
+        fireImg?.gameObject.SetActive(false);
         UpdateComboText();
     }
 
