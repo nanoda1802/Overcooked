@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SF =  UnityEngine.SerializeField;
 
-public class TimeManager : MonoBehaviour
+public class TimeManager : MonoBehaviour, IManager
 {
     private StageInfoData _stageInfo;
     private float _leftTime;
@@ -22,6 +22,7 @@ public class TimeManager : MonoBehaviour
     
     private void Update()
     {
+        if (!gameObject.activeSelf) return;
         UpdateTimer();
     }
     
@@ -32,6 +33,11 @@ public class TimeManager : MonoBehaviour
         _leftTime = _stageInfo.StageDuration;
         _prevSecond = -1; // 첫 타이머 갱신 위해 필요...
         _stringBuilder = new StringBuilder();
+    }
+
+    public void Deinit()
+    {
+        gameObject.SetActive(false);
     }
 
     private void UpdateTimer()

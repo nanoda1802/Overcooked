@@ -508,7 +508,7 @@ GameObject:
   - component: {fileID: 8816132927027461553}
   - component: {fileID: 353968207031141890}
   m_Layer: 5
-  m_Name: TempTop
+  m_Name: UIGroup_Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -663,6 +663,10 @@ PrefabInstance:
     - target: {fileID: 308080061440645847, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 693594213031049158, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 1469271353456588005, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
       propertyPath: m_Name

@@ -315,7 +315,7 @@ GameObject:
   - component: {fileID: 3454083643116830236}
   - component: {fileID: 6979513327087484732}
   m_Layer: 5
-  m_Name: TempFoodOrderUI
+  m_Name: UI_Order
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Text;
-using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public class ServingRack : Table
@@ -16,7 +13,7 @@ public class ServingRack : Table
       if (!orderManager.HasActiveOrder()) return false;
 
       if (!orderManager.FindMatchingOrder(plate.GetIngredients(), out int baseScore, out float ratio)) return true;
-      scoreManager.ApplyScore(baseScore, ratio);
+      scoreManager.UpdateScore(baseScore, ratio);
       
       plate.ClearPlate();
       sink.PlaceItem(player.DetachItem());

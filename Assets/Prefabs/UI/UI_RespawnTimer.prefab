@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 6288197704794829387}
   - component: {fileID: 5170059041763561202}
   m_Layer: 5
-  m_Name: RespawnTimerUI
+  m_Name: UI_RespawnTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

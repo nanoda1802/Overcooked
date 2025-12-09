@@ -36,6 +36,7 @@ public class RespawnTimer : MonoBehaviour, IPoolable
         _mainCam = Camera.main;
         _rect = GetComponent<RectTransform>();
         _rect.position = Vector3.zero;
+        
         _uiPool = pool;
     }
 

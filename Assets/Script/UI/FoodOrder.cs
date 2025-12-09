@@ -28,11 +28,11 @@ public class FoodOrder : MonoBehaviour
 
     public void Deactivate()
     {
-        gameObject.SetActive(false);
         foreach (Image img in ingredientImages)
         {
             img.gameObject.SetActive(false);
         }
+        gameObject.SetActive(false);
     }
 
     public void Activate(MenuData menu)
@@ -63,32 +63,15 @@ public class FoodOrder : MonoBehaviour
     public bool IsMatchingRecipe(List<Ingredient> ings)
     {
         Dictionary<ItemType, int> ingCounts = _menu.GetIngredientCounts();
-        
-        if (ingCounts.Values.Sum() != ings.Count)
-        {
-            Debug.Log($"받아야할 재료는 {ingCounts.Values.Sum()}개인데, 받은 재료는 {ings.Count}개야!");
-            return false;
-        }
+        if (ingCounts.Values.Sum() != ings.Count) return false;
         
         foreach (Ingredient ing in ings)
         {
             ItemType type = ing.GetItemType();
             
-            if (!ingCounts.TryGetValue(type, out int count))
-            {
-                Debug.Log($"{type}은 레시피에 포함되지 않아!");
-                return false;
-            }
-            if (count <= 0)
-            {
-                Debug.Log($"{type}은 이미 충분해!");
-                return false;
-            }
-            if (ing.GetDoneness() != ItemStatus.WellDone)
-            {
-                Debug.Log($"{type} 조리가 덜 됐어!");
-                return false;
-            }
+            if (!ingCounts.TryGetValue(type, out int count)) return false;
+            if (count <= 0) return false;
+            if (ing.GetDoneness() != ItemStatus.WellDone) return false;
             
             ingCounts[type] -= 1;
         }
@@ -100,13 +83,11 @@ public class FoodOrder : MonoBehaviour
     {
         _timerCount -= Time.deltaTime;
         UpdateFillImage();
-
-        if (_timerCount <= 0)
-        {
-            _scoreManager.ApplyScore(GetBaseScore(),-1);
-            Deactivate();
-            _orderManager.RemoveOrder(this);
-        }
+        if (_timerCount > 0) return;
+        
+        _scoreManager.UpdateScore(GetBaseScore(),-1);
+        Deactivate();
+        _orderManager.RemoveOrder(this);
     }
 
     public float CalculateTimerRatio()
