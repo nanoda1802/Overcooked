@@ -3,11 +3,12 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
 
-public class OrderManager : MonoBehaviour
+public class OrderManager : MonoBehaviour, IManager
 {
     /* 참조 */
     private ScoreManager _scoreManager;
     private OrderInfoData _orderInfo;
+    private StageResultData _stageResult;
     /* 주문 생성 */
     private List<FoodOrder> _activeOrderList;
     private float _intervalCount;
@@ -17,13 +18,15 @@ public class OrderManager : MonoBehaviour
 
     private void Update()
     {
+        if (!gameObject.activeSelf) return;
         UpdateOrderInterval();
     }
 
-    public void Init(ScoreManager sm, OrderInfoData data)
+    public void Init(StageManager sm)
     {
-        _scoreManager = sm;
-        _orderInfo = data;
+        _scoreManager = sm.ScoreManager;
+        _orderInfo = sm.StageInfo.OrderInfoData;
+        _stageResult = sm.StageResult;
         
         _activeOrderList = new List<FoodOrder>(_orderInfo.MaxOrderCount);
         _intervalCount = _orderInfo.NewOrderInterval;
@@ -36,6 +39,15 @@ public class OrderManager : MonoBehaviour
             order.Init(_scoreManager,this);
             order.Deactivate();
         }
+    }
+
+    public void Deinit()
+    {
+        foreach (FoodOrder order in _activeOrderList)
+        {
+            order.Deactivate();
+        }
+        gameObject.SetActive(false);
     }
 
     public bool HasActiveOrder()
@@ -63,6 +75,8 @@ public class OrderManager : MonoBehaviour
         int randomIdx = Random.Range(0, _orderInfo.AvailableMenu.Length);
         order.Activate(_orderInfo.AvailableMenu[randomIdx]);
         _activeOrderList.Add(order);
+        
+        _stageResult.CountTotalOrder();
     }
 
     public void RemoveOrder(FoodOrder order)

@@ -100,6 +100,8 @@ public class PlayerController : MonoBehaviour
                 if (pickedItem is not null) Drop();
                 else if (DetectItem()) Pick();
                 break;
+            default:
+                break;
         }
     }
 
@@ -114,6 +116,8 @@ public class PlayerController : MonoBehaviour
                 break;
             case PressInteraction:
                 Throw(pivot.forward);
+                break;
+            default:
                 break;
         }
     }

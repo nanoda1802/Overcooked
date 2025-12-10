@@ -9,10 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae08caddcf705d348b52f69f563a442f, type: 3}
-  m_Name: StageInfoData_Burger
+  m_Script: {fileID: 11500000, guid: 72ef08297ca82684fbc1640e52d077ad, type: 3}
+  m_Name: StageResultData_Burger
   m_EditorClassIdentifier: 
-  stageName: Burger
-  stageDuration: 60
-  gridInfos: []
-  orderInfoData: {fileID: 11400000, guid: d363296185e771049911670253c78af7, type: 2}

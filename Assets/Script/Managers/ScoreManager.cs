@@ -1,15 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreManager : MonoBehaviour, IManager
 {
-    private int _curScore;
+    private StageResultData _stageResult;
     private int _comboCount;
-    private const float COMBO_MODIFIER = 0.2f;
     
     [SF] private Text scoreTxt;
     [SF] private Text comboTxt;
@@ -21,44 +17,58 @@ public class ScoreManager : MonoBehaviour
     
     [SF] private Color[] comboTxtColors;
 
-    public void Init()
+    public void Init(StageManager sm)
     {
+        _stageResult = sm.StageResult;
+        _stageResult.Init();
         _scoreTxtAnim = scoreTxt.GetComponent<Animator>();
         ResetComboCount();
     }
 
-    public void ApplyScore(int baseScore, float ratio)
+    public void Deinit()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void UpdateScore(int baseScore, float ratio)
     {
         int point = CalculatePoint(baseScore, ratio);
-        _scoreTxtAnim.SetTrigger(point <= 0 ? _deductParamHash : _addParamHash);
-        _curScore += point;
-        if (_curScore < 0) _curScore = 0;
-        scoreTxt.text = $"{_curScore}";
+        
+        if (point <= 0)
+        {
+            ResetComboCount();
+            _scoreTxtAnim.SetTrigger(_deductParamHash);    
+        }
+        else
+        {
+            _stageResult.CountDeliveredOrder();
+            AddComboCount();
+            _scoreTxtAnim.SetTrigger(_addParamHash);
+        }
+        
+        _stageResult.ApplyPoint(point);
+        scoreTxt.text = $"{_stageResult.Score}";
     }
 
     private int CalculatePoint(int baseScore, float ratio)
     {
-        if (ratio < 0)
-        {
-            ResetComboCount();
-            return (int) (baseScore * -0.5f);
-        }
-        
-        AddComboCount();
-        return (int) (baseScore * (1 + ratio + (_comboCount * COMBO_MODIFIER)));
+        if (ratio < 0) return (int) (baseScore * -0.5f);
+        return (int) (baseScore * (1 + ratio + (_comboCount * _stageResult.ComboModifier)));
     }
 
     private void AddComboCount()
     {
         _comboCount++;
-        fireImg.gameObject.SetActive(true);
+        if (_stageResult.IsMaxCombo(_comboCount)) _stageResult.UpdateMaxCombo(_comboCount);
+        
+        fireImg?.gameObject.SetActive(true);
         UpdateComboText();
     }
 
     private void ResetComboCount()
     {
         _comboCount = 0;
-        fireImg.gameObject.SetActive(false);
+        fireImg?.gameObject.SetActive(false);
         UpdateComboText();
     }
 
