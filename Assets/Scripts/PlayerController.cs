@@ -48,6 +48,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        // inputManager.SetAbleInStageActionMap();
+        // 이후 적절한 액션에 맞는 메서드들 구독
+    }
+
+    private void OnDisable()
+    {
+        // inputManager.SetDisableInStageActionMap();
+        // 이후 등록해둔 메서드들 구독 해제
+    }
+
     private void Start()
     {
         _waitInertiaDecay = new WaitForSeconds(moveData.InertiaDecayTime);

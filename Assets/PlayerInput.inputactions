@@ -1,9 +1,9 @@
 {
     "version": 1,
-    "name": "Player",
+    "name": "PlayerInput",
     "maps": [
         {
-            "name": "GamePlay",
+            "name": "InStage",
             "id": "9d2e275b-c1d9-42ed-b29a-e72e0f7da9ec",
             "actions": [
                 {
@@ -136,7 +136,7 @@
                     "path": "<Keyboard>/c",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Throw",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -155,7 +155,7 @@
             ]
         },
         {
-            "name": "UI",
+            "name": "Global",
             "id": "a4f1f9c2-9a5a-4f1d-99f1-1af1a928c534",
             "actions": [
                 {
@@ -172,6 +172,15 @@
                     "type": "Button",
                     "id": "c3f6bdec-1c39-4556-974d-eb03be308f6c",
                     "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold,Press(behavior=1)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Wheel",
+                    "type": "Value",
+                    "id": "79b59ec2-3b3c-4ef1-97e7-d985f48ddab8",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -197,6 +206,17 @@
                     "processors": "",
                     "groups": ";PC",
                     "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6c3ab48a-647e-44bf-a96f-bebc18b25c1d",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "Wheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

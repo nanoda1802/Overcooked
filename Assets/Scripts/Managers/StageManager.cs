@@ -55,6 +55,8 @@ public class StageManager : MonoBehaviour
 
     public void PauseStage()
     {
+        // inputManager.SetEnableGlobalActionMap()
+        // 적절한 액션에 맞는 메서드 구독
         timeManager.PauseTime();
         isStagePaused = true;
         Cursor.lockState = CursorLockMode.Confined;
@@ -64,6 +66,8 @@ public class StageManager : MonoBehaviour
 
     public void ResumeStage()
     {
+        // inputManager.SetDisableGlobalActionMap()
+        // 등록해둔 메서드 구독해제
         timeManager.ResumeTime();
         isStagePaused = false;
         Cursor.lockState = CursorLockMode.Locked;
