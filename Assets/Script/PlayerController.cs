@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     #region 필드와 프로퍼티
     /* 컴포넌트 */
     private Rigidbody _rb;
+    [SF] private StageManager stageManager;
     /* 이동 */
     [Header("[ Move ]")] 
     [SF] private PlayerMovementData moveData;
@@ -121,6 +122,22 @@ public class PlayerController : MonoBehaviour
                 break;
         }
     }
+
+    public void OnPause(InputAction.CallbackContext ctx)
+    {
+        switch (stageManager.IsStagePaused)
+        {
+            case true:
+                stageManager.ResumeStage();
+                break;
+            case false:
+                stageManager.PauseStage();
+                break;
+            default:
+                break;
+        }
+    }
+
     #endregion
 
     #region 이동 메서드

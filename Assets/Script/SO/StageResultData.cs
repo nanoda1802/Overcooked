@@ -47,6 +47,7 @@ public class StageResultData : ScriptableObject
 
    public float CalculateDeliverRate()
    {
+      if (totalOrder <= 0) return 0;
       return (float) deliveredOrder / totalOrder;
    }
 

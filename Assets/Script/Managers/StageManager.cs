@@ -7,6 +7,13 @@ public interface IManager
     public void Deinit();
 }
 
+public enum StageState
+{
+    Paused,
+    Running,
+    Finished
+}
+
 public class StageManager : MonoBehaviour
 {
     [SF] private StageInfoData stageInfo;
@@ -15,6 +22,10 @@ public class StageManager : MonoBehaviour
     public StageResultData StageResult => stageResult;
     
     [SF] private StageResult stageResultUI;
+
+    [SF] private PausePanel pauseUI;
+    [SF] private bool isStagePaused;
+    public bool IsStagePaused => isStagePaused;
     
     // 하위 매니저들에 대한 참조
     [SF] private ScoreManager scoreManager;
@@ -31,6 +42,7 @@ public class StageManager : MonoBehaviour
     private void Init()
     {
         Application.targetFrameRate = 60; // [임시]
+        ResumeStage();
         
         scoreManager.Init(this);
         orderManager.Init(this);
@@ -38,20 +50,30 @@ public class StageManager : MonoBehaviour
         // poolManager.Init();
         
         stageResultUI.Init(this);
+        pauseUI.Init(this);
+    }
+
+    public void PauseStage()
+    {
+        timeManager.PauseTime();
+        isStagePaused = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+        pauseUI.Activate();
+    }
+
+    public void ResumeStage()
+    {
+        timeManager.ResumeTime();
+        isStagePaused = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        pauseUI.Deactivate();
     }
 
     public void FinishStage() // [임시]
     {
-        // 모든 작동을 중지시켜야 해
-        // om은 모든 주문들 타이머 멈추고, 새 주문 생성 멈추고
-        // tm도 시간 더 안 가게 멈추고
-        // 캐릭터도 못 움직이게 하고 -> 이거 어떻게 해야할지........
-        // 등등
-        scoreManager.Deinit();
-        orderManager.Deinit();
-        timeManager.Deinit();
-        // 이걸로는 부족함
-        
+        PauseStage(); // [임시]... 일단 결과창이 덮으니까 괜찮긴 한데 이게...
         stageResultUI.Activate();
     }
 }

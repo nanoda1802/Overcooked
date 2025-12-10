@@ -20,7 +20,7 @@ public class StageResult : MonoBehaviour
     public void Activate()
     {
         gameObject.SetActive(true);
-        UpdateTexts();
+        SetTexts();
     }
 
     private void Deactivate()
@@ -28,7 +28,7 @@ public class StageResult : MonoBehaviour
         gameObject.SetActive(false);
     }
     
-    private void UpdateTexts()
+    private void SetTexts()
     {
         scoreValueTxt.text = $"{_stageResult.Score}";
         maxComboValueTxt.text = $"{_stageResult.MaxCombo}";
@@ -41,6 +41,6 @@ public class StageResult : MonoBehaviour
     public void OnRetryButton()
     {
         Deactivate();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(0); // [임시]
     }
 }

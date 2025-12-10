@@ -3,7 +3,7 @@
     "name": "Player",
     "maps": [
         {
-            "name": "Player",
+            "name": "GamePlay",
             "id": "9d2e275b-c1d9-42ed-b29a-e72e0f7da9ec",
             "actions": [
                 {
@@ -40,6 +40,15 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "Hold,Press(behavior=1)",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "0ebe20d6-8fc9-4eb1-b9cd-8fdf3aa3a412",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
@@ -129,6 +138,65 @@
                     "processors": "",
                     "groups": "",
                     "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b56899ab-9886-4e49-92e8-5aee8b1ff7bb",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "a4f1f9c2-9a5a-4f1d-99f1-1af1a928c534",
+            "actions": [
+                {
+                    "name": "CursorPos",
+                    "type": "Value",
+                    "id": "435cf2e2-0b23-420b-9424-eec71d42e41d",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "LeftClick",
+                    "type": "Button",
+                    "id": "c3f6bdec-1c39-4556-974d-eb03be308f6c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "abcb4f5a-23b3-4bdf-b110-1fa3fc83fdfb",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "CursorPos",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2f4d3b87-3d74-4220-8e4d-471750c0c229",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "LeftClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
