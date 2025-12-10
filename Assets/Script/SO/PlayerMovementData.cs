@@ -12,7 +12,9 @@ public class PlayerMovementData : ScriptableObject
     
     [Header("[ Dash & Run ]")]
     [SF, Range(0f, 10f)] private float dashForce;
+    [SF, Range(0f, 2f)] private float inertiaDecayTime;
     [SF, Range(0f, 5f)] private float runSpeedMultiplier;
     public float DashForce => dashForce;
+    public float InertiaDecayTime => inertiaDecayTime;
     public float RunSpeedMultiplier => runSpeedMultiplier;
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
@@ -17,6 +18,8 @@ public class PlayerController : MonoBehaviour
     [SF] private PlayerMovementData moveData;
     private Vector3 _moveDir;
     private float _moveSpeedModifier = 1f;
+    private Coroutine _dashCoroutine;
+    private WaitForSeconds _waitInertiaDecay;
     private Transform _recentTile;
     /* 아이템 및 테이블 감지 */
     [Header("[ Detect ]")]
@@ -39,7 +42,15 @@ public class PlayerController : MonoBehaviour
         {
             _rb = gameObject.AddComponent<Rigidbody>();
             _rb.freezeRotation = true;
+            _rb.mass = 100;
+            _rb.drag = 1.5f;
+            _rb.angularDrag = 0.05f;
         }
+    }
+
+    private void Start()
+    {
+        _waitInertiaDecay = new WaitForSeconds(moveData.InertiaDecayTime);
     }
 
     private void FixedUpdate()
@@ -81,8 +92,12 @@ public class PlayerController : MonoBehaviour
 
     public void OnDash(InputAction.CallbackContext ctx)
     {
-        if (ctx.started) _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
-        if (ctx.performed) _moveSpeedModifier = moveData.RunSpeedMultiplier;
+        if (ctx.started)
+        {
+            if (_dashCoroutine is not null) StopCoroutine(_dashCoroutine);
+            _dashCoroutine = StartCoroutine(CoDash());
+            _moveSpeedModifier = moveData.RunSpeedMultiplier;
+        }
         if (ctx.canceled) _moveSpeedModifier = 1f;
     }
 
@@ -125,17 +140,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnPause(InputAction.CallbackContext ctx)
     {
-        switch (stageManager.IsStagePaused)
-        {
-            case true:
-                stageManager.ResumeStage();
-                break;
-            case false:
-                stageManager.PauseStage();
-                break;
-            default:
-                break;
-        }
+        if (stageManager.IsStagePaused) stageManager.ResumeStage();
+        else stageManager.PauseStage();
     }
 
     #endregion
@@ -153,14 +159,35 @@ public class PlayerController : MonoBehaviour
         _rb.MoveRotation(smoothRot);
     }
 
-    public void WaitForRespawn()
+    private IEnumerator CoDash()
+    {
+        if (_moveDir == Vector3.zero) yield break;
+        
+        StopMoveImmediately();
+        _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
+        yield return new WaitUntil(IsVelocityZero);
+        yield return _waitInertiaDecay;
+        StopMoveImmediately();
+    }
+
+    private bool IsVelocityZero()
+    {
+        return _rb.velocity == Vector3.zero;
+    }
+
+    private void StopMoveImmediately()
+    {
+        _rb.velocity = _rb.angularVelocity = Vector3.zero;
+    }
+    #endregion
+
+    #region 리스폰 메서드
+    public void DeactivatePlayer()
     {
         gameObject.SetActive(false);
 
         if (pickedItem is null) return;
-        
-        Item item = DetachItem();
-        item.Deactivate();
+        DetachItem().Deactivate();
     }
 
     public Vector3 CalculateRespawnPosition()
@@ -187,7 +214,7 @@ public class PlayerController : MonoBehaviour
         _rb.position = respawnPos;
     }
     #endregion
-
+    
     #region 테이블 상호작용 메서드
     private bool DetectTable()
     {
@@ -207,6 +234,7 @@ public class PlayerController : MonoBehaviour
 
     private void BeginWork(WorkTable table)
     {
+        StopMoveImmediately();
         isWorking = table.BeginWork(this);
     }
 

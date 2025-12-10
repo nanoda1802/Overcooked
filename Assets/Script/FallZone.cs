@@ -21,7 +21,7 @@ public class FallZone : MonoBehaviour
 
         if (other.CompareTag("Player") && other.TryGetComponent(out PlayerController player))
         {
-            player.WaitForRespawn();
+            player.DeactivatePlayer();
             Vector3 respawnPos = player.CalculateRespawnPosition();
             
             if (!uiPool.TryGetItem(out RespawnTimer ui)) return;

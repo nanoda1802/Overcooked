@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 4
   rotRatio: 0.5
-  dashForce: 4
+  dashForce: 4.5
+  inertiaDecayTime: 0.3
   runSpeedMultiplier: 1.5
