@@ -14,19 +14,19 @@ public class InputManager : MonoBehaviour
     public PlayerInput.OutStageActions OutStageActionMap => _outStageActionMap;
 
     private PlayerController _playerInStage;
+    private TempPlayer _playerOutStage;
     
     private void Awake()
     {
         _inputs = new PlayerInput();
         _inStageActionMap = _inputs.InStage;
         _outStageActionMap = _inputs.OutStage;
-        Debug.Log($"IM awake {Time.time}");
     }
 
     private void OnEnable()
     {
         _inputs.Enable();
-        Debug.Log($"IM enabled {Time.time}");
+        EnterOutStage(); // [임시]
     }
 
     private void OnDisable()
@@ -56,17 +56,32 @@ public class InputManager : MonoBehaviour
         _outStageActionMap.Disable();
     }
 
-    public void EnterStage()
+    public void EnterInStage()
     {
         SetEnableInStageActionMap();
         _playerInStage = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         _playerInStage.SubscribeInStageInputEvents(_inStageActionMap);
     }
 
-    public void ExitStage()
+    public void ExitInStage()
     {
         _playerInStage.UnsubscribeInStageInputEvents(_inStageActionMap);
         _playerInStage = null;
         SetDisableInStageActionMap();
+    }
+
+    public void EnterOutStage() // [임시]
+    {
+        SetEnableOutStageActionMap();
+        _playerOutStage = GameObject.FindWithTag("Player").GetComponent<TempPlayer>();
+        _playerOutStage.SubscribeOutStageInputEvents(_outStageActionMap);
+        _playerOutStage.inputManager = this;
+    }
+
+    public void ExitOutStage() // [임시]
+    {
+        _playerOutStage.UnsubscribeOutStageInputEvents(_outStageActionMap);
+        _playerOutStage = null;
+        SetDisableOutStageActionMap();
     }
 }

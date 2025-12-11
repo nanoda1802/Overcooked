@@ -42,13 +42,11 @@ public class StageManager : MonoBehaviour
     private void Awake()
     {
         Init();
-        Debug.Log($"SM awake {Time.time}");
     }
 
     private void Start() // [임시]
     {
-        inputManager.EnterStage();
-        Debug.Log($"SM started {Time.time}");
+        inputManager.EnterInStage();
     }
     
     private void Init()
@@ -90,7 +88,7 @@ public class StageManager : MonoBehaviour
 
     public void FinishStage() // [임시]
     {
-        inputManager.ExitStage();
+        inputManager.ExitInStage();
         timeManager.Deinit();
         orderManager.Deinit();
         scoreManager.Deinit();
