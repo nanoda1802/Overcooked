@@ -93,47 +93,55 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region 인풋 이벤트 메서드
-    public void OnMove(InputAction.CallbackContext ctx)
+    private void OnMovePerformed(InputAction.CallbackContext ctx)
     {
-        if (isWorking) return;
-        
-        Vector2 input = ctx.ReadValue<Vector2>();
-        _moveDir.x = input.x;
+        if (isWorking) return;  
+        Vector2 input = ctx.ReadValue<Vector2>();  
+        _moveDir.x = input.x;  
         _moveDir.z = input.y;
     }
 
-    public void OnDash(InputAction.CallbackContext ctx)
+    private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
-        if (ctx.started)
-        {
-            if (_dashCoroutine is not null) StopCoroutine(_dashCoroutine);
-            _dashCoroutine = StartCoroutine(CoDash());
-            _moveSpeedModifier = moveData.RunSpeedMultiplier;
-        }
-        if (ctx.canceled) _moveSpeedModifier = 1f;
+        _moveDir = Vector3.zero;
     }
 
-    public void OnInteract(InputAction.CallbackContext ctx)
+    private void OnDashStarted(InputAction.CallbackContext ctx)
+    {
+        if (_dashCoroutine is not null) StopCoroutine(_dashCoroutine);  
+        _dashCoroutine = StartCoroutine(CoDash());  
+        _moveSpeedModifier = moveData.RunSpeedMultiplier;
+    }
+
+    private void OnDashCanceled(InputAction.CallbackContext ctx)
+    {
+        _moveSpeedModifier = 1f;
+    }
+
+    private void OnInteractPerformed(InputAction.CallbackContext ctx)
     {
         switch (ctx.interaction)
         {
-            case HoldInteraction when ctx.performed:
-                if (DetectTable() && _detectedTable is WorkTable table) BeginWork(table);
-                break;
-            case HoldInteraction when ctx.canceled:
-                if (isWorking) StopWork();
-                break;
-            case PressInteraction when ctx.started:
-                if (DetectTable() && Interact()) break;
-                if (pickedItem is not null) Drop();
+            case HoldInteraction:
+                if (!DetectTable()) return;
+                if (_detectedTable is not WorkTable table) return;
+                BeginWork(table);
+                return;
+            case PressInteraction:
+                if (DetectTable() && TryInteract()) return;
+                if (pickedItem is not null) Drop();  
                 else if (DetectItem()) Pick();
-                break;
-            default:
-                break;
+                return;
         }
     }
 
-    public void OnThrow(InputAction.CallbackContext ctx)
+    private void OnInteractCanceled(InputAction.CallbackContext ctx)
+    {
+        if (!isWorking) return; 
+        StopWork();
+    }
+
+    private void OnThrowPerformed(InputAction.CallbackContext ctx)
     {
         if (pickedItem is null) return;
         
@@ -145,17 +153,48 @@ public class PlayerController : MonoBehaviour
             case PressInteraction:
                 Throw(pivot.forward);
                 break;
-            default:
-                break;
         }
     }
 
-    public void OnPause(InputAction.CallbackContext ctx)
+    private void OnThrowCanceled(InputAction.CallbackContext ctx)
     {
-        if (stageManager.IsStagePaused) stageManager.ResumeStage();
+        if (pickedItem is null) return;
+        if (ctx.interaction is not HoldInteraction) return;
+        // 홀드 동안 계산된 throwDir로 던지기
+        // Throw(throwDir);
+    }
+
+    private void OnPauseStated(InputAction.CallbackContext ctx)
+    {
+        if (stageManager.IsStagePaused) stageManager.ResumeStage();  
         else stageManager.PauseStage();
     }
 
+    public void SubscribeInStageInputEvents(PlayerInput.InStageActions actionMap)
+    {
+        actionMap.Move.performed += OnMovePerformed;
+        actionMap.Move.canceled += OnMoveCanceled;
+        actionMap.Dash.started += OnDashStarted;
+        actionMap.Dash.canceled += OnDashCanceled;
+        actionMap.Interact.performed += OnInteractPerformed;
+        actionMap.Interact.canceled += OnInteractCanceled;
+        actionMap.Throw.performed += OnThrowPerformed;
+        actionMap.Throw.canceled += OnThrowCanceled;
+        actionMap.Pause.started += OnPauseStated;
+    }
+
+    public void UnsubscribeInStageInputEvents(PlayerInput.InStageActions actionMap)
+    {
+        actionMap.Move.performed -= OnMovePerformed;
+        actionMap.Move.canceled -= OnMoveCanceled;
+        actionMap.Dash.started -= OnDashStarted;
+        actionMap.Dash.canceled -= OnDashCanceled;
+        actionMap.Interact.performed -= OnInteractPerformed;
+        actionMap.Interact.canceled -= OnInteractCanceled;
+        actionMap.Throw.performed -= OnThrowPerformed;
+        actionMap.Throw.canceled -= OnThrowCanceled;
+        actionMap.Pause.started -= OnPauseStated;
+    }
     #endregion
 
     #region 이동 메서드
@@ -237,7 +276,7 @@ public class PlayerController : MonoBehaviour
         return isHit && hit.collider.gameObject.TryGetComponent(out _detectedTable);
     }
 
-    private bool Interact()
+    private bool TryInteract()
     {
         bool hasInteraction = _detectedTable.Interact(this);
         _detectedTable = null;

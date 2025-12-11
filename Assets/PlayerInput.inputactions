@@ -155,7 +155,7 @@
             ]
         },
         {
-            "name": "Global",
+            "name": "OutStage",
             "id": "a4f1f9c2-9a5a-4f1d-99f1-1af1a928c534",
             "actions": [
                 {
@@ -177,7 +177,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Wheel",
+                    "name": "Scroll",
                     "type": "Value",
                     "id": "79b59ec2-3b3c-4ef1-97e7-d985f48ddab8",
                     "expectedControlType": "Vector2",
@@ -216,7 +216,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";PC",
-                    "action": "Wheel",
+                    "action": "Scroll",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

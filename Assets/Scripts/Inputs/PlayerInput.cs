@@ -241,7 +241,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""Global"",
+            ""name"": ""OutStage"",
             ""id"": ""a4f1f9c2-9a5a-4f1d-99f1-1af1a928c534"",
             ""actions"": [
                 {
@@ -263,7 +263,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Wheel"",
+                    ""name"": ""Scroll"",
                     ""type"": ""Value"",
                     ""id"": ""79b59ec2-3b3c-4ef1-97e7-d985f48ddab8"",
                     ""expectedControlType"": ""Vector2"",
@@ -302,7 +302,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";PC"",
-                    ""action"": ""Wheel"",
+                    ""action"": ""Scroll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -335,17 +335,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_InStage_Interact = m_InStage.FindAction("Interact", throwIfNotFound: true);
         m_InStage_Throw = m_InStage.FindAction("Throw", throwIfNotFound: true);
         m_InStage_Pause = m_InStage.FindAction("Pause", throwIfNotFound: true);
-        // Global
-        m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
-        m_Global_CursorPos = m_Global.FindAction("CursorPos", throwIfNotFound: true);
-        m_Global_LeftClick = m_Global.FindAction("LeftClick", throwIfNotFound: true);
-        m_Global_Wheel = m_Global.FindAction("Wheel", throwIfNotFound: true);
+        // OutStage
+        m_OutStage = asset.FindActionMap("OutStage", throwIfNotFound: true);
+        m_OutStage_CursorPos = m_OutStage.FindAction("CursorPos", throwIfNotFound: true);
+        m_OutStage_LeftClick = m_OutStage.FindAction("LeftClick", throwIfNotFound: true);
+        m_OutStage_Scroll = m_OutStage.FindAction("Scroll", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
     {
         UnityEngine.Debug.Assert(!m_InStage.enabled, "This will cause a leak and performance issues, PlayerInput.InStage.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_Global.enabled, "This will cause a leak and performance issues, PlayerInput.Global.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OutStage.enabled, "This will cause a leak and performance issues, PlayerInput.OutStage.Disable() has not been called.");
     }
 
     /// <summary>
@@ -558,39 +558,39 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     /// </summary>
     public InStageActions @InStage => new InStageActions(this);
 
-    // Global
-    private readonly InputActionMap m_Global;
-    private List<IGlobalActions> m_GlobalActionsCallbackInterfaces = new List<IGlobalActions>();
-    private readonly InputAction m_Global_CursorPos;
-    private readonly InputAction m_Global_LeftClick;
-    private readonly InputAction m_Global_Wheel;
+    // OutStage
+    private readonly InputActionMap m_OutStage;
+    private List<IOutStageActions> m_OutStageActionsCallbackInterfaces = new List<IOutStageActions>();
+    private readonly InputAction m_OutStage_CursorPos;
+    private readonly InputAction m_OutStage_LeftClick;
+    private readonly InputAction m_OutStage_Scroll;
     /// <summary>
-    /// Provides access to input actions defined in input action map "Global".
+    /// Provides access to input actions defined in input action map "OutStage".
     /// </summary>
-    public struct GlobalActions
+    public struct OutStageActions
     {
         private @PlayerInput m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public GlobalActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public OutStageActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "Global/CursorPos".
+        /// Provides access to the underlying input action "OutStage/CursorPos".
         /// </summary>
-        public InputAction @CursorPos => m_Wrapper.m_Global_CursorPos;
+        public InputAction @CursorPos => m_Wrapper.m_OutStage_CursorPos;
         /// <summary>
-        /// Provides access to the underlying input action "Global/LeftClick".
+        /// Provides access to the underlying input action "OutStage/LeftClick".
         /// </summary>
-        public InputAction @LeftClick => m_Wrapper.m_Global_LeftClick;
+        public InputAction @LeftClick => m_Wrapper.m_OutStage_LeftClick;
         /// <summary>
-        /// Provides access to the underlying input action "Global/Wheel".
+        /// Provides access to the underlying input action "OutStage/Scroll".
         /// </summary>
-        public InputAction @Wheel => m_Wrapper.m_Global_Wheel;
+        public InputAction @Scroll => m_Wrapper.m_OutStage_Scroll;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_Global; }
+        public InputActionMap Get() { return m_Wrapper.m_OutStage; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -598,9 +598,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="GlobalActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="OutStageActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(GlobalActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(OutStageActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -608,20 +608,20 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="GlobalActions" />
-        public void AddCallbacks(IGlobalActions instance)
+        /// <seealso cref="OutStageActions" />
+        public void AddCallbacks(IOutStageActions instance)
         {
-            if (instance == null || m_Wrapper.m_GlobalActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_GlobalActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_OutStageActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OutStageActionsCallbackInterfaces.Add(instance);
             @CursorPos.started += instance.OnCursorPos;
             @CursorPos.performed += instance.OnCursorPos;
             @CursorPos.canceled += instance.OnCursorPos;
             @LeftClick.started += instance.OnLeftClick;
             @LeftClick.performed += instance.OnLeftClick;
             @LeftClick.canceled += instance.OnLeftClick;
-            @Wheel.started += instance.OnWheel;
-            @Wheel.performed += instance.OnWheel;
-            @Wheel.canceled += instance.OnWheel;
+            @Scroll.started += instance.OnScroll;
+            @Scroll.performed += instance.OnScroll;
+            @Scroll.canceled += instance.OnScroll;
         }
 
         /// <summary>
@@ -630,8 +630,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="GlobalActions" />
-        private void UnregisterCallbacks(IGlobalActions instance)
+        /// <seealso cref="OutStageActions" />
+        private void UnregisterCallbacks(IOutStageActions instance)
         {
             @CursorPos.started -= instance.OnCursorPos;
             @CursorPos.performed -= instance.OnCursorPos;
@@ -639,18 +639,18 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @LeftClick.started -= instance.OnLeftClick;
             @LeftClick.performed -= instance.OnLeftClick;
             @LeftClick.canceled -= instance.OnLeftClick;
-            @Wheel.started -= instance.OnWheel;
-            @Wheel.performed -= instance.OnWheel;
-            @Wheel.canceled -= instance.OnWheel;
+            @Scroll.started -= instance.OnScroll;
+            @Scroll.performed -= instance.OnScroll;
+            @Scroll.canceled -= instance.OnScroll;
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="GlobalActions.UnregisterCallbacks(IGlobalActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="OutStageActions.UnregisterCallbacks(IOutStageActions)" />.
         /// </summary>
-        /// <seealso cref="GlobalActions.UnregisterCallbacks(IGlobalActions)" />
-        public void RemoveCallbacks(IGlobalActions instance)
+        /// <seealso cref="OutStageActions.UnregisterCallbacks(IOutStageActions)" />
+        public void RemoveCallbacks(IOutStageActions instance)
         {
-            if (m_Wrapper.m_GlobalActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_OutStageActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -660,21 +660,21 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="GlobalActions.AddCallbacks(IGlobalActions)" />
-        /// <seealso cref="GlobalActions.RemoveCallbacks(IGlobalActions)" />
-        /// <seealso cref="GlobalActions.UnregisterCallbacks(IGlobalActions)" />
-        public void SetCallbacks(IGlobalActions instance)
+        /// <seealso cref="OutStageActions.AddCallbacks(IOutStageActions)" />
+        /// <seealso cref="OutStageActions.RemoveCallbacks(IOutStageActions)" />
+        /// <seealso cref="OutStageActions.UnregisterCallbacks(IOutStageActions)" />
+        public void SetCallbacks(IOutStageActions instance)
         {
-            foreach (var item in m_Wrapper.m_GlobalActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_OutStageActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_GlobalActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_OutStageActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="GlobalActions" /> instance referencing this action map.
+    /// Provides a new <see cref="OutStageActions" /> instance referencing this action map.
     /// </summary>
-    public GlobalActions @Global => new GlobalActions(this);
+    public OutStageActions @OutStage => new OutStageActions(this);
     private int m_PCSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -732,11 +732,11 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnPause(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Global" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "OutStage" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="GlobalActions.AddCallbacks(IGlobalActions)" />
-    /// <seealso cref="GlobalActions.RemoveCallbacks(IGlobalActions)" />
-    public interface IGlobalActions
+    /// <seealso cref="OutStageActions.AddCallbacks(IOutStageActions)" />
+    /// <seealso cref="OutStageActions.RemoveCallbacks(IOutStageActions)" />
+    public interface IOutStageActions
     {
         /// <summary>
         /// Method invoked when associated input action "CursorPos" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
@@ -753,11 +753,11 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLeftClick(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Wheel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Scroll" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnWheel(InputAction.CallbackContext context);
+        void OnScroll(InputAction.CallbackContext context);
     }
 }

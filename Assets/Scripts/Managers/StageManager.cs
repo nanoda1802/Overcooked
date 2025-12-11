@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using SF =  UnityEngine.SerializeField;
 
@@ -27,6 +28,10 @@ public class StageManager : MonoBehaviour
     [SF] private bool isStagePaused;
     public bool IsStagePaused => isStagePaused;
     
+    // 상위 매니저들에 대한 참조
+    // GameManager? 부터 해서?
+    [SF] private InputManager inputManager;
+    
     // 하위 매니저들에 대한 참조
     [SF] private ScoreManager scoreManager;
     [SF] private OrderManager orderManager;
@@ -37,11 +42,18 @@ public class StageManager : MonoBehaviour
     private void Awake()
     {
         Init();
+        Debug.Log($"SM awake {Time.time}");
     }
 
+    private void Start() // [임시]
+    {
+        inputManager.EnterStage();
+        Debug.Log($"SM started {Time.time}");
+    }
+    
     private void Init()
     {
-        Application.targetFrameRate = 60; // [임시]
+        Application.targetFrameRate = 120; // [임시]
         ResumeStage();
         
         scoreManager.Init(this);
@@ -52,6 +64,7 @@ public class StageManager : MonoBehaviour
         stageResultUI.Init(this);
         pauseUI.Init(this);
     }
+
 
     public void PauseStage()
     {
@@ -77,6 +90,10 @@ public class StageManager : MonoBehaviour
 
     public void FinishStage() // [임시]
     {
+        inputManager.ExitStage();
+        timeManager.Deinit();
+        orderManager.Deinit();
+        scoreManager.Deinit();
         PauseStage(); // [임시]... 일단 결과창이 덮으니까 괜찮긴 한데 이게...
         stageResultUI.Activate();
     }
