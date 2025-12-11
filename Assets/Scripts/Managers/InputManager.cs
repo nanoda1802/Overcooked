@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -13,8 +12,8 @@ public class InputManager : MonoBehaviour
     private PlayerInput.OutStageActions _outStageActionMap;
     public PlayerInput.OutStageActions OutStageActionMap => _outStageActionMap;
 
-    private PlayerController _playerInStage;
-    private TempPlayer _playerOutStage;
+    private InStagePlayerController _inStagePlayerInStage;
+    private OutStagePlayerController _playerOutStage;
     
     private void Awake()
     {
@@ -56,24 +55,29 @@ public class InputManager : MonoBehaviour
         _outStageActionMap.Disable();
     }
 
+    public Vector2 GetCursorPosition()
+    {
+        return _outStageActionMap.CursorPos.ReadValue<Vector2>();
+    }
+
     public void EnterInStage()
     {
         SetEnableInStageActionMap();
-        _playerInStage = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        _playerInStage.SubscribeInStageInputEvents(_inStageActionMap);
+        _inStagePlayerInStage = GameObject.FindWithTag("Player").GetComponent<InStagePlayerController>();
+        _inStagePlayerInStage.SubscribeInStageInputEvents(_inStageActionMap);
     }
 
     public void ExitInStage()
     {
-        _playerInStage.UnsubscribeInStageInputEvents(_inStageActionMap);
-        _playerInStage = null;
+        _inStagePlayerInStage.UnsubscribeInStageInputEvents(_inStageActionMap);
+        _inStagePlayerInStage = null;
         SetDisableInStageActionMap();
     }
 
     public void EnterOutStage() // [임시]
     {
         SetEnableOutStageActionMap();
-        _playerOutStage = GameObject.FindWithTag("Player").GetComponent<TempPlayer>();
+        _playerOutStage = GameObject.FindWithTag("Player").GetComponent<OutStagePlayerController>();
         _playerOutStage.SubscribeOutStageInputEvents(_outStageActionMap);
         _playerOutStage.inputManager = this;
     }

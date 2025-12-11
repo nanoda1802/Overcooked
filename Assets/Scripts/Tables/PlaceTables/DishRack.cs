@@ -7,12 +7,12 @@ public class DishRack : PlaceTable
     [SF] private float offsetY;
     private readonly Stack<Plate> _plates = new(10);
 
-    public override bool Interact(PlayerController player)
+    public override bool Interact(InStagePlayerController inStagePlayer)
     {
-        if (player.pickedItem is not null) return false;
+        if (inStagePlayer.pickedItem is not null) return false;
         if (_plates.Count == 0) return false;
         
-        player.AttachItem(DisplaceItem());
+        inStagePlayer.AttachItem(DisplaceItem());
         return true;
     }
 

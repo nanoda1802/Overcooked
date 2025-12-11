@@ -8,16 +8,16 @@ public class PlaceTable : Table
     [SF,Range(0f,1f)] private float scaleOffset;
     [SF] protected ItemType[] availableItems;
     
-    public override bool Interact(PlayerController player)
+    public override bool Interact(InStagePlayerController inStagePlayer)
     {
-        if (player.pickedItem is null && placedItem is not null)
+        if (inStagePlayer.pickedItem is null && placedItem is not null)
         {
-            player.AttachItem(DisplaceItem());
+            inStagePlayer.AttachItem(DisplaceItem());
             return true;
         }
-        if (player.pickedItem is not null && placedItem is null && availableItems.Contains(player.pickedItem.Data.ItemType))
+        if (inStagePlayer.pickedItem is not null && placedItem is null && availableItems.Contains(inStagePlayer.pickedItem.Data.ItemType))
         {
-            PlaceItem(player.DetachItem());
+            PlaceItem(inStagePlayer.DetachItem());
             return true;
         }
         

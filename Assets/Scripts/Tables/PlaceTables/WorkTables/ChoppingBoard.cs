@@ -30,16 +30,16 @@ public class ChoppingBoard : WorkTable
         return base.DisplaceItem();
     }
 
-    public override bool BeginWork(PlayerController player)
+    public override bool BeginWork(InStagePlayerController inStagePlayer)
     {
         if (placedItem is null) return false;
         
         IsWorking = true;
         if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
         
-        player.OnWorkStopped += StopWork;
-        _onFinished += player.GetHandledItem;
-        _onFinished += player.FinishWork;
+        inStagePlayer.OnWorkStopped += StopWork;
+        _onFinished += inStagePlayer.GetHandledItem;
+        _onFinished += inStagePlayer.FinishWork;
         
         return true;
     }

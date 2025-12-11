@@ -1,0 +1,129 @@
+using System.Collections;
+using Cinemachine;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
+using SF = UnityEngine.SerializeField;
+
+public class OutStagePlayerController : MonoBehaviour
+{
+    [SF] private NavMeshAgent agent;
+    [SF] private Camera mainCam;
+    [SF] private CinemachineBrain cineBrain;
+    
+    public InputManager inputManager; // [임시]
+
+    private Coroutine _coSelectStage;
+    private WaitUntil _waitPathPending;
+    private WaitUntil _waitAgentArrival;
+    private WaitUntil _waitVCamBlendingStart;
+    private WaitUntil _waitVCamBlendingEnd;
+    [SF] private float arrivalDistanceThreshold;
+
+    [SF] private Eatery curTargetEatery;
+    [SF] private int maxCamPriority;
+
+    [SF] private GameObject stagePopUpUI;
+    
+    private void Awake()
+    {
+        if (!TryGetComponent(out agent))
+        {
+            agent = gameObject.AddComponent<NavMeshAgent>();
+            agent.speed = 30; // [임시]
+            agent.angularSpeed = 500; // [임시]
+            agent.acceleration = 300; // [임시]    
+        }
+
+        mainCam = Camera.main;
+        
+        if (cineBrain is null)
+        {
+            cineBrain = mainCam?.GetComponent<CinemachineBrain>();
+        }
+    }
+
+    private void Start()
+    {
+        _waitPathPending = new WaitUntil(() => agent.pathPending);
+        _waitAgentArrival = new WaitUntil(() => agent.remainingDistance <= arrivalDistanceThreshold);
+        _waitVCamBlendingStart = new WaitUntil(() => cineBrain.IsBlending);
+        _waitVCamBlendingEnd = new WaitUntil(() => !cineBrain.IsBlending);
+    }
+
+    private void OnLeftClickPerformed(InputAction.CallbackContext ctx)
+    {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+        
+        switch (ctx.interaction)
+        {
+            case PressInteraction:
+                if (!TryDetectEatery(inputManager.GetCursorPosition())) break;
+                if (_coSelectStage is not null) StopCoroutine(_coSelectStage);
+                StartCoroutine(CoSelectStage());
+                break;
+        }
+    }
+
+    private void OnLeftClickCanceled(InputAction.CallbackContext ctx)
+    {
+    }
+
+    private void OnScrollPerformed(InputAction.CallbackContext ctx)
+    {
+        // float scrollAmount = ctx.ReadValue<Vector2>().y;
+        // float originalFOV = _mainCam.fieldOfView; // 시네머신이라서 현재 활성화 중인 virtual cam의 virtual FOV를 조절해야 할 듯?
+        // _mainCam.fieldOfView = Mathf.Clamp(originalFOV - scrollAmount * zoomSpeed, zoomInLimit, zoomOutLimit);
+    }
+
+    public void SubscribeOutStageInputEvents(PlayerInput.OutStageActions actionMap)
+    {
+        actionMap.LeftClick.performed += OnLeftClickPerformed;
+        // actionMap.LeftClick.canceled += OnLeftClickCanceled;
+        // actionMap.Scroll.performed += OnScrollPerformed;
+    }
+
+    public void UnsubscribeOutStageInputEvents(PlayerInput.OutStageActions actionMap)
+    {
+        actionMap.LeftClick.performed -= OnLeftClickPerformed;
+        // actionMap.LeftClick.canceled -= OnLeftClickCanceled;
+        // actionMap.Scroll.performed -= OnScrollPerformed;
+    }
+
+    private bool TryDetectEatery(Vector2 cursorPos)
+    {
+        Ray ray = mainCam.ScreenPointToRay(cursorPos);
+        
+        if (!Physics.Raycast(ray, out RaycastHit hit)) return false;
+        if (!hit.collider.TryGetComponent(out curTargetEatery)) return false;
+        
+        return true;
+    }
+
+    private IEnumerator CoSelectStage()
+    {
+        if (curTargetEatery is null) yield break;
+        
+        agent.SetDestination(curTargetEatery.Marker.position);
+        yield return _waitPathPending;
+        yield return _waitAgentArrival;
+        
+        // agent 속도 가속도 조절해서 넓게 도는 거 방지 할 수 있을 듯?
+        // 대신 남은 거리 임계점은 좀 넉넉히 해야해
+        
+        curTargetEatery.SetVCamPriority(maxCamPriority);
+        yield return _waitVCamBlendingStart;
+        yield return _waitVCamBlendingEnd;
+        
+        stagePopUpUI.SetActive(true);
+    }
+
+    public void DeactivatePopUp()
+    {
+        curTargetEatery.SetVCamPriority(0);
+        stagePopUpUI.SetActive(false);
+        curTargetEatery = null;
+    }
+}

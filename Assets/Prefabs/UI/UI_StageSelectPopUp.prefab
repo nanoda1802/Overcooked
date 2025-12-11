@@ -1006,7 +1006,7 @@ GameObject:
   - component: {fileID: 4273155579367530852}
   - component: {fileID: 3998301059896415493}
   m_Layer: 5
-  m_Name: UI_TempStageDesc
+  m_Name: UI_StageSelectPopUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

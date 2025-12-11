@@ -6,9 +6,9 @@ public class ServingRack : Table
    [SF] private ScoreManager scoreManager;
    [SF] private Sink sink;
 
-   public override bool Interact(PlayerController player)
+   public override bool Interact(InStagePlayerController inStagePlayer)
    {
-      if (player.pickedItem is not Plate plate) return false;
+      if (inStagePlayer.pickedItem is not Plate plate) return false;
       if (!plate.HasIngredient()) return false;
       if (!orderManager.HasActiveOrder()) return false;
 
@@ -16,7 +16,7 @@ public class ServingRack : Table
       scoreManager.UpdateScore(baseScore, ratio);
       
       plate.ClearPlate();
-      sink.PlaceItem(player.DetachItem());
+      sink.PlaceItem(inStagePlayer.DetachItem());
       
       return true;
    }

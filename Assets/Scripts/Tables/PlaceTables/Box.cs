@@ -11,9 +11,9 @@ public class Box : PlaceTable
         PlaceItem(item);
     }
 
-    public override bool Interact(PlayerController player)
+    public override bool Interact(InStagePlayerController inStagePlayer)
     {
-        return base.Interact(player);
+        return base.Interact(inStagePlayer);
     }
 
     public override void PlaceItem(Item item)

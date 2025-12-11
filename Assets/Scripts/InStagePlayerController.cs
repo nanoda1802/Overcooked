@@ -7,7 +7,7 @@ using SF = UnityEngine.SerializeField;
 
 // 참고 링크 https://rito15.github.io/posts/unity-rigidbody-move-and-jump/
 
-public class PlayerController : MonoBehaviour
+public class InStagePlayerController : MonoBehaviour
 {
     #region 필드와 프로퍼티
     /* 컴포넌트 */

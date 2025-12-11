@@ -19,7 +19,7 @@ public class FallZone : MonoBehaviour
             return;
         }
 
-        if (other.CompareTag("Player") && other.TryGetComponent(out PlayerController player))
+        if (other.CompareTag("Player") && other.TryGetComponent(out InStagePlayerController player))
         {
             player.DeactivatePlayer();
             Vector3 respawnPos = player.CalculateRespawnPosition();

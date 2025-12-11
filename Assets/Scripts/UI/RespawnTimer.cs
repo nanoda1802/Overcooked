@@ -12,7 +12,7 @@ public class RespawnTimer : MonoBehaviour, IPoolable
     [SF] private float respawnTime;
     private float _timerCount;
 
-    private PlayerController _player;
+    private InStagePlayerController _inStagePlayer;
     private Vector3 _respawnPos;
 
     private void Update()
@@ -27,7 +27,7 @@ public class RespawnTimer : MonoBehaviour, IPoolable
         timerText.text = $"{_timerCount:F0}";
 
         if (_timerCount > 0) return;
-        _player.Respawn(_respawnPos);
+        _inStagePlayer.Respawn(_respawnPos);
         Deactivate();
     }
 
@@ -40,11 +40,11 @@ public class RespawnTimer : MonoBehaviour, IPoolable
         _uiPool = pool;
     }
 
-    public void SetRespawnValues(Vector3 respawnPos, PlayerController player)
+    public void SetRespawnValues(Vector3 respawnPos, InStagePlayerController inStagePlayer)
     {
         _respawnPos = respawnPos;
         _rect.position = _mainCam.WorldToScreenPoint(_respawnPos);
-        _player = player;
+        _inStagePlayer = inStagePlayer;
     }
 
     public void Activate()
@@ -56,7 +56,7 @@ public class RespawnTimer : MonoBehaviour, IPoolable
     public void Deactivate()
     {
         gameObject.SetActive(false);
-        _player = null;
+        _inStagePlayer = null;
         _uiPool.ReturnToPool(this);
     }
 }

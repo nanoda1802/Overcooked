@@ -36,13 +36,13 @@ public class Sink : WorkTable, IPool<Item>
         PlaceItem(item);
     }
 
-    public override bool Interact(PlayerController player)
+    public override bool Interact(InStagePlayerController inStagePlayer)
     {
-        if (player.pickedItem is not Plate plate) return false;
+        if (inStagePlayer.pickedItem is not Plate plate) return false;
         if (plate.HasIngredient()) return false;
         if (IsFull()) return false;
         
-        PlaceItem(player.DetachItem());
+        PlaceItem(inStagePlayer.DetachItem());
         return true;
     }
     
@@ -69,7 +69,7 @@ public class Sink : WorkTable, IPool<Item>
         return null;
     }
     
-    public override bool BeginWork(PlayerController player)
+    public override bool BeginWork(InStagePlayerController inStagePlayer)
     {
         if (placedItem is null) 
         {
@@ -80,8 +80,8 @@ public class Sink : WorkTable, IPool<Item>
 
         IsWorking = true;
         
-        player.OnWorkStopped += StopWork;
-        _onFinished = player.FinishWork;
+        inStagePlayer.OnWorkStopped += StopWork;
+        _onFinished = inStagePlayer.FinishWork;
         
         return true;
     }

@@ -16,7 +16,7 @@ public class WorkTable : PlaceTable
         Work();
     }
     
-    public virtual bool BeginWork(PlayerController player)
+    public virtual bool BeginWork(InStagePlayerController inStagePlayer)
     {
         if (placedItem is null) return false;
         return IsWorking = true;

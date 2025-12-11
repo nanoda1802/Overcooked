@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -11,7 +8,9 @@ using SF = UnityEngine.SerializeField;
 public class TempPlayer : MonoBehaviour
 {
     [SF] private Canvas canvas;
-    [SF] private GameObject uiPrefab;
+    [SF] private GameObject ui;
+
+    [SF] private GameObject vCam;
     
     [SF] private NavMeshAgent agent;
     private Camera _mainCam;
@@ -28,6 +27,23 @@ public class TempPlayer : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         _mainCam = Camera.main;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Box")) return;
+        if (agent.pathPending || agent.remainingDistance > 5f) return;
+        
+        vCam = other.transform.parent.GetChild(2).gameObject;
+        vCam.SetActive(true);
+        ui.SetActive(true);
+        // GameObject ui = Instantiate(this.ui, canvas.transform);
+        // ui.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(-150, 30, 0);
+    }
+
+    public void DeactivateVCam()
+    {
+        vCam?.SetActive(false);
     }
 
     public void OnLeftClickPerformed(InputAction.CallbackContext ctx)
@@ -51,9 +67,6 @@ public class TempPlayer : MonoBehaviour
                 // 거기로 이동
                 if (!TryDetectObject(cursorPos, out Transform target)) break;
                 agent.SetDestination(target.position);
-                GameObject ui = Instantiate(uiPrefab, canvas.transform);
-                ui.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(-150, 30, 0);
-                
                 break;
         }
     }
@@ -92,30 +105,5 @@ public class TempPlayer : MonoBehaviour
         bool isHit = Physics.Raycast(ray, out RaycastHit hit);
         target = isHit ? hit.transform : null;
         return isHit;
-    }
-
-    private void Drag() // 이거 아니야..........
-    {
-        Vector2 cursorPos = inputManager.OutStageActionMap.CursorPos.ReadValue<Vector2>();
-        swipeEndPos.x = cursorPos.x;
-        swipeEndPos.z = cursorPos.y;
-        StartCoroutine(CoDrag());
-        swipeStartPos = Vector3.zero;
-    }
-
-    private IEnumerator CoDrag()
-    {
-        Vector3 targetPos = swipeEndPos - swipeStartPos;
-        targetPos.y = 0;
-        Vector3 origin = _mainCam.transform.position;
-
-        float time = 1f;
-
-        while (time > 0)
-        {
-            _mainCam.transform.position = Vector3.Lerp(origin, origin + targetPos, time);
-            time -= Time.deltaTime;
-            yield return new WaitForEndOfFrame();
-        }
     }
 }
