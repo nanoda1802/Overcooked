@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using SF =  UnityEngine.SerializeField;
 
@@ -99,6 +98,7 @@ public class InStageManager : MonoBehaviour
         orderManager.Deinit();
         scoreManager.Deinit();
         PauseStage(); // [임시]... 일단 결과창이 덮으니까 괜찮긴 한데 이게...
+        pauseUI.Deactivate();
         stageResultUI.Activate();
     }
 }

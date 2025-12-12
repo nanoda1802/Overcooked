@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using SF = UnityEngine.SerializeField;
@@ -34,21 +32,17 @@ public class GameManager : MonoBehaviour
     public IEnumerator CoLoadSceneAsync(string sceneName)
     {
         AsyncOperation loadOper = SceneManager.LoadSceneAsync(sceneName);
-        Debug.Log($"전환 호출 ? {loadOper is not null}");
         Time.timeScale = 1f;
 
         while (!loadOper.isDone)
         {
             yield return null;
-
-            Debug.Log(loadOper.progress);
             if (loadOper.progress < 0.9f) continue;
+            
             loadOper.allowSceneActivation = true;
+            yield return null;
             Time.timeScale = 1f;
-            Debug.Log("씬 전환");
             yield break;
         }
-
-        yield return null;
     }
 }

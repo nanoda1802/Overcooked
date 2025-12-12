@@ -5,7 +5,6 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
-using UnityEngine.SceneManagement;
 using SF = UnityEngine.SerializeField;
 
 public class OutStagePlayerController : MonoBehaviour
@@ -32,9 +31,9 @@ public class OutStagePlayerController : MonoBehaviour
         if (!TryGetComponent(out agent))
         {
             agent = gameObject.AddComponent<NavMeshAgent>();
-            agent.speed = 30; // [임시]
+            agent.speed = 20; // [임시]
             agent.angularSpeed = 500; // [임시]
-            agent.acceleration = 300; // [임시]    
+            agent.acceleration = 400; // [임시]    
         }
 
         mainCam = Camera.main;
@@ -50,7 +49,7 @@ public class OutStagePlayerController : MonoBehaviour
         // Time.timeScale = 1f; // [임시]
         
         _waitPathPending = new WaitUntil(() => !agent.pathPending);
-        _waitAgentArrival = new WaitUntil(() => agent.remainingDistance <= arrivalDistanceThreshold);
+        _waitAgentArrival = new WaitUntil(IsAgentArrived);
         _waitVCamBlendingStart = new WaitUntil(() => cineBrain.IsBlending);
         _waitVCamBlendingEnd = new WaitUntil(() => !cineBrain.IsBlending);
         
@@ -64,6 +63,9 @@ public class OutStagePlayerController : MonoBehaviour
 
     private void OnLeftClickPerformed(InputAction.CallbackContext ctx)
     {
+        if (curTargetEatery is not null) return;
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+        
         switch (ctx.interaction)
         {
             case PressInteraction:
@@ -108,6 +110,11 @@ public class OutStagePlayerController : MonoBehaviour
         return true;
     }
 
+    private bool IsAgentArrived()
+    {
+        return agent.remainingDistance <= arrivalDistanceThreshold;
+    }
+
     private IEnumerator CoSelectStage()
     {
         if (curTargetEatery is null) yield break;
@@ -115,10 +122,12 @@ public class OutStagePlayerController : MonoBehaviour
         agent.SetDestination(hit.position);
         yield return _waitPathPending;
         yield return _waitAgentArrival;
-        if (curTargetEatery.IsDummyEatery()) yield break;
         
-        // agent 속도 가속도 조절해서 넓게 도는 거 방지 할 수 있을 듯?
-        // 대신 남은 거리 임계점은 좀 넉넉히 해야해
+        if (curTargetEatery.IsDummyEatery())
+        {
+            curTargetEatery = null;
+            yield break;
+        }
         
         curTargetEatery.SetVCamPriority(maxCamPriority);
         yield return _waitVCamBlendingStart;
@@ -129,13 +138,14 @@ public class OutStagePlayerController : MonoBehaviour
 
     public void EnterStage(int stageId)
     {
-        if (stageId <= 0) return;
+        if (stageId <= 0) return; // [임시]
         gameManager.InputManager.ExitOutStage();
         StartCoroutine(gameManager.CoLoadSceneAsync("InStage"));
     }
 
     public void DeselectEatery()
     {
+        if (curTargetEatery is null) return;
         curTargetEatery.SetVCamPriority(0);
         curTargetEatery.DeactivatePopUpUI();
         curTargetEatery = null;
