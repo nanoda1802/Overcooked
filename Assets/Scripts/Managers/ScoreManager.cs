@@ -17,7 +17,7 @@ public class ScoreManager : MonoBehaviour, IManager
     
     [SF] private Color[] comboTxtColors;
 
-    public void Init(StageManager sm)
+    public void Init(InStageManager sm)
     {
         _stageResult = sm.StageResult;
         _stageResult.Init();

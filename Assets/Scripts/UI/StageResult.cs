@@ -7,14 +7,17 @@ public class StageResult : MonoBehaviour
 {
     private StageResultData _stageResult;
 
+    private GameManager _gameManager;
+    
     [SF] private Text scoreValueTxt;
     [SF] private Text maxComboValueTxt;
     [SF] private Text deliveredOrderValueTxt;
     [SF] private Text incomeValueTxt;
 
-    public void Init(StageManager sm)
+    public void Init(InStageManager sm)
     {
         _stageResult = sm.StageResult;
+        _gameManager = sm.GameManager;
     }
 
     public void Activate()
@@ -40,7 +43,15 @@ public class StageResult : MonoBehaviour
 
     public void OnRetryButton()
     {
+        Debug.Log("Retry");
+        StartCoroutine(_gameManager.CoLoadSceneAsync("InStage"));
         Deactivate();
-        SceneManager.LoadScene(0); // [임시]
+    }
+    
+    public void OnLobbyButton()
+    {
+        Debug.Log("Lobby");
+        StartCoroutine(_gameManager.CoLoadSceneAsync("OutStage"));
+        Deactivate();
     }
 }

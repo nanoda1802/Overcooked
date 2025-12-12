@@ -5,16 +5,16 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
+using UnityEngine.SceneManagement;
 using SF = UnityEngine.SerializeField;
 
 public class OutStagePlayerController : MonoBehaviour
 {
+    [SF] private GameManager gameManager;
     [SF] private NavMeshAgent agent;
     [SF] private Camera mainCam;
     [SF] private CinemachineBrain cineBrain;
     
-    public InputManager inputManager; // [임시]
-
     private Coroutine _coSelectStage;
     private WaitUntil _waitPathPending;
     private WaitUntil _waitAgentArrival;
@@ -24,11 +24,11 @@ public class OutStagePlayerController : MonoBehaviour
 
     [SF] private Eatery curTargetEatery;
     [SF] private int maxCamPriority;
-
-    [SF] private GameObject stagePopUpUI;
     
     private void Awake()
     {
+        gameManager = FindObjectOfType(typeof(GameManager)) as GameManager;
+        
         if (!TryGetComponent(out agent))
         {
             agent = gameObject.AddComponent<NavMeshAgent>();
@@ -47,20 +47,27 @@ public class OutStagePlayerController : MonoBehaviour
 
     private void Start()
     {
-        _waitPathPending = new WaitUntil(() => agent.pathPending);
+        // Time.timeScale = 1f; // [임시]
+        
+        _waitPathPending = new WaitUntil(() => !agent.pathPending);
         _waitAgentArrival = new WaitUntil(() => agent.remainingDistance <= arrivalDistanceThreshold);
         _waitVCamBlendingStart = new WaitUntil(() => cineBrain.IsBlending);
         _waitVCamBlendingEnd = new WaitUntil(() => !cineBrain.IsBlending);
+        
+        gameManager.InputManager.EnterOutStage();
+
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+        {
+            transform.position = hit.position;
+        }
     }
 
     private void OnLeftClickPerformed(InputAction.CallbackContext ctx)
     {
-        if (EventSystem.current.IsPointerOverGameObject()) return;
-        
         switch (ctx.interaction)
         {
             case PressInteraction:
-                if (!TryDetectEatery(inputManager.GetCursorPosition())) break;
+                if (!TryDetectEatery(gameManager.InputManager.GetCursorPosition())) break;
                 if (_coSelectStage is not null) StopCoroutine(_coSelectStage);
                 StartCoroutine(CoSelectStage());
                 break;
@@ -98,17 +105,17 @@ public class OutStagePlayerController : MonoBehaviour
         
         if (!Physics.Raycast(ray, out RaycastHit hit)) return false;
         if (!hit.collider.TryGetComponent(out curTargetEatery)) return false;
-        
         return true;
     }
 
     private IEnumerator CoSelectStage()
     {
         if (curTargetEatery is null) yield break;
-        
-        agent.SetDestination(curTargetEatery.Marker.position);
+        if (!NavMesh.SamplePosition(curTargetEatery.Marker.position, out NavMeshHit hit, 3f, NavMesh.AllAreas)) yield break;
+        agent.SetDestination(hit.position);
         yield return _waitPathPending;
         yield return _waitAgentArrival;
+        if (curTargetEatery.IsDummyEatery()) yield break;
         
         // agent 속도 가속도 조절해서 넓게 도는 거 방지 할 수 있을 듯?
         // 대신 남은 거리 임계점은 좀 넉넉히 해야해
@@ -117,13 +124,20 @@ public class OutStagePlayerController : MonoBehaviour
         yield return _waitVCamBlendingStart;
         yield return _waitVCamBlendingEnd;
         
-        stagePopUpUI.SetActive(true);
+        curTargetEatery.ActivatePopUpUI(this);
     }
 
-    public void DeactivatePopUp()
+    public void EnterStage(int stageId)
+    {
+        if (stageId <= 0) return;
+        gameManager.InputManager.ExitOutStage();
+        StartCoroutine(gameManager.CoLoadSceneAsync("InStage"));
+    }
+
+    public void DeselectEatery()
     {
         curTargetEatery.SetVCamPriority(0);
-        stagePopUpUI.SetActive(false);
+        curTargetEatery.DeactivatePopUpUI();
         curTargetEatery = null;
     }
 }

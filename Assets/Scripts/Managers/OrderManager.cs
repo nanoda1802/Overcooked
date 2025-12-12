@@ -22,7 +22,7 @@ public class OrderManager : MonoBehaviour, IManager
         UpdateOrderInterval();
     }
 
-    public void Init(StageManager sm)
+    public void Init(InStageManager sm)
     {
         _scoreManager = sm.ScoreManager;
         _orderInfo = sm.StageInfo.OrderInfoData;

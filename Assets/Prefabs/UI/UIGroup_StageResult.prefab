@@ -215,7 +215,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1499157660771649490}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8207454285807762829}
+        m_TargetAssemblyTypeName: StageResult, Assembly-CSharp
+        m_MethodName: OnLobbyButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1389979375244411553
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,7 +398,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Stage Clear!
+  m_Text: Result
 --- !u!1 &3466878961117728599
 GameObject:
   m_ObjectHideFlags: 0
@@ -763,13 +775,14 @@ GameObject:
   - component: {fileID: 9175452422044172486}
   - component: {fileID: 4366053386110336822}
   - component: {fileID: 8207454285807762829}
+  - component: {fileID: 889721490954740437}
   m_Layer: 5
   m_Name: UIGroup_StageResult
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7970790195487350575
 RectTransform:
   m_ObjectHideFlags: 0
@@ -846,6 +859,18 @@ MonoBehaviour:
   maxComboValueTxt: {fileID: 5639285880717065334}
   deliveredOrderValueTxt: {fileID: 8378855553505129509}
   incomeValueTxt: {fileID: 5796889218190798314}
+--- !u!225 &889721490954740437
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5319452242991626632}
+  m_Enabled: 0
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5508195836430681429
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,6 +882,7 @@ GameObject:
   - component: {fileID: 8151104076373741090}
   - component: {fileID: 6024857811825535305}
   - component: {fileID: 5029740111804494014}
+  - component: {fileID: 8202532400636400570}
   m_Layer: 5
   m_Name: Img_Reciept
   m_TagString: Untagged
@@ -923,6 +949,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8202532400636400570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5508195836430681429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfabb0440166ab443bba8876756fdfa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.45098042, g: 0.32156864, b: 0.22352943, a: 0.5}
+  m_EffectDistance: {x: 0, y: -5}
+  m_UseGraphicAlpha: 1
 --- !u!1 &5598727352933291121
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,7 +1532,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2088649981872123888}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8207454285807762829}
+        m_TargetAssemblyTypeName: StageResult, Assembly-CSharp
+        m_MethodName: OnRetryButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8162090048334493110
 GameObject:
   m_ObjectHideFlags: 0

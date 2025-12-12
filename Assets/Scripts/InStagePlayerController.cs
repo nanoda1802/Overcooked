@@ -12,7 +12,7 @@ public class InStagePlayerController : MonoBehaviour
     #region 필드와 프로퍼티
     /* 컴포넌트 */
     private Rigidbody _rb;
-    [SF] private StageManager stageManager;
+    [SF] private InStageManager inStageManager;
     /* 이동 */
     [Header("[ Move ]")] 
     [SF] private PlayerMovementData moveData;
@@ -166,8 +166,8 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnPauseStated(InputAction.CallbackContext ctx)
     {
-        if (stageManager.IsStagePaused) stageManager.ResumeStage();  
-        else stageManager.PauseStage();
+        if (inStageManager.IsStagePaused) inStageManager.ResumeStage();  
+        else inStageManager.PauseStage();
     }
 
     public void SubscribeInStageInputEvents(PlayerInput.InStageActions actionMap)

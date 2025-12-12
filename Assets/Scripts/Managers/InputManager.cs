@@ -1,4 +1,5 @@
 using UnityEngine;
+using SF = UnityEngine.SerializeField;
 
 public class InputManager : MonoBehaviour
 {
@@ -12,8 +13,8 @@ public class InputManager : MonoBehaviour
     private PlayerInput.OutStageActions _outStageActionMap;
     public PlayerInput.OutStageActions OutStageActionMap => _outStageActionMap;
 
-    private InStagePlayerController _inStagePlayerInStage;
-    private OutStagePlayerController _playerOutStage;
+    [SF] private InStagePlayerController inStagePlayerInStage;
+    [SF] private OutStagePlayerController playerOutStage;
     
     private void Awake()
     {
@@ -25,7 +26,7 @@ public class InputManager : MonoBehaviour
     private void OnEnable()
     {
         _inputs.Enable();
-        EnterOutStage(); // [임시]
+        // EnterOutStage(); // [임시]
     }
 
     private void OnDisable()
@@ -35,22 +36,22 @@ public class InputManager : MonoBehaviour
         SetDisableOutStageActionMap();
     }
 
-    public void SetEnableInStageActionMap()
+    private void SetEnableInStageActionMap()
     {
         _inStageActionMap.Enable();
     }
 
-    public void SetDisableInStageActionMap()
+    private void SetDisableInStageActionMap()
     {
         _inStageActionMap.Disable();
     }
 
-    public void SetEnableOutStageActionMap()
+    private void SetEnableOutStageActionMap()
     {
         _outStageActionMap.Enable();
     }
 
-    public void SetDisableOutStageActionMap()
+    private void SetDisableOutStageActionMap()
     {
         _outStageActionMap.Disable();
     }
@@ -63,29 +64,28 @@ public class InputManager : MonoBehaviour
     public void EnterInStage()
     {
         SetEnableInStageActionMap();
-        _inStagePlayerInStage = GameObject.FindWithTag("Player").GetComponent<InStagePlayerController>();
-        _inStagePlayerInStage.SubscribeInStageInputEvents(_inStageActionMap);
+        inStagePlayerInStage = GameObject.FindWithTag("Player").GetComponent<InStagePlayerController>();
+        inStagePlayerInStage.SubscribeInStageInputEvents(_inStageActionMap);
     }
 
     public void ExitInStage()
     {
-        _inStagePlayerInStage.UnsubscribeInStageInputEvents(_inStageActionMap);
-        _inStagePlayerInStage = null;
+        inStagePlayerInStage.UnsubscribeInStageInputEvents(_inStageActionMap);
+        inStagePlayerInStage = null;
         SetDisableInStageActionMap();
     }
 
     public void EnterOutStage() // [임시]
     {
         SetEnableOutStageActionMap();
-        _playerOutStage = GameObject.FindWithTag("Player").GetComponent<OutStagePlayerController>();
-        _playerOutStage.SubscribeOutStageInputEvents(_outStageActionMap);
-        _playerOutStage.inputManager = this;
+        playerOutStage = GameObject.FindWithTag("Player").GetComponent<OutStagePlayerController>();
+        playerOutStage.SubscribeOutStageInputEvents(_outStageActionMap);
     }
 
     public void ExitOutStage() // [임시]
     {
-        _playerOutStage.UnsubscribeOutStageInputEvents(_outStageActionMap);
-        _playerOutStage = null;
+        playerOutStage.UnsubscribeOutStageInputEvents(_outStageActionMap);
+        playerOutStage = null;
         SetDisableOutStageActionMap();
     }
 }

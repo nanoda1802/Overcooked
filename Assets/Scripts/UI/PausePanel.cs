@@ -5,11 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class PausePanel : MonoBehaviour
 {
-    private StageManager _stageManager;
+    private InStageManager _inStageManager;
+    private GameManager _gameManager;
 
-    public void Init(StageManager sm)
+    public void Init(InStageManager sm)
     {
-        _stageManager = sm;
+        _inStageManager = sm;
+        _gameManager = sm.GameManager;
     }
 
     public void Activate()
@@ -24,16 +26,19 @@ public class PausePanel : MonoBehaviour
 
     public void OnResume()
     {
-        _stageManager.ResumeStage();
+        _inStageManager.ResumeStage();
     }
 
     public void OnRetry()
     {
-        SceneManager.LoadScene(0); // [임시]
+        Debug.Log("Retry");
+        _gameManager.InputManager.ExitInStage();
+        StartCoroutine(_gameManager.CoLoadSceneAsync("InStage"));
+        Deactivate();
     }
 
     public void OnQuit()
     {
-        _stageManager.FinishStage();
+        _inStageManager.FinishStage();
     }
 }

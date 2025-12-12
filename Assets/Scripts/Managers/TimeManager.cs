@@ -26,7 +26,7 @@ public class TimeManager : MonoBehaviour, IManager
         UpdateTimer();
     }
     
-    public void Init(StageManager sm)
+    public void Init(InStageManager sm)
     {
         _onTimerDone += sm.FinishStage;
         _stageInfo = sm.StageInfo;

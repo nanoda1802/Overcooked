@@ -553,13 +553,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8614834263706282766}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.7058824}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -646,7 +646,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 308080061440645847, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 10
+      value: 10.000244
       objectReference: {fileID: 0}
     - target: {fileID: 308080061440645847, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1200,7 +1200,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8647877840440049089, guid: 179d76899a7902f4e90c6f5de599db7a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -10
+      value: -10.000244
       objectReference: {fileID: 0}
     - target: {fileID: 8647877840440049089, guid: 179d76899a7902f4e90c6f5de599db7a, type: 3}
       propertyPath: m_AnchoredPosition.y
