@@ -14,21 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   curStage: Test
   titles:
-  - Tutorial 01
-  - Tutorial 02
-  - Tutorial 03
+  - How To Cook 01
+  - How To Cook 02
+  - How To Cook 03
   descriptions:
-  - Tutorial 01 Description Tutorial 01 Description Tutorial 01 Description Tutorial
-    01 Description Tutorial 01 Description Tutorial 01 Description Tutorial 01 Description
-    Tutorial 01 Description
-  - Tutorial 02 Description Tutorial 02 Description Tutorial 02 Description Tutorial
-    02 Description Tutorial 02 Description Tutorial 02 Description Tutorial 02 Description
-    Tutorial 02 Description
-  - 'Tutorial 03 Description Tutorial 03 Description Tutorial 03 Description Tutorial
-    03 Description Tutorial 03 Description Tutorial 03 Description Tutorial 03 Description
-    Tutorial 03 Description '
-  previewSprites:
-  - {fileID: 21300000, guid: 283b422b74bacd54d85e07e22b459a67, type: 3}
-  - {fileID: 21300000, guid: 3118f35b519df8648847c31c8890b4c0, type: 3}
-  - {fileID: 21300000, guid: abd7a6db9a9fb474b825b026f9c68bab, type: 3}
+  - Hello? This is temp description of tutorial page 01. Hope you enjoy! Hello? This
+    is temp description of tutorial page 01. Hope you enjoy!
+  - Hello? This is temp description of tutorial page 02. Hope you enjoy! Hello? This
+    is temp description of tutorial page 02. Hope you enjoy!
+  - Hello? This is temp description of tutorial page 03. Hope you enjoy! Hello? This
+    is temp description of tutorial page 03. Hope you enjoy!
+  previewAnimController: {fileID: 9100000, guid: 8b2b62cc1cfe1f3469697cbe90cc77fc, type: 2}
   pageCount: 3

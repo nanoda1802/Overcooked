@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -9,16 +6,16 @@ public class Tutorial : MonoBehaviour
 {
     [SF] private Text titleTxt;
     [SF] private Text descriptionTxt;
-    [SF] private Image previewImg;
+    [SF] private Animator previewAnim;
+    private readonly int _paramHash = Animator.StringToHash("PageIdx");
     
     [SF] private Text pageTxt;
     [SF] private Button prevPageBtn;
     [SF] private Button nextPageBtn;
-
     [SF] private Toggle neverShownToggle;
     
     [SF] private TutorialData tutorialInfo;
-    [SF] private int curPageIdx;
+    private int _curPageIdx;
 
     private void Awake() // [임시]
     {
@@ -33,29 +30,30 @@ public class Tutorial : MonoBehaviour
 
     public void Init()
     {
-        curPageIdx = 0;
+        previewAnim.runtimeAnimatorController = tutorialInfo.PreviewAnimController;
+        _curPageIdx = 0;
         UpdateContents();
     }
 
     public void UpdateContents()
     {
-        titleTxt.text = tutorialInfo.GetCurrentTitle(curPageIdx);
-        descriptionTxt.text = tutorialInfo.GetCurrentDescription(curPageIdx);
-        previewImg.sprite = tutorialInfo.GetPreviewSprite(curPageIdx);
-
+        titleTxt.text = tutorialInfo.GetCurrentTitle(_curPageIdx);
+        descriptionTxt.text = tutorialInfo.GetCurrentDescription(_curPageIdx);
+        previewAnim.SetInteger(_paramHash, _curPageIdx);
+        
         UpdatePageText();
         
-        if (curPageIdx == 0) DeactivatePrevButton();
+        if (_curPageIdx == 0) DeactivatePrevButton();
         else ActivatePrevButton();
 
-        if (curPageIdx == tutorialInfo.PageCount - 1) DeactivateNextButton(); // [추가] 닫기 버튼 추가하고, 여기서 닫기 버튼 활성화하기
+        if (_curPageIdx == tutorialInfo.PageCount - 1) DeactivateNextButton(); // [추가] 닫기 버튼 추가하고, 여기서 닫기 버튼 활성화하기
         else ActivateNextButton();
         
     }
 
     public void UpdatePageText()
     {
-        pageTxt.text = $"{curPageIdx+1} / {tutorialInfo.PageCount}";
+        pageTxt.text = $"{_curPageIdx+1} / {tutorialInfo.PageCount}";
     }
 
     public void ActivatePrevButton()
@@ -84,15 +82,15 @@ public class Tutorial : MonoBehaviour
 
     public void OnPrevButton()
     {
-        if (curPageIdx == 0) return;
-        curPageIdx--;
+        if (_curPageIdx == 0) return;
+        _curPageIdx--;
         UpdateContents();
     }
 
     public void OnNextButton()
     {
-        if (curPageIdx == tutorialInfo.PageCount - 1) return;
-        curPageIdx++;
+        if (_curPageIdx == tutorialInfo.PageCount - 1) return;
+        _curPageIdx++;
         UpdateContents();
     }
 
