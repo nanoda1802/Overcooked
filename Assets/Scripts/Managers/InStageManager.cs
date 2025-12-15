@@ -56,7 +56,7 @@ public class InStageManager : MonoBehaviour
         Application.targetFrameRate = 120; // [임시]
         ResumeStage();
         
-        gameManager = FindObjectOfType(typeof(GameManager)) as GameManager;
+        gameManager ??= FindObjectOfType(typeof(GameManager)) as GameManager;
         gameManager?.InputManager.EnterInStage();
         
         scoreManager.Init(this);

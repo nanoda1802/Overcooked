@@ -130,10 +130,19 @@ public class OutStagePlayerController : MonoBehaviour
         }
         
         curTargetEatery.SetVCamPriority(maxCamPriority);
+
+        LookCam(curTargetEatery.GetVCamPos());
+        
         yield return _waitVCamBlendingStart;
         yield return _waitVCamBlendingEnd;
         
         curTargetEatery.ActivatePopUpUI(this);
+    }
+
+    private void LookCam(Vector3 camPos)
+    {
+        transform.LookAt(camPos);
+        transform.rotation = Quaternion.Euler(new Vector3(0, transform.rotation.eulerAngles.y, 0));
     }
 
     public void EnterStage(int stageId)

@@ -43,14 +43,12 @@ public class StageResult : MonoBehaviour
 
     public void OnRetryButton()
     {
-        Debug.Log("Retry");
         StartCoroutine(_gameManager.CoLoadSceneAsync("InStage"));
         Deactivate();
     }
     
     public void OnLobbyButton()
     {
-        Debug.Log("Lobby");
         StartCoroutine(_gameManager.CoLoadSceneAsync("OutStage"));
         Deactivate();
     }

@@ -28,7 +28,6 @@ public class PausePanel : MonoBehaviour
 
     public void OnRetry()
     {
-        Debug.Log("Retry");
         _gameManager.InputManager.ExitInStage();
         StartCoroutine(_gameManager.CoLoadSceneAsync("InStage"));
         Deactivate();

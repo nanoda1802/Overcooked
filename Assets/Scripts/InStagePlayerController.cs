@@ -95,6 +95,7 @@ public class InStagePlayerController : MonoBehaviour
     #region 인풋 이벤트 메서드
     private void OnMovePerformed(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         if (isWorking) return;  
         Vector2 input = ctx.ReadValue<Vector2>();  
         _moveDir.x = input.x;  
@@ -103,11 +104,13 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         _moveDir = Vector3.zero;
     }
 
     private void OnDashStarted(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         if (_dashCoroutine is not null) StopCoroutine(_dashCoroutine);  
         _dashCoroutine = StartCoroutine(CoDash());  
         _moveSpeedModifier = moveData.RunSpeedMultiplier;
@@ -115,11 +118,13 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnDashCanceled(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         _moveSpeedModifier = 1f;
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         switch (ctx.interaction)
         {
             case HoldInteraction:
@@ -137,12 +142,14 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnInteractCanceled(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         if (!isWorking) return; 
         StopWork();
     }
 
     private void OnThrowPerformed(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         if (pickedItem is null) return;
         
         switch (ctx.interaction)
@@ -158,6 +165,7 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnThrowCanceled(InputAction.CallbackContext ctx)
     {
+        if (!gameObject.activeSelf) return;
         if (pickedItem is null) return;
         if (ctx.interaction is not HoldInteraction) return;
         // 홀드 동안 계산된 throwDir로 던지기

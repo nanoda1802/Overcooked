@@ -21,6 +21,11 @@ public class Eatery : MonoBehaviour
         vCam.Priority = priority;
     }
 
+    public Vector3 GetVCamPos()
+    {
+        return vCam.transform.position;
+    }
+
     public void ActivatePopUpUI(OutStagePlayerController player)
     {
         popUpUI.gameObject.SetActive(true);
