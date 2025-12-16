@@ -8,7 +8,8 @@ public class Tutorial : MonoBehaviour
     [SF] private Text descriptionTxt;
     [SF] private Animator previewAnim;
     private readonly int _paramHash = Animator.StringToHash("PageIdx");
-    
+
+    [SF] private Button exitBtn;
     [SF] private Text pageTxt;
     [SF] private Button prevPageBtn;
     [SF] private Button nextPageBtn;
@@ -22,7 +23,7 @@ public class Tutorial : MonoBehaviour
         Init();
     }
 
-    private void Start()
+    private void Start() // [테스트용 임시]
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -31,11 +32,17 @@ public class Tutorial : MonoBehaviour
     public void Init()
     {
         previewAnim.runtimeAnimatorController = tutorialInfo.PreviewAnimController;
+        Activate();
+    }
+
+    public void Activate()
+    {
+        gameObject.SetActive(true);
         _curPageIdx = 0;
         UpdateContents();
     }
 
-    public void UpdateContents()
+    private void UpdateContents()
     {
         titleTxt.text = tutorialInfo.GetCurrentTitle(_curPageIdx);
         descriptionTxt.text = tutorialInfo.GetCurrentDescription(_curPageIdx);
@@ -43,38 +50,61 @@ public class Tutorial : MonoBehaviour
         
         UpdatePageText();
         
-        if (_curPageIdx == 0) DeactivatePrevButton();
+        if (_curPageIdx == 0) OnFirstPage();
         else ActivatePrevButton();
 
-        if (_curPageIdx == tutorialInfo.PageCount - 1) DeactivateNextButton(); // [추가] 닫기 버튼 추가하고, 여기서 닫기 버튼 활성화하기
+        if (_curPageIdx == tutorialInfo.PageCount - 1) OnLastPage();
         else ActivateNextButton();
-        
     }
 
-    public void UpdatePageText()
+    private void UpdatePageText()
     {
         pageTxt.text = $"{_curPageIdx+1} / {tutorialInfo.PageCount}";
     }
 
-    public void ActivatePrevButton()
+    private void OnFirstPage()
+    {
+        DeactivatePrevButton();
+        DeactivateExitButton();
+    }
+
+    private void OnLastPage()
+    {
+        DeactivateNextButton();
+        ActivateExitButton();
+    }
+
+    private void ActivateExitButton()
+    {
+        if (exitBtn.gameObject.activeSelf) return;
+        exitBtn.gameObject.SetActive(true);
+    }
+
+    private void DeactivateExitButton()
+    {
+        if (!exitBtn.gameObject.activeSelf) return;
+        exitBtn.gameObject.SetActive(false);
+    }
+
+    private void ActivatePrevButton()
     {
         if (prevPageBtn.gameObject.activeSelf) return;
         prevPageBtn.gameObject.SetActive(true);
     }
 
-    public void DeactivatePrevButton()
+    private void DeactivatePrevButton()
     {
         if (!prevPageBtn.gameObject.activeSelf) return;
         prevPageBtn.gameObject.SetActive(false);
     }
 
-    public void ActivateNextButton()
+    private void ActivateNextButton()
     {
         if (nextPageBtn.gameObject.activeSelf) return;
         nextPageBtn.gameObject.SetActive(true);
     }
 
-    public void DeactivateNextButton()
+    private void DeactivateNextButton()
     {
         if (!nextPageBtn.gameObject.activeSelf) return;
         nextPageBtn.gameObject.SetActive(false);
@@ -106,5 +136,10 @@ public class Tutorial : MonoBehaviour
         {
             
         }
+    }
+
+    public void OnExitButton()
+    {
+        gameObject.SetActive(false);
     }
 }

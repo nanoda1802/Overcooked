@@ -149,7 +149,7 @@ public class OutStagePlayerController : MonoBehaviour
     {
         if (stageId <= 0) return; // [임시]
         gameManager.InputManager.ExitOutStage();
-        StartCoroutine(gameManager.CoLoadSceneAsync("InStage"));
+        gameManager.ChangeScene("InStage");
     }
 
     public void DeselectEatery()

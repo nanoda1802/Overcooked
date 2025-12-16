@@ -29,7 +29,7 @@ public class PausePanel : MonoBehaviour
     public void OnRetry()
     {
         _gameManager.InputManager.ExitInStage();
-        StartCoroutine(_gameManager.CoLoadSceneAsync("InStage"));
+        _gameManager.ChangeScene("InStage");
         Deactivate();
     }
 

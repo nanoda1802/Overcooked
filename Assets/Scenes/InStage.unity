@@ -9931,7 +9931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 542718422831636662, guid: 77dc1eb6f19e574408bde930c4efb11f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 10.0008545
+      value: 10.000732
       objectReference: {fileID: 0}
     - target: {fileID: 611980557710631983, guid: 77dc1eb6f19e574408bde930c4efb11f, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10131,7 +10131,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4009436707078147601, guid: 77dc1eb6f19e574408bde930c4efb11f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -10.0008545
+      value: -10.000732
       objectReference: {fileID: 0}
     - target: {fileID: 4456466939937397759, guid: 77dc1eb6f19e574408bde930c4efb11f, type: 3}
       propertyPath: m_AnchorMax.y
@@ -10546,10 +10546,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_Tutorial
       objectReference: {fileID: 0}
-    - target: {fileID: 5626595211905858324, guid: 6e6fe61396e3d0346a303594ca02cebd, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 1040743217, guid: 16d1a473c38434b43a7965d87d772aef, type: 3}
+    - target: {fileID: 3267746781055158640, guid: 6e6fe61396e3d0346a303594ca02cebd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9085970123551269773, guid: 6e6fe61396e3d0346a303594ca02cebd, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -10740,6 +10740,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 559051836}
     m_Modifications:
+    - target: {fileID: 4366053386110336822, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 872106fd027812e458f7a8c4d231eb8f, type: 3}
+    - target: {fileID: 4366053386110336822, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
+      propertyPath: m_Color.b
+      value: 0.735849
+      objectReference: {fileID: 0}
+    - target: {fileID: 4366053386110336822, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
+      propertyPath: m_Color.g
+      value: 0.735849
+      objectReference: {fileID: 0}
+    - target: {fileID: 4366053386110336822, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
+      propertyPath: m_Color.r
+      value: 0.735849
+      objectReference: {fileID: 0}
     - target: {fileID: 5319452242991626632, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
       propertyPath: m_Name
       value: UI_StageResult

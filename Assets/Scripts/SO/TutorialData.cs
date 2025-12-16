@@ -10,17 +10,19 @@ public class TutorialData : ScriptableObject
     [SF] private RuntimeAnimatorController previewAnimController; // 스테이지 별로 다른 컨트롤러
     [SF] private int pageCount;
     
-    public string CurStage => curStage;
+    public string CurStage => curStage; // 쓸 일이 있을 것...
     public RuntimeAnimatorController PreviewAnimController => previewAnimController;
     public int PageCount => pageCount;
 
-    public string GetCurrentTitle(int curPageIdx) // 인덱싱 방어 조건 추가해야
+    public string GetCurrentTitle(int curPageIdx)
     {
+        if (curPageIdx < 0 || curPageIdx >= titles.Length) return string.Empty;
         return titles[curPageIdx];
     }
 
-    public string GetCurrentDescription(int curPageIdx) // 인덱싱 방어 조건 추가해야
+    public string GetCurrentDescription(int curPageIdx)
     {
+        if (curPageIdx < 0 || curPageIdx >= descriptions.Length) return string.Empty;
         return descriptions[curPageIdx];
     }
 }

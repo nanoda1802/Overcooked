@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     [SF] private InputManager inputManager;
     public InputManager InputManager => inputManager;
     
+    [SF] private LoadingDisplay loadingDisplay;
+    
     private void Awake()
     {
         if (_instance is null)
@@ -29,20 +31,41 @@ public class GameManager : MonoBehaviour
         inputManager.EnterOutStage();
     }
 
-    public IEnumerator CoLoadSceneAsync(string sceneName)
+    public void ChangeScene(string sceneName)
+    {
+        StartCoroutine(CoLoadSceneAsync(sceneName));
+    }
+
+    private IEnumerator CoLoadSceneAsync(string sceneName)
     {
         AsyncOperation loadOper = SceneManager.LoadSceneAsync(sceneName);
-        Time.timeScale = 1f;
+        if (loadOper is null) yield break;
+        
+        loadOper.allowSceneActivation = false;
+        Time.timeScale = 0f;
+        loadingDisplay.Activate();
 
+        float minTime = 0.3f;
+        
         while (!loadOper.isDone)
         {
-            yield return null;
-            if (loadOper.progress < 0.9f) continue;
+            if (loadOper.progress < 0.9f)
+            {
+                loadingDisplay.UpdateProgressImage(Mathf.Lerp(0f,0.3f,loadOper.progress * 0.3f));
+                yield return null;
+            }
+            else
+            {
+                minTime += Time.unscaledDeltaTime;
+                loadingDisplay.UpdateProgressImage(Mathf.Lerp(0.3f,1f,minTime));
+                yield return null;
+                if (minTime < 1f) continue;
             
-            loadOper.allowSceneActivation = true;
-            yield return null;
-            Time.timeScale = 1f;
-            yield break;
+                loadOper.allowSceneActivation = true;
+                yield return StartCoroutine(loadingDisplay.Fade(1, 0));
+                Time.timeScale = 1f;
+                yield break;
+            }
         }
     }
 }
