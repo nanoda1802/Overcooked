@@ -21,4 +21,4 @@ MonoBehaviour:
   stageDuration: 300
   gridInfos: []
   orderInfoData: {fileID: 11400000, guid: d363296185e771049911670253c78af7, type: 2}
-  bgm: {fileID: 8300000, guid: 0428e8b247c5be34a8b461de2f0b763a, type: 3}
+  bgm: {fileID: 8300000, guid: f1f7b7a2e71846d459717c0f83cac064, type: 3}

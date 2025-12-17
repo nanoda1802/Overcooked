@@ -26,20 +26,27 @@ public class Stove : WorkTable
         //     return;
         // }
         base.PlaceItem(item);
-        IsWorking = true;
+        BeginWork();
         ActivateUI();
     }
 
     public override Item DisplaceItem()
     {
         DeactivateUI();
+        StopWork();
         return base.DisplaceItem();
+    }
+
+    protected override void StopWork()
+    {
+        base.StopWork();
+        // Debug.Log($"{gameObject.name} StopWork!");
     }
 
     protected override void FinishWork()
     {
-        // [sfx] 조리 완료 소리 내기?
         // 근데 이거 maxDone 기준이라 finish는 다 탔을 때 호출되는디
         base.FinishWork();
+        // Debug.Log($"{gameObject.name} FinishWork!");
     }
 }

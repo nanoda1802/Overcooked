@@ -20,8 +20,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 37b67a21557161d469e7ce0e034fce7f, type: 2}
   - {fileID: 2100000, guid: b3737475b3717db4cabb07581e28a3bf, type: 2}
   - {fileID: 2100000, guid: 37c6e0d9defdae748b9708752b0bd42a, type: 2}
-  throwForce: 15
-  throwDamp: 0.6
-  maxThrowDistance: 3
+  throwForce: 18
+  throwDamp: 0.5
+  maxThrowDistance: 2
   ingredientOffsetY: 0
   ingredientPrefab: {fileID: 0}

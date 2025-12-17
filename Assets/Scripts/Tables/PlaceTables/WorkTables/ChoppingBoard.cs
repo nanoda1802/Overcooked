@@ -37,11 +37,12 @@ public class ChoppingBoard : WorkTable
         return base.DisplaceItem();
     }
 
-    public override bool BeginWork(InStagePlayerController player)
+    public override bool BeginWork(InStagePlayerController player = null)
     {
+        if (player is null) return false;
         if (placedItem is null) return false;
+        base.BeginWork();
         
-        IsWorking = true;
         if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
         
         player.OnWorkStopped += StopWork;
@@ -60,7 +61,7 @@ public class ChoppingBoard : WorkTable
     protected override void FinishWork()
     {
         _onFinished?.Invoke();
-        StopWork();
+        base.FinishWork();
         
         DeactivateUI();
     }

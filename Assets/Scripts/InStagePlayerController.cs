@@ -34,8 +34,11 @@ public class InStagePlayerController : MonoBehaviour
     [HideInInspector] public bool isWorking;
     public Action OnWorkStopped;
 
-    [SF] private AudioClip interactBlockedSfx; // [임시]
-    [SF] private AudioClip despawnSfx; // [임시]
+    [SF] private AudioClip interactBlockSoundClip; // [임시]
+    [SF] private AudioClip despawnSoundClip; // [임시]
+    [SF] private AudioClip dashSoundClip; // [임시]
+    [SF] private AudioClip attachSoundClip; // [임시]
+    [SF] private AudioClip throwSoundClip; // [임시]
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -116,6 +119,7 @@ public class InStagePlayerController : MonoBehaviour
     private void OnInteractPerformed(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
+        
         switch (ctx.interaction)
         {
             case HoldInteraction:
@@ -124,17 +128,9 @@ public class InStagePlayerController : MonoBehaviour
                 BeginWork(table);
                 return;
             case PressInteraction:
-                if (DetectTable())
-                {
-                    if (TryInteract()) return;
-                    if (pickedItem is not null) return;
-                }
-                if (pickedItem is not null)
-                {
-                    Drop();
-                    return;
-                }
-                if (DetectItem()) Pick();
+                if (TryPick()) return;
+                if (DetectTable()) TryInteract();
+                else Drop();
                 return;
         }
     }
@@ -225,6 +221,7 @@ public class InStagePlayerController : MonoBehaviour
         StopMoveImmediately();
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
         // [sfx] 대시 소리
+        GameManager.Instance.SoundManager.PlaySfx(dashSoundClip);
         yield return new WaitUntil(IsVelocityZero);
         yield return _waitInertiaDecay;
         StopMoveImmediately();
@@ -244,9 +241,10 @@ public class InStagePlayerController : MonoBehaviour
     #region 리스폰 메서드
     public void DespawnPlayer()
     {
+        StopMoveImmediately();
         gameObject.SetActive(false);
         // [sfx] 떨어지는 소리
-        GameManager.Instance.SoundManager.PlaySfx(despawnSfx);
+        GameManager.Instance.SoundManager.PlaySfx(despawnSoundClip);
         if (pickedItem is null) return;
         DetachItem().Deactivate();
     }
@@ -288,11 +286,13 @@ public class InStagePlayerController : MonoBehaviour
 
     private bool TryInteract()
     {
+        if (!DetectTable()) return false;
+        
         bool hasInteraction = _detectedTable.Interact(this);
         if (!hasInteraction)
         {
             // [sfx] 상호작용 블락 소리   
-            GameManager.Instance.SoundManager.PlaySfx(interactBlockedSfx);
+            GameManager.Instance.SoundManager.PlaySfx(interactBlockSoundClip);
         }
         _detectedTable = null;
         return hasInteraction;
@@ -329,8 +329,11 @@ public class InStagePlayerController : MonoBehaviour
         return hits > 0;
     }
 
-    private void Pick()
+    private bool TryPick()
     {
+        if (pickedItem is not null) return false;
+        if (!DetectItem())  return false;
+        
         float minDist = float.MaxValue;
         GameObject closestObj = null;
         
@@ -345,15 +348,17 @@ public class InStagePlayerController : MonoBehaviour
             closestObj = col.gameObject;
         }
 
-        if (closestObj is null) return;
-        if (!closestObj.TryGetComponent(out Item item)) return;
-        if (item.IsPlaced) return; // 버그 해결 핵심 분기...!
+        if (closestObj is null) return false;
+        if (!closestObj.TryGetComponent(out Item item)) return false;
+        if (item.IsPlaced) return false; // 버그 해결 핵심 분기...!
         
         AttachItem(item);
+        return true;
     }
 
     private void Drop()
     {
+        if (pickedItem is null) return;
         Item item = DetachItem();
         item.ActivatePhysics();
     }
@@ -361,8 +366,9 @@ public class InStagePlayerController : MonoBehaviour
     private void Throw(Vector3 dir)
     {
         DetachItem().SetThrowValues(pivot.position, dir, _moveSpeedModifier);
-        // [sfx] 던지는 소리
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
+        // [sfx] 던지는 소리
+        GameManager.Instance.SoundManager.PlaySfx(throwSoundClip);
     }
     
     public void AttachItem(Item item)
@@ -370,6 +376,7 @@ public class InStagePlayerController : MonoBehaviour
         item.SetParent(pivot);
         pickedItem = item;
         // [sfx] 재료 줍는 소리
+        GameManager.Instance.SoundManager.PlaySfx(attachSoundClip);
     }
 
     public Item DetachItem()

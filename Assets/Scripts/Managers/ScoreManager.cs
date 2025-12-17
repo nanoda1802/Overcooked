@@ -17,8 +17,8 @@ public class ScoreManager : MonoBehaviour, IManager
     
     [SF] private Color[] comboTxtColors;
 
-    [SF] private AudioClip addScoreSfx; // [임시]
-    [SF] private AudioClip deductScoreSfx; // [임시]
+    [SF] private AudioClip addScoreSoundClip; // [임시]
+    [SF] private AudioClip deductScoreSoundClip; // [임시]
     
     public void Init(InStageManager sm)
     {
@@ -40,14 +40,14 @@ public class ScoreManager : MonoBehaviour, IManager
         if (point <= 0)
         {
             // [sfx] 감점 소리
-            GameManager.Instance.SoundManager.PlaySfx(deductScoreSfx);
+            GameManager.Instance.SoundManager.PlaySfx(deductScoreSoundClip);
             ResetComboCount();
             _scoreTxtAnim.SetTrigger(_deductParamHash);    
         }
         else
         {
             // [sfx] 득점 소리
-            GameManager.Instance.SoundManager.PlaySfx(addScoreSfx);
+            GameManager.Instance.SoundManager.PlaySfx(addScoreSoundClip);
             _stageResult.CountDeliveredOrder();
             AddComboCount();
             _scoreTxtAnim.SetTrigger(_addParamHash);

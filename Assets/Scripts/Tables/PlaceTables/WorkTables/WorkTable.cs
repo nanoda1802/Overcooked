@@ -4,40 +4,45 @@ using SF = UnityEngine.SerializeField;
 
 public class WorkTable : PlaceTable
 {
-    protected bool IsWorking;
+    private bool _isWorking;
     [SF] protected Canvas fillBarCanvas;
     [SF] protected Image[] barImages;
-    [SF] protected AudioClip workSfx;
+    [SF] protected AudioClip workSoundClip;
+    
+    [SF] protected AudioSource curSfx;
     
     protected void Update()
     {
-        if (!IsWorking) return;
+        if (!_isWorking) return;
         if (placedItem is null) return;
         
         Work();
     }
     
-    public virtual bool BeginWork(InStagePlayerController player)
+    public virtual bool BeginWork(InStagePlayerController player = null)
     {
-        if (placedItem is null) return false;
-        return IsWorking = true;
+        _isWorking = true;
+        // [sfx] 테이블 별 일하는 소리 시작
+        curSfx = GameManager.Instance.SoundManager.PlayLoopingSfx(workSoundClip);
+        return true;
     }
 
     protected virtual void StopWork()
     {
-        IsWorking = false;
+        _isWorking = false;
+        // [sfx] 테이블 별 일하는 소리 끝
+        GameManager.Instance.SoundManager.MuteLoopingSfx(curSfx);
+        curSfx = null;
     }
 
     protected virtual void FinishWork()
     {
-        IsWorking = false;
+        StopWork();
     }
 
     private void Work()
     {
         FillBarImg(placedItem.Handle());
-        // [sfx] 테이블 별 일하는 소리
-        // if (workSfx is not null) soundManager.Play(workSfx);
         if (placedItem.IsMaxDone()) FinishWork();
     }
 

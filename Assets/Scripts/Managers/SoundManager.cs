@@ -8,8 +8,9 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
     [SF] private AudioSource bgm;
     [SF] private int poolSize;
     private Queue<AudioSource> _pool;
-    [SF] private AudioClip btnDefaultSfx;
     
+    [SF] private float sfxMaxVolume = 1f;
+    [SF] private AudioClip btnDefaultSoundClip;
     
     public void InitPool()
     {
@@ -36,6 +37,7 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
     
     public void ReturnToPool(AudioSource poolable)
     {
+        poolable.loop = false;
         poolable.clip = null;
         poolable.gameObject.SetActive(false);
         _pool.Enqueue(poolable);
@@ -43,7 +45,7 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
 
     private AudioSource InstantiateSfxObj(int idx = -1)
     {
-        string sfxName = idx >= 0 ? $"Sfx_{idx}" : $"Sfx_Instant";
+        string sfxName = idx >= 0 ? $"Sfx_{idx}" : "Sfx_Instant";
         GameObject sfxObj = new GameObject(sfxName);
         sfxObj.transform.SetParent(transform);
         
@@ -69,7 +71,7 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
     {
         while (bgm.volume > 0)
         {
-            bgm.volume -= Time.unscaledDeltaTime * 2;
+            bgm.volume -= Time.unscaledDeltaTime * 1.5f;
             yield return null;
         }
         
@@ -81,9 +83,9 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
         bgm.clip = clip;
         bgm.Play();
 
-        while (bgm.volume < 1)
+        while (bgm.volume < sfxMaxVolume)
         {
-            bgm.volume += Time.unscaledDeltaTime * 2;
+            bgm.volume += Time.unscaledDeltaTime * 1.5f;
             yield return null;
         }
     }
@@ -91,7 +93,7 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
     public void PlaySfx(AudioClip clip = null)
     {
         TryGetItem(out AudioSource sfx);
-        sfx.clip = clip is null ? btnDefaultSfx : clip;
+        sfx.clip = clip is null ? btnDefaultSoundClip : clip;
         sfx.volume = 1; // [임시] 추후 옵션으로 일괄 ...
         StartCoroutine(CoPlaySfx(sfx));
     }
@@ -106,6 +108,34 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
             yield return null;
         }
         
+        ReturnToPool(sfx);
+    }
+
+    public AudioSource PlayLoopingSfx(AudioClip clip)
+    {
+        TryGetItem(out AudioSource sfx);
+        sfx.clip = clip;
+        sfx.loop = true;
+        sfx.volume = 1; // [임시] 추후 옵션으로 일괄 ... 
+        sfx.Play();
+        return sfx;
+    }
+
+    public void MuteLoopingSfx(AudioSource sfx)
+    {
+        if (sfx is null) return;
+        StartCoroutine(CoFadeOutLoopingSfx(sfx));
+    }
+
+    private IEnumerator CoFadeOutLoopingSfx(AudioSource sfx)
+    {
+        while (sfx.volume > 0)
+        {
+            sfx.volume -= Time.unscaledDeltaTime * 1.5f;
+            yield return null;
+        }
+        
+        sfx.Stop();
         ReturnToPool(sfx);
     }
 }

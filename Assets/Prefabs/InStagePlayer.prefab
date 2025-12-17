@@ -134,11 +134,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7985ac1b076ee2142b5ae203a8d44b0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inStageManager: {fileID: 0}
   moveData: {fileID: 11400000, guid: 1ac7603815979984ab1cab9b1f511ab1, type: 2}
   detectData: {fileID: 11400000, guid: eef123bc93ed3034ca89464c2a45a112, type: 2}
   pivot: {fileID: 4884989298701289034}
   pickedItem: {fileID: 0}
   isWorking: 0
+  interactBlockSoundClip: {fileID: 8300000, guid: aa3080448ea1d484eaf98e10fe063b80, type: 3}
+  despawnSoundClip: {fileID: 8300000, guid: 826b41d05ae1d604bb65f5dd0b47ae6d, type: 3}
+  dashSoundClip: {fileID: 8300000, guid: bb19cc7d9c72dc5468efa6218e801784, type: 3}
+  attachSoundClip: {fileID: 8300000, guid: a7604af10ba0bd844927885a1be5b962, type: 3}
+  throwSoundClip: {fileID: 8300000, guid: 564dca54f8e6ec846b75c4aae0c32218, type: 3}
 --- !u!54 &5196186138760199806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -278,9 +284,25 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: d00f0b3c-3866-496c-a514-7ab7e36e52ce
     m_ActionName: Player/LeftCtrl[/Keyboard/c]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 0ebe20d6-8fc9-4eb1-b9cd-8fdf3aa3a412
+    m_ActionName: InStage/Pause[/Keyboard/escape]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 435cf2e2-0b23-420b-9424-eec71d42e41d
+    m_ActionName: OutStage/CursorPos[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: c3f6bdec-1c39-4556-974d-eb03be308f6c
+    m_ActionName: OutStage/LeftClick[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 79b59ec2-3b3c-4ef1-97e7-d985f48ddab8
+    m_ActionName: OutStage/Scroll[/Mouse/scroll]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: PC
-  m_DefaultActionMap: Player
+  m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &4021617750095250983

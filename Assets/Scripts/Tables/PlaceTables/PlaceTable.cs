@@ -30,7 +30,6 @@ public class PlaceTable : Table
         placedItem = item;
         item.IsPlaced = true;
         pivot.localScale *= scaleOffset;
-        // [sfx] 재료 놓는 소리
     }
     
     public virtual Item DisplaceItem() { 

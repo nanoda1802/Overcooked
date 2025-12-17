@@ -472,6 +472,8 @@ MonoBehaviour:
   barImages:
   - {fileID: 3212028284119786299}
   - {fileID: 4550176872679273383}
+  workSoundClip: {fileID: 8300000, guid: d7b6689aab8ca014a83cf2727583c86f, type: 3}
+  curSfx: {fileID: 0}
 --- !u!65 &664470068792072275
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -136,7 +136,10 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: b98ec004a4880ad4ba4e10903cb4249b, type: 2}
   throwOrigin: {x: 0, y: 0, z: 0}
   throwDir: {x: 0, y: 0, z: 0}
-  throwForce: 0
+  throwForceModifier: 0
+  <IsThrown>k__BackingField: 0
+  <IsFalling>k__BackingField: 0
+  <IsPlaced>k__BackingField: 0
   curProgress: 0
   curDoneness: 0
 --- !u!64 &8790229360840270275
@@ -170,7 +173,7 @@ Rigidbody:
   m_GameObject: {fileID: 769096965684271472}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 5
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -19,14 +17,14 @@ public class StageSelectPopUp : MonoBehaviour
     [SF] private Color32 achievedTextColor;
     [SF] private Color32 failedTextColor;
     
-    [SF] private AudioClip stageEntered;
+    [SF] private AudioClip stageEnterSoundClip;
     
     public void SubscribeButtonEvents(OutStagePlayerController player, int stageId)
     {
         enterBtn.onClick.AddListener(()=>
         {
             player.EnterStage(stageId);
-            GameManager.Instance.SoundManager.PlaySfx(stageEntered);
+            GameManager.Instance.SoundManager.PlaySfx(stageEnterSoundClip);
         });
         closeBtn.onClick.AddListener(()=>
         {

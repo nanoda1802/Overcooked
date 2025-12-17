@@ -54,7 +54,6 @@ public class Sink : WorkTable, IPool<Item>
         
         plate.Deactivate();
 
-        if (!sinkCanvas.gameObject.activeSelf) ActivatePlateCount();
         UpdatePlateCount();
     }
     
@@ -64,13 +63,12 @@ public class Sink : WorkTable, IPool<Item>
         placedItem = null;
         
         UpdatePlateCount();
-        if(_pool.Count <= 0) DeactivatePlateCount();
-        
         return null;
     }
     
-    public override bool BeginWork(InStagePlayerController player)
+    public override bool BeginWork(InStagePlayerController player = null)
     {
+        if (player is null) return false;
         if (placedItem is null) 
         {
             if (!TryGetItem(out placedItem)) return false;
@@ -78,7 +76,7 @@ public class Sink : WorkTable, IPool<Item>
             ActivateUI();
         }
 
-        IsWorking = true;
+        base.BeginWork();
         
         player.OnWorkStopped += StopWork;
         _onFinished = player.FinishWork;
@@ -95,7 +93,7 @@ public class Sink : WorkTable, IPool<Item>
     protected override void FinishWork()
     {
         _onFinished.Invoke();
-        StopWork();
+        base.FinishWork();
         
         DeactivateUI();
         DisplaceItem();
@@ -113,6 +111,12 @@ public class Sink : WorkTable, IPool<Item>
     
     private void UpdatePlateCount() // [임시]
     {
+        if (_pool.Count <= 0)
+        {
+            DeactivatePlateCount();
+            return;
+        }
+        if (!sinkCanvas.gameObject.activeSelf) ActivatePlateCount();
         sinkText.text = $"{_pool.Count}";
     }
 

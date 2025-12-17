@@ -19,9 +19,9 @@ public class Item : MonoBehaviour, IPoolable
     [SF] private Vector3 throwOrigin;
     [SF] private Vector3 throwDir;
     [SF] private float throwForceModifier;
-    public bool IsThrown { get; private set; }
-    public bool IsFalling { get; private set; }
-    public bool IsPlaced { get; set; }
+    [field:SF] public bool IsThrown { get; private set; }
+    [field:SF] public bool IsFalling { get; private set; }
+    [field:SF] public bool IsPlaced { get; set; }
     /* 아이템 요리조리 */
     [Header("[ Doneness ]")] 
     [SF] private float curProgress;

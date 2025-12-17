@@ -415,8 +415,16 @@ PrefabInstance:
       value: Meat
       objectReference: {fileID: 0}
     - target: {fileID: 7289515810239547363, guid: 78338f00b6a8ea0438b249f7c70a8c94, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7289515810239547363, guid: 78338f00b6a8ea0438b249f7c70a8c94, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7289515810239547363, guid: 78338f00b6a8ea0438b249f7c70a8c94, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6148534383111941940, guid: 78338f00b6a8ea0438b249f7c70a8c94, type: 3}
@@ -446,8 +454,16 @@ PrefabInstance:
       value: Cabbage
       objectReference: {fileID: 0}
     - target: {fileID: 3675245381779779352, guid: 4cfb9702c8a68aa458d16f61c114122b, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3675245381779779352, guid: 4cfb9702c8a68aa458d16f61c114122b, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3675245381779779352, guid: 4cfb9702c8a68aa458d16f61c114122b, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 8449828130959628347, guid: 4cfb9702c8a68aa458d16f61c114122b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -558,8 +574,16 @@ PrefabInstance:
       value: Cheese
       objectReference: {fileID: 0}
     - target: {fileID: 7185309294429992422, guid: 22185c1cc221d74478923737c6a83f57, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185309294429992422, guid: 22185c1cc221d74478923737c6a83f57, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7185309294429992422, guid: 22185c1cc221d74478923737c6a83f57, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3822120838703725628, guid: 22185c1cc221d74478923737c6a83f57, type: 3}
@@ -589,8 +613,16 @@ PrefabInstance:
       value: Tomato
       objectReference: {fileID: 0}
     - target: {fileID: 769096965684271472, guid: fb135e8ee64066044b07cb9870dc06e5, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 769096965684271472, guid: fb135e8ee64066044b07cb9870dc06e5, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 769096965684271472, guid: fb135e8ee64066044b07cb9870dc06e5, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 2687248878397770002, guid: fb135e8ee64066044b07cb9870dc06e5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -660,8 +692,16 @@ PrefabInstance:
       value: Bun
       objectReference: {fileID: 0}
     - target: {fileID: 4197651994025035912, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4197651994025035912, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4197651994025035912, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     - target: {fileID: 4331712229842803752, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -709,6 +749,8 @@ PrefabInstance:
     - {fileID: -9192566205105230573, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
     - {fileID: 6218803197901439917, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
     - {fileID: 627212232291210728, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
+    - {fileID: 3302919296269204336, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
+    - {fileID: 134933554850626729, guid: c1b27b995fc742a48991cfc5bbb5080a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

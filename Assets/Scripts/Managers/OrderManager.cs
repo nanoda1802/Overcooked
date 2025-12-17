@@ -12,7 +12,7 @@ public class OrderManager : MonoBehaviour, IManager
     /* 주문 생성 */
     private List<FoodOrder> _activeOrderList;
     private float _intervalCount;
-    [SF] private AudioClip newOrderSfx; // [임시]
+    [SF] private AudioClip newOrderSoundClip; // [임시]
     /* UI */
     [SF] private Transform orderGroupUI;
     private List<FoodOrder> _orderGroupChildren;
@@ -79,7 +79,7 @@ public class OrderManager : MonoBehaviour, IManager
         
         _stageResult.CountTotalOrder();
         // [sfx] 신규 주문 소리
-        GameManager.Instance.SoundManager.PlaySfx(newOrderSfx);
+        GameManager.Instance.SoundManager.PlaySfx(newOrderSoundClip);
     }
 
     public void RemoveOrder(FoodOrder order)
