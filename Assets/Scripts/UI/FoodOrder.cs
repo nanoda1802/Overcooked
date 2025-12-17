@@ -85,6 +85,7 @@ public class FoodOrder : MonoBehaviour
         UpdateFillImage();
         if (_timerCount > 0) return;
         
+        // [sfx] 주문 타임아웃 소리
         _scoreManager.UpdateScore(GetBaseScore(),-1);
         Deactivate();
         _orderManager.RemoveOrder(this);

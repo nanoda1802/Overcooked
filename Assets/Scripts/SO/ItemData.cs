@@ -26,7 +26,7 @@ public class ItemData : ScriptableObject
     [Header("[ Throw Values ]")]
     [SF, Range(1f, 20f)] private float throwForce;
     [SF] [Range(0f,1f)] private float throwDamp;
-    [SF] [Range(5f,30f)] private float maxThrowDistance;
+    [SF] [Range(1f,30f)] private float maxThrowDistance;
     public float ThrowForce => throwForce;
     public float ThrowDamp => throwDamp;
     public float MaxThrowDistance => maxThrowDistance;

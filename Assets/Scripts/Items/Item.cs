@@ -41,7 +41,11 @@ public class Item : MonoBehaviour, IPoolable
         if (other.gameObject.CompareTag("Player")) return; // [임시]
         
         if (IsThrown) StopThrowing();
-        else if (IsFalling) IsFalling = false;
+        else if (IsFalling)
+        {
+            IsFalling = false;
+            DeactivateTrail();
+        }
     }
     #endregion
 
@@ -107,7 +111,6 @@ public class Item : MonoBehaviour, IPoolable
         
         IsThrown = false;
         IsFalling = true;
-        DeactivateTrail();
     }
     
     public void SetParent(Transform parent)

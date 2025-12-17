@@ -19,8 +19,8 @@ MonoBehaviour:
   mats:
   - {fileID: 2100000, guid: 8ec0e1b86f886a3489434d88701373e9, type: 2}
   - {fileID: 2100000, guid: b3737475b3717db4cabb07581e28a3bf, type: 2}
-  throwForce: 12
-  throwDamp: 0.4
-  maxThrowDistance: 15
+  throwForce: 15
+  throwDamp: 0.6
+  maxThrowDistance: 3
   ingredientOffsetY: 0.04
   ingredientPrefab: {fileID: 5020934527727135508, guid: 93b2a89e4fa1b464faaf8131c8271a50, type: 3}

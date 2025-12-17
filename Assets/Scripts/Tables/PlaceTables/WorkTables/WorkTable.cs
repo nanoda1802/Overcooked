@@ -7,7 +7,8 @@ public class WorkTable : PlaceTable
     protected bool IsWorking;
     [SF] protected Canvas fillBarCanvas;
     [SF] protected Image[] barImages;
-
+    [SF] protected AudioClip workSfx;
+    
     protected void Update()
     {
         if (!IsWorking) return;
@@ -16,7 +17,7 @@ public class WorkTable : PlaceTable
         Work();
     }
     
-    public virtual bool BeginWork(InStagePlayerController inStagePlayer)
+    public virtual bool BeginWork(InStagePlayerController player)
     {
         if (placedItem is null) return false;
         return IsWorking = true;
@@ -35,6 +36,8 @@ public class WorkTable : PlaceTable
     private void Work()
     {
         FillBarImg(placedItem.Handle());
+        // [sfx] 테이블 별 일하는 소리
+        // if (workSfx is not null) soundManager.Play(workSfx);
         if (placedItem.IsMaxDone()) FinishWork();
     }
 

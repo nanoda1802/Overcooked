@@ -2387,6 +2387,10 @@ PrefabInstance:
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
+      propertyPath: despawnSfx
+      value: 
+      objectReference: {fileID: 8300000, guid: 826b41d05ae1d604bb65f5dd0b47ae6d, type: 3}
+    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: stageManager
       value: 
       objectReference: {fileID: 992935538}
@@ -2394,6 +2398,10 @@ PrefabInstance:
       propertyPath: inStageManager
       value: 
       objectReference: {fileID: 992935538}
+    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
+      propertyPath: interactBlockedSfx
+      value: 
+      objectReference: {fileID: 8300000, guid: aa3080448ea1d484eaf98e10fe063b80, type: 3}
     - target: {fileID: 7102077388945321086, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4961,6 +4969,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0655252e93c204b969a6c14a5e1d0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  newOrderSfx: {fileID: 8300000, guid: 109a8fd3f0bc83e44b3d843ea8664cf5, type: 3}
   orderGroupUI: {fileID: 931042406009026930}
 --- !u!4 &1067675856
 Transform:
@@ -5641,6 +5650,8 @@ MonoBehaviour:
   - {r: 0.98039216, g: 0.54140455, b: 0.12549022, a: 1}
   - {r: 0.98039216, g: 0.42438966, b: 0.12549022, a: 1}
   - {r: 0.98039216, g: 0.2952977, b: 0.12549022, a: 1}
+  addScoreSfx: {fileID: 8300000, guid: de0b9a52e1637f941b2c32024ce92b1e, type: 3}
+  deductScoreSfx: {fileID: 8300000, guid: 9ade9c77745701c438833ea12ce34a41, type: 3}
 --- !u!4 &1287589741
 Transform:
   m_ObjectHideFlags: 0

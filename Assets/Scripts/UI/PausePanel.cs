@@ -14,6 +14,7 @@ public class PausePanel : MonoBehaviour
     public void Activate()
     {
         gameObject.SetActive(true);
+        // [sfx] 퍼즈될 때 소리
     }
 
     public void Deactivate()
@@ -24,6 +25,8 @@ public class PausePanel : MonoBehaviour
     public void OnResume()
     {
         _inStageManager.ResumeStage();
+        // [sfx] 버튼 기본 소리
+        GameManager.Instance.SoundManager.PlaySfx();
     }
 
     public void OnRetry()
@@ -31,11 +34,15 @@ public class PausePanel : MonoBehaviour
         _gameManager.InputManager.ExitInStage();
         _gameManager.ChangeScene("InStage");
         Deactivate();
+        // [sfx] 버튼 기본 소리
+        GameManager.Instance.SoundManager.PlaySfx();
     }
 
     public void OnQuit()
     {
         _inStageManager.FinishStage();
         Deactivate();
+        // [sfx] 버튼 기본 소리
+        GameManager.Instance.SoundManager.PlaySfx();
     }
 }

@@ -58,6 +58,7 @@ public class InStageManager : MonoBehaviour
         
         gameManager ??= FindObjectOfType(typeof(GameManager)) as GameManager;
         gameManager?.InputManager.EnterInStage();
+        gameManager?.SoundManager.ChangeBgm(stageInfo.Bgm);
         
         scoreManager.Init(this);
         orderManager.Init(this);
@@ -94,6 +95,7 @@ public class InStageManager : MonoBehaviour
     public void FinishStage() // [임시]
     {
         gameManager.InputManager.ExitInStage();
+        gameManager.SoundManager.MuteCurrentBgm();
         timeManager.Deinit();
         orderManager.Deinit();
         scoreManager.Deinit();

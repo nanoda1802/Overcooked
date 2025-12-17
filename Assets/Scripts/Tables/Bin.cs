@@ -13,12 +13,12 @@ public class Bin : Table
         item.Deactivate();
     }
     
-    public override bool Interact(InStagePlayerController inStagePlayer)
+    public override bool Interact(InStagePlayerController player)
     {
-        if (inStagePlayer.pickedItem is null) return false;
+        if (player.pickedItem is null) return false;
         
-        if (inStagePlayer.pickedItem is Plate plate) plate.ClearPlate();
-        else inStagePlayer.DetachItem().Deactivate();
+        if (player.pickedItem is Plate plate) plate.ClearPlate();
+        else player.DetachItem().Deactivate();
         
         return true;
     }

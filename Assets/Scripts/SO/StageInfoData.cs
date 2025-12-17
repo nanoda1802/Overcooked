@@ -16,6 +16,8 @@ public class StageInfoData : ScriptableObject
     [SF] private Grid[] gridInfos; // [임시]
     [SF] private OrderInfoData orderInfoData;
     
+    [SF] private AudioClip bgm;
+    
     public int StageId => stageId;
     public string StageName => stageName;
     public string StageDescription => stageDescription;
@@ -25,7 +27,8 @@ public class StageInfoData : ScriptableObject
     public float StageDuration => stageDuration;
     public Grid[] GridInfos => gridInfos;
     public OrderInfoData OrderInfoData => orderInfoData;
-
+    public AudioClip Bgm => bgm;
+    
     public int CalculateAchievedScoreCutIndex() // [임시] 매개변수로 최고 점수 받아야해
     {
         int idx = -1;

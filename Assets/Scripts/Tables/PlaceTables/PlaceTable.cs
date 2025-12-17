@@ -8,16 +8,16 @@ public class PlaceTable : Table
     [SF,Range(0f,1f)] private float scaleOffset;
     [SF] protected ItemType[] availableItems;
     
-    public override bool Interact(InStagePlayerController inStagePlayer)
+    public override bool Interact(InStagePlayerController player)
     {
-        if (inStagePlayer.pickedItem is null && placedItem is not null)
+        if (player.pickedItem is null && placedItem is not null)
         {
-            inStagePlayer.AttachItem(DisplaceItem());
+            player.AttachItem(DisplaceItem());
             return true;
         }
-        if (inStagePlayer.pickedItem is not null && placedItem is null && availableItems.Contains(inStagePlayer.pickedItem.Data.ItemType))
+        if (player.pickedItem is not null && placedItem is null && availableItems.Contains(player.pickedItem.Data.ItemType))
         {
-            PlaceItem(inStagePlayer.DetachItem());
+            PlaceItem(player.DetachItem());
             return true;
         }
         
@@ -30,6 +30,7 @@ public class PlaceTable : Table
         placedItem = item;
         item.IsPlaced = true;
         pivot.localScale *= scaleOffset;
+        // [sfx] 재료 놓는 소리
     }
     
     public virtual Item DisplaceItem() { 
@@ -50,7 +51,7 @@ public class PlaceTable : Table
         if (!other.CompareTag("Item")) return false;
         if (!other.TryGetComponent(out Item item)) return false;
         if (!availableItems.Contains(item.Data.ItemType)) return false;
-        if (!item.IsThrown && !item.IsFalling) return false;
+        if (!item.IsFalling) return false;
         
         checkedItem = item;
         return true;

@@ -19,11 +19,7 @@ public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
     
     public bool TryGetItem(out IngredientsInfo ui)
     {
-        if (_ingredientsInfoPool.TryDequeue(out IngredientsInfo poolUi))
-        {
-            ui = poolUi;
-            return true;
-        }
+        if (_ingredientsInfoPool.TryDequeue(out ui)) return true;
         
         GameObject uiObj = Instantiate(ingredientsInfoPrefab, transform);
         if (!uiObj.TryGetComponent(out IngredientsInfo instantUi))
@@ -41,11 +37,7 @@ public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
     
     public bool TryGetItem(out RespawnTimer ui)
     {
-        if (_respawnTimerPool.TryDequeue(out RespawnTimer poolUi))
-        {
-            ui = poolUi;
-            return true;
-        }
+        if (_respawnTimerPool.TryDequeue(out ui)) return true;
         
         GameObject uiObj = Instantiate(respawnTimerPrefab, transform);
         if (!uiObj.TryGetComponent(out RespawnTimer instantUi))

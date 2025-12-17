@@ -24,6 +24,7 @@ public class StageResult : MonoBehaviour
     {
         gameObject.SetActive(true);
         SetTexts();
+        // [sfx] 결산창 소리
     }
 
     private void Deactivate()

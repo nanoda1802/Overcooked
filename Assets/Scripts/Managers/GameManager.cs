@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     [SF] private InputManager inputManager;
     public InputManager InputManager => inputManager;
     
+    [SF] private SoundManager soundManager;
+    public SoundManager SoundManager => soundManager;
+    
     [SF] private LoadingDisplay loadingDisplay;
     
     private void Awake()
@@ -29,10 +32,12 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         inputManager.EnterOutStage();
+        soundManager.InitPool();
     }
 
     public void ChangeScene(string sceneName)
     {
+        soundManager.MuteCurrentBgm();
         StartCoroutine(CoLoadSceneAsync(sceneName));
     }
 

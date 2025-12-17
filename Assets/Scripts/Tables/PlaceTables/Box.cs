@@ -11,9 +11,17 @@ public class Box : PlaceTable
         PlaceItem(item);
     }
 
-    public override bool Interact(InStagePlayerController inStagePlayer)
+    public override bool Interact(InStagePlayerController player)
     {
-        return base.Interact(inStagePlayer);
+        if (placedItem is not Plate plate) return base.Interact(player);
+        if (player.pickedItem is null)
+        {
+            player.AttachItem(DisplaceItem());
+            return true;
+        }
+        if (!plate.IsAbleToStack(player.pickedItem)) return false;
+        plate.StackIngredient(player.DetachItem());
+        return true;
     }
 
     public override void PlaceItem(Item item)

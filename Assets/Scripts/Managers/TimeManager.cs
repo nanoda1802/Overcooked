@@ -54,6 +54,7 @@ public class TimeManager : MonoBehaviour, IManager
     {
         if (_leftTime <= 0)
         {
+            // [sfx] 스테이지 타임아웃 소리
             _onTimerDone?.Invoke();
             return;
         }

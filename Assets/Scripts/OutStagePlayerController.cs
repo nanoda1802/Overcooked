@@ -23,6 +23,8 @@ public class OutStagePlayerController : MonoBehaviour
 
     [SF] private Eatery curTargetEatery;
     [SF] private int maxCamPriority;
+
+    [SF] private AudioClip bgm;
     
     private void Awake()
     {
@@ -46,15 +48,14 @@ public class OutStagePlayerController : MonoBehaviour
 
     private void Start()
     {
-        // Time.timeScale = 1f; // [임시]
-        
         _waitPathPending = new WaitUntil(() => !agent.pathPending);
         _waitAgentArrival = new WaitUntil(IsAgentArrived);
         _waitVCamBlendingStart = new WaitUntil(() => cineBrain.IsBlending);
         _waitVCamBlendingEnd = new WaitUntil(() => !cineBrain.IsBlending);
         
         gameManager.InputManager.EnterOutStage();
-
+        gameManager.SoundManager.ChangeBgm(bgm);
+        
         if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
         {
             transform.position = hit.position;

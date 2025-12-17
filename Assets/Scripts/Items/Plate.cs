@@ -12,12 +12,27 @@ public class Plate : Item
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsPlaced || IsInDishRack || !IsMaxDone()) return;
+        // if (!IsPlaced || IsInDishRack || !IsMaxDone()) return;
+        // if (!other.CompareTag("Item")) return;
+        // if (!other.TryGetComponent(out Item item)) return;
+        // if (item is Plate || !item.IsWellDone()) return;
+
         if (!other.CompareTag("Item")) return;
-        if (!other.TryGetComponent(out Item item) || item is Plate) return;
-        if (!item.IsWellDone()) return;
+        if (!other.TryGetComponent(out Item item)) return;
         
+        if (!IsAbleToStack(item)) return;
         StackIngredient(item);
+    }
+
+    public bool IsAbleToStack(Item targetItem)
+    {
+        if (!IsPlaced || IsInDishRack || !IsMaxDone()) return false;
+        if (targetItem is Plate || !targetItem.IsWellDone()) return false;
+        if (_ingredientsInfo is null) return true;
+        
+        if (_ingredientsInfo.IsFull()) return false;
+        if (targetItem.Data.ItemType is ItemType.Bun && _ingredientsInfo.HasBun) return false;
+        return true;
     }
 
     public void StackIngredient(Item item)
@@ -27,9 +42,6 @@ public class Plate : Item
             if (!uiPool.TryGetItem(out _ingredientsInfo)) return;
             _ingredientsInfo.ConnectWithPlate(this);
         }
-        
-        if (_ingredientsInfo.IsFull()) return;
-        if (item.Data.ItemType is ItemType.Bun && _ingredientsInfo.HasBun) return;
         
         item.Deactivate();
         

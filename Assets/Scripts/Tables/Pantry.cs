@@ -20,13 +20,13 @@ public class Pantry : Table, IPool<Item>
         pivot.GetChild((int)type).gameObject.SetActive(true);
     }
 
-    public override bool Interact(InStagePlayerController inStagePlayer)
+    public override bool Interact(InStagePlayerController player)
     {
-        if (inStagePlayer.pickedItem is not null) return false;
+        if (player.pickedItem is not null) return false;
         if (!TryGetItem(out Item item)) return false;
         
         item.Activate();
-        inStagePlayer.AttachItem(item);
+        player.AttachItem(item);
         
         return true;
     }

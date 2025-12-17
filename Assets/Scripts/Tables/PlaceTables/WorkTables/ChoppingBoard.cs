@@ -10,17 +10,24 @@ public class ChoppingBoard : WorkTable
     {
         if (placedItem is not null) return;
         if (!CheckTriggeredItem(other, out var item)) return;
-
+        if (item.IsMaxDone()) return;
+        
         PlaceItem(item);
+    }
+
+    public override bool Interact(InStagePlayerController player)
+    {
+        if (player.pickedItem is not null && player.pickedItem.IsMaxDone()) return false;
+        return base.Interact(player);
     }
 
     public override void PlaceItem(Item item)
     {
-        if (item.IsMaxDone())
-        {
-            item.ActivatePhysics();
-            return;
-        }
+        // if (item.IsMaxDone())
+        // {
+        //     item.ActivatePhysics();
+        //     return;
+        // }
         base.PlaceItem(item);
     }
 
@@ -30,16 +37,16 @@ public class ChoppingBoard : WorkTable
         return base.DisplaceItem();
     }
 
-    public override bool BeginWork(InStagePlayerController inStagePlayer)
+    public override bool BeginWork(InStagePlayerController player)
     {
         if (placedItem is null) return false;
         
         IsWorking = true;
         if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
         
-        inStagePlayer.OnWorkStopped += StopWork;
-        _onFinished += inStagePlayer.GetHandledItem;
-        _onFinished += inStagePlayer.FinishWork;
+        player.OnWorkStopped += StopWork;
+        _onFinished += player.GetHandledItem;
+        _onFinished += player.FinishWork;
         
         return true;
     }

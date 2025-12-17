@@ -33,6 +33,9 @@ public class InStagePlayerController : MonoBehaviour
     /* 작업 */
     [HideInInspector] public bool isWorking;
     public Action OnWorkStopped;
+
+    [SF] private AudioClip interactBlockedSfx; // [임시]
+    [SF] private AudioClip despawnSfx; // [임시]
     #endregion
 
     #region 유니티 이벤트 메서드
@@ -48,18 +51,6 @@ public class InStagePlayerController : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        // inputManager.SetAbleInStageActionMap();
-        // 이후 적절한 액션에 맞는 메서드들 구독
-    }
-
-    private void OnDisable()
-    {
-        // inputManager.SetDisableInStageActionMap();
-        // 이후 등록해둔 메서드들 구독 해제
-    }
-
     private void Start()
     {
         _waitInertiaDecay = new WaitForSeconds(moveData.InertiaDecayTime);
@@ -67,7 +58,7 @@ public class InStagePlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_moveDir.sqrMagnitude <= 0.001f) return;
+        if (_moveDir == Vector3.zero) return;
         Move();
         Rotate();
     }
@@ -133,9 +124,17 @@ public class InStagePlayerController : MonoBehaviour
                 BeginWork(table);
                 return;
             case PressInteraction:
-                if (DetectTable() && TryInteract()) return;
-                if (pickedItem is not null) Drop();  
-                else if (DetectItem()) Pick();
+                if (DetectTable())
+                {
+                    if (TryInteract()) return;
+                    if (pickedItem is not null) return;
+                }
+                if (pickedItem is not null)
+                {
+                    Drop();
+                    return;
+                }
+                if (DetectItem()) Pick();
                 return;
         }
     }
@@ -210,6 +209,7 @@ public class InStagePlayerController : MonoBehaviour
     {
         Vector3 moveOffset = (moveData.MoveSpeed * _moveSpeedModifier * Time.fixedDeltaTime) * _moveDir;
         _rb.MovePosition(_rb.position + moveOffset);
+        // [sfx] 걷는 소리
     }
 
     private void Rotate()
@@ -224,6 +224,7 @@ public class InStagePlayerController : MonoBehaviour
         
         StopMoveImmediately();
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
+        // [sfx] 대시 소리
         yield return new WaitUntil(IsVelocityZero);
         yield return _waitInertiaDecay;
         StopMoveImmediately();
@@ -241,10 +242,11 @@ public class InStagePlayerController : MonoBehaviour
     #endregion
 
     #region 리스폰 메서드
-    public void DeactivatePlayer()
+    public void DespawnPlayer()
     {
         gameObject.SetActive(false);
-
+        // [sfx] 떨어지는 소리
+        GameManager.Instance.SoundManager.PlaySfx(despawnSfx);
         if (pickedItem is null) return;
         DetachItem().Deactivate();
     }
@@ -287,6 +289,11 @@ public class InStagePlayerController : MonoBehaviour
     private bool TryInteract()
     {
         bool hasInteraction = _detectedTable.Interact(this);
+        if (!hasInteraction)
+        {
+            // [sfx] 상호작용 블락 소리   
+            GameManager.Instance.SoundManager.PlaySfx(interactBlockedSfx);
+        }
         _detectedTable = null;
         return hasInteraction;
     }
@@ -354,6 +361,7 @@ public class InStagePlayerController : MonoBehaviour
     private void Throw(Vector3 dir)
     {
         DetachItem().SetThrowValues(pivot.position, dir, _moveSpeedModifier);
+        // [sfx] 던지는 소리
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
     }
     
@@ -361,6 +369,7 @@ public class InStagePlayerController : MonoBehaviour
     {
         item.SetParent(pivot);
         pickedItem = item;
+        // [sfx] 재료 줍는 소리
     }
 
     public Item DetachItem()

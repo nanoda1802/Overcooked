@@ -19,10 +19,21 @@ public class StageSelectPopUp : MonoBehaviour
     [SF] private Color32 achievedTextColor;
     [SF] private Color32 failedTextColor;
     
+    [SF] private AudioClip stageEntered;
+    
     public void SubscribeButtonEvents(OutStagePlayerController player, int stageId)
     {
-        enterBtn.onClick.AddListener(()=>player.EnterStage(stageId));
-        closeBtn.onClick.AddListener(player.DeselectEatery);
+        enterBtn.onClick.AddListener(()=>
+        {
+            player.EnterStage(stageId);
+            GameManager.Instance.SoundManager.PlaySfx(stageEntered);
+        });
+        closeBtn.onClick.AddListener(()=>
+        {
+            player.DeselectEatery();
+            // [sfx] 버튼 기본 소리
+            GameManager.Instance.SoundManager.PlaySfx();
+        });
     }
 
     public void UnsubscribeButtonEvents()
