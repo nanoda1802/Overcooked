@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-[CreateAssetMenu(fileName = "MenuData", menuName = "SO/Menu")]
+[CreateAssetMenu(fileName = "MenuData", menuName = "SO/Stage/Menu")]
 public class MenuData : ScriptableObject
 {
     [SF] private int spriteIndex;

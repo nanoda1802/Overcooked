@@ -17,7 +17,11 @@ public class StageSelectPopUp : MonoBehaviour
     [SF] private Color32 achievedTextColor;
     [SF] private Color32 failedTextColor;
     
+    [SF] private Toggle dontShowTutorialToggle;
+    
     [SF] private AudioClip stageEnterSoundClip;
+    
+    private StageInfoData _stageInfo;
     
     public void SubscribeButtonEvents(OutStagePlayerController player, int stageId)
     {
@@ -32,12 +36,14 @@ public class StageSelectPopUp : MonoBehaviour
             // [sfx] 버튼 기본 소리
             GameManager.Instance.SoundManager.PlaySfx();
         });
+        dontShowTutorialToggle.onValueChanged.AddListener(OnToggleChanged);
     }
 
     public void UnsubscribeButtonEvents()
     {
         enterBtn.onClick.RemoveAllListeners();
         closeBtn.onClick.RemoveAllListeners();
+        dontShowTutorialToggle.onValueChanged.RemoveAllListeners();
     }
 
     public void SetPopUpInfos(StageInfoData stageInfo)
@@ -53,5 +59,13 @@ public class StageSelectPopUp : MonoBehaviour
             scoreCutImages[i].sprite = scoreCutIdx >= i ? achievedScoreCutSprite : failedScoreCutSprite;
             scoreCutTexts[i].color = scoreCutIdx >= i ? achievedTextColor : failedTextColor;
         }
+
+        dontShowTutorialToggle.isOn = !stageInfo.ShowTutorial;
+        _stageInfo = stageInfo;
+    }
+    
+    public void OnToggleChanged(bool value)
+    {
+        _stageInfo.SetShowTutorial(!value);
     }
 }

@@ -13,29 +13,22 @@ public class Tutorial : MonoBehaviour
     [SF] private Text pageTxt;
     [SF] private Button prevPageBtn;
     [SF] private Button nextPageBtn;
-    [SF] private Toggle neverShownToggle;
+    [SF] private Toggle dontShowTutorialToggle;
     
     [SF] private TutorialData tutorialInfo;
     private int _curPageIdx;
+    
+    private InStageManager _inStageManager;
 
-    private void Awake() // [임시]
-    {
-        Init();
-    }
-
-    private void Start() // [테스트용 임시]
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
-
-    public void Init()
+    public void Init(InStageManager inStageManager)
     {
         previewAnim.runtimeAnimatorController = tutorialInfo.PreviewAnimController;
+        previewAnim.updateMode = AnimatorUpdateMode.UnscaledTime;
+        _inStageManager = inStageManager;
         Activate();
     }
 
-    public void Activate()
+    private void Activate()
     {
         gameObject.SetActive(true);
         _curPageIdx = 0;
@@ -126,20 +119,15 @@ public class Tutorial : MonoBehaviour
 
     public void OnToggleChanged() // [임시] 추후 글로벌 설정과 연계
     {
-        if (neverShownToggle.isOn)
-        {
-            gameObject.SetActive(false);
-            // 해당 스테이지의 튜토리얼 보이지 않도록 글로벌 설정
-            // 로비 옵션에서도 수정 가능하도록
-        }
-        else
-        {
-            
-        }
+        if (!dontShowTutorialToggle.isOn) return; // 애초에 저게 꺼져있으면 튜토리얼 ui를 볼 수가 없엉
+        gameObject.SetActive(false);
+        _inStageManager.StageInfo.SetShowTutorial(false);
+        _inStageManager.ResumeStage();
     }
 
     public void OnExitButton()
     {
         gameObject.SetActive(false);
+        _inStageManager.ResumeStage();
     }
 }

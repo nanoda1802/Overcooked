@@ -46,11 +46,13 @@ public class StageResult : MonoBehaviour
     {
         _gameManager.ChangeScene("InStage");
         Deactivate();
+        GameManager.Instance.SoundManager.PlaySfx();
     }
     
     public void OnLobbyButton()
     {
         _gameManager.ChangeScene("OutStage");
         Deactivate();
+        GameManager.Instance.SoundManager.PlaySfx();
     }
 }

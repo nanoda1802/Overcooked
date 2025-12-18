@@ -56,6 +56,8 @@ public class OutStagePlayerController : MonoBehaviour
         gameManager.InputManager.EnterOutStage();
         gameManager.SoundManager.ChangeBgm(bgm);
         
+        Time.timeScale = 1;
+        
         if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
         {
             transform.position = hit.position;

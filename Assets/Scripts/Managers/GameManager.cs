@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public SoundManager SoundManager => soundManager;
     
     [SF] private LoadingDisplay loadingDisplay;
+    [SF] private SettingsData settingsData; // [임시]
+    public SettingsData SettingsData => settingsData;
     
     private void Awake()
     {
@@ -22,22 +24,19 @@ public class GameManager : MonoBehaviour
         {
             _instance = this;
             DontDestroyOnLoad(this);
+            
+            settingsData.Init(""); // [임시]
+            soundManager.Init(settingsData);
         }
         else
         {
             Destroy(gameObject);
         }
     }
-    
-    private void Start()
-    {
-        inputManager.EnterOutStage();
-        soundManager.InitPool();
-    }
 
     public void ChangeScene(string sceneName)
     {
-        soundManager.MuteCurrentBgm();
+        soundManager.TurnOffCurrentBgm();
         StartCoroutine(CoLoadSceneAsync(sceneName));
     }
 
@@ -68,7 +67,6 @@ public class GameManager : MonoBehaviour
             
                 loadOper.allowSceneActivation = true;
                 yield return StartCoroutine(loadingDisplay.Fade(1, 0));
-                Time.timeScale = 1f;
                 yield break;
             }
         }

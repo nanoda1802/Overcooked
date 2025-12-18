@@ -17,6 +17,7 @@ public class StageInfoData : ScriptableObject
     [SF] private OrderInfoData orderInfoData;
     
     [SF] private AudioClip bgm;
+    [SF] private bool showTutorial = true;
     
     public int StageId => stageId;
     public string StageName => stageName;
@@ -28,6 +29,7 @@ public class StageInfoData : ScriptableObject
     public Grid[] GridInfos => gridInfos;
     public OrderInfoData OrderInfoData => orderInfoData;
     public AudioClip Bgm => bgm;
+    public bool ShowTutorial => showTutorial;
     
     public int CalculateAchievedScoreCutIndex() // [임시] 매개변수로 최고 점수 받아야해
     {
@@ -38,5 +40,10 @@ public class StageInfoData : ScriptableObject
             idx = i;
         }
         return idx;
+    }
+    
+    public void SetShowTutorial(bool value)
+    {
+        showTutorial = value;
     }
 }

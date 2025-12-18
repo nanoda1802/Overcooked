@@ -706,7 +706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 0.74509805, g: 0.74509805, b: 0.74509805, a: 0.5882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -742,7 +742,7 @@ MonoBehaviour:
   pageTxt: {fileID: 6213918866249385958}
   prevPageBtn: {fileID: 5454806179207993839}
   nextPageBtn: {fileID: 3918870422788723724}
-  neverShownToggle: {fileID: 7384181210330036171}
+  dontShowTutorialToggle: {fileID: 7384181210330036171}
   tutorialInfo: {fileID: 11400000, guid: 5e43b1f8591b15f4c895db413eb25c7e, type: 2}
 --- !u!1 &4153191065756846396
 GameObject:

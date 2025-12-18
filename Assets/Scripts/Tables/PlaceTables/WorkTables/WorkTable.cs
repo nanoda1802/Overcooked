@@ -31,7 +31,7 @@ public class WorkTable : PlaceTable
     {
         _isWorking = false;
         // [sfx] 테이블 별 일하는 소리 끝
-        GameManager.Instance.SoundManager.MuteLoopingSfx(curSfx);
+        GameManager.Instance.SoundManager.TurnOffLoopingSfx(curSfx);
         curSfx = null;
     }
 

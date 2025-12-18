@@ -25,7 +25,8 @@ public class InStageManager : MonoBehaviour
     public StageResultData StageResult => stageResult;
     
     [SF] private StageResult stageResultUI;
-
+    [SF] private Tutorial tutorialUI;
+    
     [SF] private PausePanel pauseUI;
     [SF] private bool isStagePaused;
     public bool IsStagePaused => isStagePaused;
@@ -45,16 +46,10 @@ public class InStageManager : MonoBehaviour
     {
         Init();
     }
-
-    // private void Start() // [임시]
-    // {
-    //     inputManager.EnterInStage();
-    // }
     
     private void Init()
     {
         Application.targetFrameRate = 120; // [임시]
-        ResumeStage();
         
         gameManager ??= FindObjectOfType(typeof(GameManager)) as GameManager;
         gameManager?.InputManager.EnterInStage();
@@ -67,8 +62,17 @@ public class InStageManager : MonoBehaviour
         
         stageResultUI.Init(this);
         pauseUI.Init(this);
+        
+        if (stageInfo.ShowTutorial)
+        {
+            PauseStage();
+            tutorialUI.Init(this);
+        }
+        else
+        {
+            ResumeStage();
+        }
     }
-
 
     public void PauseStage()
     {
@@ -95,7 +99,8 @@ public class InStageManager : MonoBehaviour
     public void FinishStage() // [임시]
     {
         gameManager.InputManager.ExitInStage();
-        gameManager.SoundManager.MuteCurrentBgm();
+        gameManager.SoundManager.TurnOffCurrentBgm();
+        gameManager.SoundManager.TurnOffAllSfx();
         timeManager.Deinit();
         orderManager.Deinit();
         scoreManager.Deinit();

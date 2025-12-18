@@ -6,7 +6,7 @@ using SF = UnityEngine.SerializeField;
 public enum ItemType { Bun, Cabbage, Cheese, Patty, Tomato, Plate }
 public enum ItemStatus { Undone, WellDone, Overdone }
 
-[CreateAssetMenu(fileName = "ItemData", menuName = "SO/Item")]
+[CreateAssetMenu(fileName = "ItemData", menuName = "SO/Stage/Item")]
 public class ItemData : ScriptableObject
 {
     [Header("[ Type ]")]
