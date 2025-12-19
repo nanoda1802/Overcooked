@@ -13,10 +13,26 @@ public class SettingsPanel : MonoBehaviour
     [SF] private Slider sfxSlider;
     [SF] private Toggle bgmMuteToggle;
     [SF] private Toggle sfxMuteToggle;
+
+    [SF] private CustomButton btnApply;
+    [SF] private CustomButton btnQuit;
     
     // 바뀐 옵션만 적용되게 해야 겄는디
 
     private void OnEnable()
+    {
+        ApplySettingsInfo();
+        btnApply.SubscribeEvent(OnApplyButton);
+        btnQuit.SubscribeEvent(OnQuitButton);
+    }
+
+    private void OnDisable()
+    {
+        btnApply.UnsubscribeEvent(OnApplyButton);
+        btnQuit.UnsubscribeEvent(OnQuitButton);
+    }
+
+    private void ApplySettingsInfo()
     {
         bgmSlider.value = settingsInfo.BgmVolume;
         sfxSlider.value = settingsInfo.SfxVolume;
@@ -24,18 +40,16 @@ public class SettingsPanel : MonoBehaviour
         sfxMuteToggle.isOn = settingsInfo.IsSfxMute;
     }
 
-    public void OnApplyButton()
+    private void OnApplyButton()
     {
         settingsInfo.SetBgmVolume(bgmSlider.value);
         settingsInfo.SetSfxVolume(sfxSlider.value);
         settingsInfo.SetIsBgmMute(bgmMuteToggle.isOn);
         settingsInfo.SetIsSfxMute(sfxMuteToggle.isOn);
-        GameManager.Instance.SoundManager.PlaySfx();
     }
 
-    public void OnQuitButton()
+    private void OnQuitButton()
     {
-        GameManager.Instance.SoundManager.PlaySfx();
         gameObject.SetActive(false);
     }
 

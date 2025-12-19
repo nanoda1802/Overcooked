@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using SF = UnityEngine.SerializeField;
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
             _instance = this;
             DontDestroyOnLoad(this);
             
+            DOTween.Init(true,true).SetCapacity(100,50);
             settingsData.Init(""); // [임시]
             soundManager.Init(settingsData);
         }

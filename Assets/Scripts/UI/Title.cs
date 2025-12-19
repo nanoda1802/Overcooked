@@ -1,35 +1,47 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using DG.Tweening;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public class Title : MonoBehaviour
 {
     [SF] private CinemachineVirtualCamera titleCam;
-    [SF] private GameObject titleUI;
-    [SF] private GameObject settingsUI;
+    [SF] private SettingsPanel settingsUI;
 
-    
+    [SF] private CustomButton btnSelectStage;
+    [SF] private CustomButton btnSettings;
+    [SF] private CustomButton btnExit;
+
+    private void OnEnable()
+    {
+        btnSelectStage.SubscribeEvent(OnSelectStage);
+        btnSettings.SubscribeEvent(OnSettings);
+        btnExit.SubscribeEvent(OnExit);
+    }
+
+    private void OnDisable()
+    {
+        btnSelectStage.UnsubscribeEvent(OnSelectStage);
+        btnSettings.UnsubscribeEvent(OnSettings);
+        btnExit.UnsubscribeEvent(OnExit);
+    }
+
     public void OnSelectStage()
     {
-        titleUI.SetActive(false);
+        gameObject.SetActive(false);
         titleCam.Priority = 0;
-        // [sfx] 버튼 기본 소리
-        GameManager.Instance.SoundManager.PlaySfx();
     }
 
     public void OnSettings()
     {
-        settingsUI.SetActive(true);
-        // [sfx] 버튼 기본 소리
-        GameManager.Instance.SoundManager.PlaySfx();
+        settingsUI.gameObject.SetActive(true);
     }
 
     public void OnExit()
     {
-        Application.Quit();
-        // [sfx] 버튼 기본 소리
-        GameManager.Instance.SoundManager.PlaySfx();
+        // Application.Quit();
     }
 }
