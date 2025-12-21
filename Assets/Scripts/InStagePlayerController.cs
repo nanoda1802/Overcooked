@@ -170,7 +170,7 @@ public class InStagePlayerController : MonoBehaviour
     private void OnPauseStated(InputAction.CallbackContext ctx)
     {
         if (inStageManager.IsStagePaused) inStageManager.ResumeStage();  
-        else inStageManager.PauseStage();
+        else inStageManager.PauseStage(true);
     }
 
     public void SubscribeInStageInputEvents(PlayerInput.InStageActions actionMap)

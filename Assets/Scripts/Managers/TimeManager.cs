@@ -40,12 +40,12 @@ public class TimeManager : MonoBehaviour, IManager
         gameObject.SetActive(false);
     }
 
-    public void PauseTime()
+    public void PauseTimer()
     {
         Time.timeScale = 0;
     }
 
-    public void ResumeTime()
+    public void ResumeTimer()
     {
         Time.timeScale = 1;
     }

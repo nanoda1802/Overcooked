@@ -25,15 +25,11 @@ public class InStageManager : MonoBehaviour
     public StageResultData StageResult => stageResult;
     
     [SF] private StageResult stageResultUI;
-    [SF] private Tutorial tutorialUI;
+    [SF] private TutorialPopUp tutorialUI;
     
-    [SF] private PausePanel pauseUI;
+    [SF] private PausePopUp pauseUI;
     [SF] private bool isStagePaused;
     public bool IsStagePaused => isStagePaused;
-    
-    // 상위 매니저들에 대한 참조
-    // GameManager? 부터 해서?
-    // [SF] private InputManager inputManager;
     
     // 하위 매니저들에 대한 참조
     [SF] private ScoreManager scoreManager;
@@ -49,11 +45,10 @@ public class InStageManager : MonoBehaviour
     
     private void Init()
     {
-        Application.targetFrameRate = 120; // [임시]
+        Application.targetFrameRate = 60; // [임시]
         
         gameManager ??= FindObjectOfType(typeof(GameManager)) as GameManager;
-        gameManager?.InputManager.EnterInStage();
-        gameManager?.SoundManager.ChangeBgm(stageInfo.Bgm);
+        GameManager.Instance.SoundManager.ChangeBgm(stageInfo.Bgm);
         
         scoreManager.Init(this);
         orderManager.Init(this);
@@ -62,50 +57,68 @@ public class InStageManager : MonoBehaviour
         
         stageResultUI.Init(this);
         pauseUI.Init(this);
+        tutorialUI.Init(this);
         
         if (stageInfo.ShowTutorial)
         {
             PauseStage();
-            tutorialUI.Init(this);
+            tutorialUI.Activate();
         }
         else
         {
             ResumeStage();
+            gameManager?.InputManager.EnterInStage();
         }
     }
 
-    public void PauseStage()
+    public void PauseStage(bool withPopUp = false)
     {
-        // inputManager.SetEnableGlobalActionMap()
-        // 적절한 액션에 맞는 메서드 구독
-        timeManager.PauseTime();
+        timeManager.PauseTimer();
         isStagePaused = true;
+        
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
-        pauseUI.Activate();
+        
+        if (withPopUp) pauseUI.Activate();
     }
 
     public void ResumeStage()
     {
-        // inputManager.SetDisableGlobalActionMap()
-        // 등록해둔 메서드 구독해제
-        timeManager.ResumeTime();
+        timeManager.ResumeTimer();
         isStagePaused = false;
+        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        pauseUI.Deactivate();
+        
+        if (pauseUI.IsActive) pauseUI.Deactivate();
+    }
+
+    public void RetryStage() // [임시] 씬 전환 없이 할 방법 생각해보기
+    {
+        if (pauseUI.IsActive) pauseUI.Deactivate();
+        gameManager.SoundManager.TurnOffAllSfx();
+        gameManager.SoundManager.TurnOffCurrentBgm(true);
+        gameManager.InputManager.ExitInStage();
+        gameManager.ChangeScene("InStage");
+    }
+
+    public void QuitStage()
+    {
+        if (pauseUI.IsActive) pauseUI.Deactivate();
+        gameManager.SoundManager.TurnOffAllSfx();
+        gameManager.SoundManager.TurnOffCurrentBgm(true);
+        FinishStage(); 
     }
 
     public void FinishStage() // [임시]
     {
         gameManager.InputManager.ExitInStage();
-        gameManager.SoundManager.TurnOffCurrentBgm();
-        gameManager.SoundManager.TurnOffAllSfx();
-        timeManager.Deinit();
-        orderManager.Deinit();
-        scoreManager.Deinit();
-        PauseStage(); // [임시]... 일단 결과창이 덮으니까 괜찮긴 한데 이게...
-        pauseUI.Deactivate();
+        gameManager.SoundManager.TurnOffCurrentBgm(); // [임시]
+        gameManager.SoundManager.TurnOffAllSfx(); // [임시]
+        timeManager.Deinit(); // [임시]
+        orderManager.Deinit(); // [임시]
+        scoreManager.Deinit(); // [임시]
+        PauseStage();
         stageResultUI.Activate();
     }
 }

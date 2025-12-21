@@ -53,7 +53,6 @@ public class OutStagePlayerController : MonoBehaviour
         _waitVCamBlendingStart = new WaitUntil(() => cineBrain.IsBlending);
         _waitVCamBlendingEnd = new WaitUntil(() => !cineBrain.IsBlending);
         
-        gameManager.InputManager.EnterOutStage();
         gameManager.SoundManager.ChangeBgm(bgm);
         
         Time.timeScale = 1;
@@ -148,18 +147,11 @@ public class OutStagePlayerController : MonoBehaviour
         transform.rotation = Quaternion.Euler(new Vector3(0, transform.rotation.eulerAngles.y, 0));
     }
 
-    public void EnterStage(int stageId)
-    {
-        if (stageId <= 0) return; // [임시]
-        gameManager.InputManager.ExitOutStage();
-        gameManager.ChangeScene("InStage");
-    }
-
     public void DeselectEatery()
     {
         if (curTargetEatery is null) return;
         curTargetEatery.SetVCamPriority(0);
-        curTargetEatery.DeactivatePopUpUI();
+        curTargetEatery.DeactivatePopUpUI(this);
         curTargetEatery = null;
     }
 }

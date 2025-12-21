@@ -666,7 +666,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 693594213031049158, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
       propertyPath: m_Text
-      value: 0000
+      value: 000
       objectReference: {fileID: 0}
     - target: {fileID: 693594213031049158, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
       propertyPath: m_FontData.m_MaxSize

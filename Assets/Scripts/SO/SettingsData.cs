@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -50,7 +48,8 @@ public class SettingsData : ScriptableObject
         
         /* 임시 */
         bgmVolume = sfxVolume = 1;
-        isBgmMute = isSfxMute = false;
+        isBgmMute = true; 
+        isSfxMute = false;
         currentFrameRate = FrameRate.Opt3;
         currentGraphicLevel = GraphicLevel.High;
     }

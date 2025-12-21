@@ -22,6 +22,9 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
         _settingsInfo.Subscribe(this);
         InitPool();
         _activeSfx = new List<AudioSource>(poolSize);
+
+        OnBgmMuteChanged(_settingsInfo.IsBgmMute);
+        OnSfxMuteChanged(_settingsInfo.IsSfxMute);
     }
 
     public void InitPool()

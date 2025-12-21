@@ -1,14 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using DG.Tweening;
 using SF = UnityEngine.SerializeField;
 
 public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    private int _instanceId;
+    
     private RectTransform _rect;
     private Image _img;
     private event Action OnClicked;
@@ -17,18 +17,21 @@ public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private Vector3 _originalLocalScale;
     private Color _originalColor;
 
-    [SF,Range(1,2)] private float btnSizeModifier = 1.02f;
+    [SF,Range(0,2)] private float btnSizeModifier = 1.02f;
     [SF,Range(0,1)] private float btnColorModifier = 0.7f;
     [SF,Range(0,1)] private float tweenDuration = 0.15f;
     
-    private Tween _hoverEnterTween;
-    private Tween _hoverExitTween;
+    private Tween _hoverTween;
     private Tween _clickTween;
     
     private void Awake()
     {
+        _instanceId = gameObject.GetInstanceID();
         _rect = GetComponent<RectTransform>();
         _img = GetComponent<Image>();
+        
+        _originalLocalScale = _rect.localScale;
+        _originalColor = _img.color;
         
         // [1] useSafeMode : 만약 트윈의 대상 오브젝트가 파괴되는 예외 상황 등이 발생해도 안전하게 처리됨 (매 프레임 트윈 작업 전 대상 상태 체크하기 때문 -> 미세한 성능 부하)
         // [2] recycleAllByDefault : 트윈이 사용 후 파괴되는 것이 아니라 풀링되기 때문에, GC 호출 수를 줄일 수 있음
@@ -55,10 +58,24 @@ public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         // DOTween.defaultAutoKill = true; // DO를 마친 트윈을 제거하는지 여부 (기본값이 true지만 공부 겸 명시...)
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        _originalLocalScale = _rect.localScale;
-        _originalColor = _img.color;
+        PrepareClickTween();
+
+        _rect.DOScale(_originalLocalScale, 0.1f) // 등장 트윈
+            .From(0.5f * _originalLocalScale)
+            .SetEase(Ease.OutBack,3)
+            .SetUpdate(true)
+            .SetId(_instanceId)
+            .OnKill(()=>_rect.localScale=_originalLocalScale);
+    }
+    
+    private void OnDisable()
+    {
+        DOTween.Kill(_instanceId);
+        _hoverTween = _clickTween = null;
+        _img.color = _originalColor;
+        _rect.localScale = _originalLocalScale;
     }
 
     public void SubscribeEvent(Action action)
@@ -73,76 +90,48 @@ public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_hoverEnterTween is not null)
-        {
-            _hoverEnterTween?.Kill();
-            OnKillHoverEnterTween();
-        }
+        _hoverTween?.Kill(); // 이미 OnKill에 등록해뒀으니, null이 아니면 알아서 원하는 작업을 함!
         
-        _hoverEnterTween = _rect.DOScale(_originalLocalScale * btnSizeModifier, tweenDuration)
-            .SetEase(Ease.InQuad)
-            .OnKill(OnKillHoverEnterTween);
+        _hoverTween = _rect.DOScale(_originalLocalScale * btnSizeModifier, tweenDuration)
+            .SetEase(Ease.OutBack)
+            .SetUpdate(true)
+            .SetId(_instanceId)
+            .OnKill(() => _hoverTween = null);
     }
-
+    
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_hoverExitTween is not null)
-        {
-            _hoverExitTween?.Kill();
-            OnKillHoverExitTween();
-        }
+        _hoverTween?.Kill();
         
-        _hoverExitTween = _rect.DOScale(_originalLocalScale, tweenDuration)
-            .SetEase(Ease.InQuad)
-            .OnKill(OnKillHoverExitTween);
+        _hoverTween = _rect.DOScale(_originalLocalScale, tweenDuration)
+            .SetEase(Ease.InBack)
+            .SetUpdate(true)
+            .SetId(_instanceId)
+            .OnKill(() => _hoverTween = null);
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         GameManager.Instance.SoundManager.PlaySfx();
-        
-        if (_clickTween is not null) // 안 해주면 색이 돌아오지 않음... YoYo 루핑 탓에
-        {
-            _clickTween?.Kill();
-            OnKillClickTween(); 
-        }
-        
-        Color targetColor = _originalColor * btnColorModifier;
-        targetColor.a = 1; // Color는 0~1, Color32가 1~255
-        _clickTween = _img.DOColor(targetColor, tweenDuration)
-            .SetLoops(2, LoopType.Yoyo)
-            .SetEase(Ease.OutQuad)
-            .OnKill(OnKillClickTween);
-        
+        _clickTween?.Restart(); // 굳이 IsPlaying 확인할 필요 없이 무조건 리스타트하면 의도대로 동작
         OnClicked?.Invoke();
     }
 
-    private void OnKillHoverEnterTween()
+    private void PrepareClickTween()
     {
-        _hoverEnterTween = null;
-    }
-
-    private void OnKillHoverExitTween()
-    {
-        _hoverExitTween = null;
-    }
-
-    private void OnKillClickTween()
-    {
-        _clickTween = null;
-        _img.color = _originalColor;
-    }
-
-    private void OnDisable()
-    {
-        _hoverEnterTween?.Kill();
-        _hoverExitTween?.Kill();
-        _clickTween?.Kill();
+        Color targetColor = _originalColor * btnColorModifier;
+        targetColor.a = 1; // Color는 0~1, Color32가 1~255
         
-        OnKillHoverEnterTween();
-        OnKillHoverExitTween();
-        OnKillClickTween();
-        
-        _rect.localScale = _originalLocalScale;
+        _clickTween = _img.DOColor(targetColor, tweenDuration)
+            .From(_originalColor) // 시작 색
+            .SetEase(Ease.OutQuad)
+            .SetLoops(2, LoopType.Yoyo)
+            .SetAutoKill(false) // 재사용할 거라 AutoKill 끄기
+            .SetUpdate(true)
+            .SetId(_instanceId)
+            .Pause() // 자동 Play라 OnEnable에서 트윈 작동하기 때문에 막아놔야
+            // .OnStart(OnStartClickTween) OnStart는 트윈 실행 최초 1회만 작동
+            .OnComplete(()=>_clickTween.Rewind(false)) // Rewind는 처음으로 돌리고 Pause도 해줌
+            .OnKill(()=>_clickTween = null);
     }
 }

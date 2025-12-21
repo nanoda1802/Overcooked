@@ -1,15 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
-using DG.Tweening;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public class Title : MonoBehaviour
 {
     [SF] private CinemachineVirtualCamera titleCam;
-    [SF] private SettingsPanel settingsUI;
+    [SF] private SettingsPopUp settingsUI;
 
     [SF] private CustomButton btnSelectStage;
     [SF] private CustomButton btnSettings;
@@ -32,6 +28,7 @@ public class Title : MonoBehaviour
     public void OnSelectStage()
     {
         gameObject.SetActive(false);
+        GameManager.Instance.InputManager.EnterOutStage();
         titleCam.Priority = 0;
     }
 

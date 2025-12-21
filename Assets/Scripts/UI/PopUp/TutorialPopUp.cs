@@ -1,18 +1,25 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
-public class Tutorial : MonoBehaviour
+public class TutorialPopUp : MonoBehaviour
 {
+    [SF] private CanvasGroup canvasGroup;
+    [SF] private RectTransform popUpRect;
+    [SF, Range(0, 1)] private float originalScaleRatio; // 0.6;
+    private Sequence _popUpSequence;
+    
     [SF] private Text titleTxt;
     [SF] private Text descriptionTxt;
     [SF] private Animator previewAnim;
     private readonly int _paramHash = Animator.StringToHash("PageIdx");
 
-    [SF] private Button exitBtn;
     [SF] private Text pageTxt;
-    [SF] private Button prevPageBtn;
-    [SF] private Button nextPageBtn;
+    [SF] private CustomButton prevPageBtn;
+    [SF] private CustomButton nextPageBtn;
+    
+    [SF] private CustomButton exitBtn;
     [SF] private Toggle dontShowTutorialToggle;
     
     [SF] private TutorialData tutorialInfo;
@@ -20,19 +27,77 @@ public class Tutorial : MonoBehaviour
     
     private InStageManager _inStageManager;
 
+    private void OnEnable()
+    {
+        SubscribeEvents();
+        DoEnableSequence();
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.InputManager.EnterInStage();
+        _inStageManager.ResumeStage();
+
+        UnsubscribeEvents();
+        
+        _popUpSequence?.Kill();
+        _popUpSequence = null;
+    }
+
     public void Init(InStageManager inStageManager)
     {
         previewAnim.runtimeAnimatorController = tutorialInfo.PreviewAnimController;
         previewAnim.updateMode = AnimatorUpdateMode.UnscaledTime;
         _inStageManager = inStageManager;
-        Activate();
     }
-
-    private void Activate()
+    
+    public void Activate()
     {
-        gameObject.SetActive(true);
         _curPageIdx = 0;
         UpdateContents();
+        popUpRect.localScale = Vector3.zero;
+        gameObject.SetActive(true);
+    }
+
+    private void SubscribeEvents()
+    {
+        prevPageBtn.SubscribeEvent(OnPrevButton);
+        nextPageBtn.SubscribeEvent(OnNextButton);
+        exitBtn.SubscribeEvent(OnExitButton);
+        dontShowTutorialToggle.onValueChanged.AddListener(OnToggleChanged);
+    }
+
+    private void UnsubscribeEvents()
+    {
+        prevPageBtn.UnsubscribeEvent(OnPrevButton);
+        nextPageBtn.UnsubscribeEvent(OnNextButton);
+        exitBtn.UnsubscribeEvent(OnExitButton);
+        dontShowTutorialToggle.onValueChanged.RemoveAllListeners();
+    }
+
+    private void DoEnableSequence()
+    {
+        _popUpSequence?.Kill();
+
+        _popUpSequence = DOTween.Sequence()
+            .Append(canvasGroup.DOFade(1,0.2f).From(0))
+            .Join(popUpRect.DOScaleX(originalScaleRatio, 0.2f).From(0).SetEase(Ease.OutCubic))
+            .Append(popUpRect.DOScaleY(originalScaleRatio, 0.3f).From(0.01f).SetEase(Ease.OutBack))
+            .SetUpdate(true)
+            .OnKill(()=>_popUpSequence=null);
+    }
+
+    private void DoDisableSequence()
+    {
+        _popUpSequence?.Kill();
+        
+        _popUpSequence = DOTween.Sequence()
+            .Append(popUpRect.DOScaleY(0.01f, 0.2f).From(originalScaleRatio).SetEase(Ease.InBack))
+            .Append(popUpRect.DOScaleX(0f, 0.15f).From(originalScaleRatio).SetEase(Ease.InCubic))
+            .Join(canvasGroup.DOFade(0,0.15f).From(1))
+            .SetUpdate(true)
+            .OnComplete(()=>gameObject.SetActive(false))
+            .OnKill(()=>_popUpSequence=null);
     }
 
     private void UpdateContents()
@@ -103,31 +168,30 @@ public class Tutorial : MonoBehaviour
         nextPageBtn.gameObject.SetActive(false);
     }
 
-    public void OnPrevButton()
+    private void OnPrevButton()
     {
         if (_curPageIdx == 0) return;
         _curPageIdx--;
         UpdateContents();
     }
 
-    public void OnNextButton()
+    private void OnNextButton()
     {
         if (_curPageIdx == tutorialInfo.PageCount - 1) return;
         _curPageIdx++;
         UpdateContents();
     }
 
-    public void OnToggleChanged() // [임시] 추후 글로벌 설정과 연계
+    private void OnToggleChanged(bool isOn)
     {
-        if (!dontShowTutorialToggle.isOn) return; // 애초에 저게 꺼져있으면 튜토리얼 ui를 볼 수가 없엉
-        gameObject.SetActive(false);
+        if (!isOn) return; // 애초에 저게 꺼져있으면 튜토리얼 ui를 볼 수가 없엉
+        
         _inStageManager.StageInfo.SetShowTutorial(false);
-        _inStageManager.ResumeStage();
+        DoDisableSequence();
     }
 
-    public void OnExitButton()
+    private void OnExitButton()
     {
-        gameObject.SetActive(false);
-        _inStageManager.ResumeStage();
+        DoDisableSequence();
     }
 }
