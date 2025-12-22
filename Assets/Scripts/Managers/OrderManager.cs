@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
@@ -15,6 +16,7 @@ public class OrderManager : MonoBehaviour, IManager
     [SF] private AudioClip newOrderSoundClip; // [임시]
     /* UI */
     [SF] private Transform orderGroupUI;
+    [SF] private int[] orderPosXs;
     private List<FoodOrder> _orderGroupChildren;
 
     private void Update()
@@ -99,8 +101,7 @@ public class OrderManager : MonoBehaviour, IManager
             
             remainingTimeRatio = order.CalculateTimerRatio();
             baseScore = order.GetBaseScore();
-            order.Deactivate();
-            RemoveOrder(order);
+            order.Deactivate(true);
             break;
         }
         
@@ -119,5 +120,23 @@ public class OrderManager : MonoBehaviour, IManager
     private void CycleOrderGroupUIs(FoodOrder order)
     {
         order.transform.SetAsLastSibling();
+        
+        for (int i = 0; i < orderGroupUI.childCount; i++)
+        {
+            Vector3 curPos = _orderGroupChildren[i].Rect.localPosition;
+            float targetPosX = orderPosXs[_orderGroupChildren[i].transform.GetSiblingIndex()];
+            
+            float diff = Mathf.Abs(curPos.x - targetPosX);
+            if (diff < 0.01f) continue;
+            
+            if (!_orderGroupChildren[i].gameObject.activeSelf)
+            {
+                _orderGroupChildren[i].Rect.localPosition = new Vector3(targetPosX,curPos.y,curPos.z);
+            }
+            else
+            {
+                _orderGroupChildren[i].Rect.DOAnchorPosX(targetPosX, order.TweenDuration).SetEase(Ease.OutBack);
+            }
+        }
     }
 }

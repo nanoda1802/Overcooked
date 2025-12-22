@@ -20,7 +20,6 @@ public class InStagePlayerController : MonoBehaviour
     private float _moveSpeedModifier = 1f;
     private Coroutine _dashCoroutine;
     private WaitForSeconds _waitInertiaDecay;
-    private Transform _recentTile;
     /* 아이템 및 테이블 감지 */
     [Header("[ Detect ]")]
     [SF] private PlayerDetectionData detectData;
@@ -66,14 +65,16 @@ public class InStagePlayerController : MonoBehaviour
         Rotate();
     }
 
-    private void OnCollisionEnter(Collision other)
+    private void OnDisable()
     {
-        if (!other.gameObject.CompareTag("Ground")) return;
-        
-        Transform otherTransform = other.gameObject.transform;
-        if (otherTransform.position.y + 0.8f * otherTransform.localScale.y > _rb.position.y) return;
-        
-        _recentTile = otherTransform;
+        if (_dashCoroutine is not null)
+        {
+            StopCoroutine(_dashCoroutine);
+            _dashCoroutine = null;
+            StopMoveImmediately();
+        }
+
+        _moveDir = Vector3.zero;
     }
 
     private void OnDrawGizmos()
@@ -98,7 +99,6 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
-        if (!gameObject.activeSelf) return;
         _moveDir = Vector3.zero;
     }
 
@@ -112,7 +112,6 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnDashCanceled(InputAction.CallbackContext ctx)
     {
-        if (!gameObject.activeSelf) return;
         _moveSpeedModifier = 1f;
     }
 
@@ -222,14 +221,8 @@ public class InStagePlayerController : MonoBehaviour
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
         // [sfx] 대시 소리
         GameManager.Instance.SoundManager.PlaySfx(dashSoundClip);
-        yield return new WaitUntil(IsVelocityZero);
         yield return _waitInertiaDecay;
         StopMoveImmediately();
-    }
-
-    private bool IsVelocityZero()
-    {
-        return _rb.velocity == Vector3.zero;
     }
 
     private void StopMoveImmediately()
@@ -239,38 +232,24 @@ public class InStagePlayerController : MonoBehaviour
     #endregion
 
     #region 리스폰 메서드
-    public void DespawnPlayer()
+    public Vector3 DespawnPlayer()
     {
-        StopMoveImmediately();
+        _rb.Sleep();
         gameObject.SetActive(false);
+        
         // [sfx] 떨어지는 소리
         GameManager.Instance.SoundManager.PlaySfx(despawnSoundClip);
-        if (pickedItem is null) return;
-        DetachItem().Deactivate();
-    }
 
-    public Vector3 CalculateRespawnPosition()
-    {
-        Vector3 respawnPos;
+        if (pickedItem is not null) DetachItem().Deactivate();
         
-        if (_recentTile is null)
-        {
-            respawnPos = Vector3.one;
-        }
-        else
-        {
-            Vector3 temp = _recentTile.position;
-            temp.y += _recentTile.localScale.y;
-            respawnPos = temp;
-        }
-        
-        return respawnPos;
+        return transform.position;
     }
 
     public void Respawn(Vector3 respawnPos)
     {
         gameObject.SetActive(true);
-        _rb.position = respawnPos;
+        transform.position = respawnPos;
+        _rb.WakeUp();
     }
     #endregion
     

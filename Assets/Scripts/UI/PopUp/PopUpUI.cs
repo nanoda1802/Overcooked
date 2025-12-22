@@ -38,8 +38,6 @@ public class PopUpUI : MonoBehaviour, IPointerClickHandler
             .OnComplete(onComplete);
     }
     
-    
-    
     public void OnPointerClick(PointerEventData eventData)
     {
         if (_isClicked) return;

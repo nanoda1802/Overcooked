@@ -15,7 +15,7 @@ MonoBehaviour:
   itemType: 1
   initialDoneness: 0
   maxDoneness: 1
-  maxProgress: 1
+  maxProgress: 0.6
   mats:
   - {fileID: 2100000, guid: b3737475b3717db4cabb07581e28a3bf, type: 2}
   - {fileID: 2100000, guid: b3737475b3717db4cabb07581e28a3bf, type: 2}

@@ -14,6 +14,7 @@ public class StageInfoData : ScriptableObject
     [SF] private int[] scoreCuts;
     [SF] private float stageDuration;
     [SF] private Grid[] gridInfos; // [임시]
+    [SF] private Vector3[] respawnPoints;
     [SF] private OrderInfoData orderInfoData;
     
     [SF] private AudioClip bgm;
@@ -41,7 +42,25 @@ public class StageInfoData : ScriptableObject
         }
         return idx;
     }
-    
+
+    public Vector3 GetClosestRespawnPoint(Vector3 pos)
+    {
+        float minDist = float.MaxValue;
+        Vector3 closest = Vector3.one;
+        
+        foreach (Vector3 point in respawnPoints)
+        {
+            float dist = (point - pos).sqrMagnitude;
+            Debug.Log($"이번 지점 {point}, 거리 {dist}");
+            if (dist >= minDist) continue;
+            
+            minDist = dist;
+            closest = point;
+        }
+
+        return closest;
+    }
+
     public void SetShowTutorial(bool value)
     {
         showTutorial = value;

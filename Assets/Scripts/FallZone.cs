@@ -4,7 +4,8 @@ using SF = UnityEngine.SerializeField;
 public class FallZone : MonoBehaviour
 {
     [SF] private MovableUIPool uiPool;
-
+    [SF] private InStageManager inStageManager;
+    
     private void Start()
     {
         if (uiPool is not null) return;
@@ -21,8 +22,8 @@ public class FallZone : MonoBehaviour
 
         if (other.CompareTag("Player") && other.TryGetComponent(out InStagePlayerController player))
         {
-            player.DespawnPlayer();
-            Vector3 respawnPos = player.CalculateRespawnPosition();
+            Vector3 despawnPos = player.DespawnPlayer();
+            Vector3 respawnPos = inStageManager.StageInfo.GetClosestRespawnPoint(despawnPos);
             
             if (!uiPool.TryGetItem(out RespawnTimer ui)) return;
             ui.Activate();

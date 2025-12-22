@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -11,6 +13,13 @@ public class FoodOrder : MonoBehaviour
     private MenuData _menu;
     private float _timerCount;
 
+    private bool _isTimeOut;
+    
+    private RectTransform _rect;
+    public RectTransform Rect => _rect;
+    [SF] private float tweenDuration;
+    public float TweenDuration => tweenDuration;
+    
     [SF] private Image foodImage;
     [SF] private Sprite[] foodSprites;
     
@@ -19,22 +28,30 @@ public class FoodOrder : MonoBehaviour
 
     [SF] private Image timerFillImage;
     [SF] private Color32[] fillColors;
-    
+
+    private void Awake()
+    {
+        _rect = GetComponent<RectTransform>();
+    }
+
+    private void OnEnable()
+    {
+        DoTransition(new Vector2(_rect.anchoredPosition.x,150f),10f,Ease.OutBack);
+        _isTimeOut = false;
+    }
+
     private void Update()
     {
-        if (!gameObject.activeSelf) return;
+        if (_isTimeOut) return;
         UpdateTimer();
     }
 
-    public void Deactivate()
+    public void Init(ScoreManager sm, OrderManager om)
     {
-        foreach (Image img in ingredientImages)
-        {
-            img.gameObject.SetActive(false);
-        }
-        gameObject.SetActive(false);
+        _scoreManager = sm;
+        _orderManager = om;
     }
-
+    
     public void Activate(MenuData menu)
     {
         _menu = menu;
@@ -43,20 +60,36 @@ public class FoodOrder : MonoBehaviour
         
         gameObject.SetActive(true);
     }
-
-    public void Init(ScoreManager sm, OrderManager om)
+    
+    public void Deactivate(bool withTween = false)
     {
-        _scoreManager = sm;
-        _orderManager = om;
+        _isTimeOut = true;
+        if (withTween) DoTransition(new Vector2(_rect.anchoredPosition.x,10f),150f,Ease.InBack,OnDeactivateTweenComplete);
+        else gameObject.SetActive(false);
+    }
+
+    private void DoTransition(Vector2 from, float to, Ease easeMode, TweenCallback onComplete = null)
+    {
+        _rect.DOKill(true);
+        _rect.DOAnchorPosY(to, tweenDuration).From(from).SetEase(easeMode).OnComplete(onComplete);
+    }
+
+    private void OnDeactivateTweenComplete()
+    {
+        gameObject.SetActive(false); 
+        _orderManager.RemoveOrder(this);
     }
 
     private void SetUIImages(int menuIdx)
     {
         foodImage.sprite = foodSprites[menuIdx]; // [임시] 
-        for (int i = 0; i < _menu.Recipe.Length; i++)
+        for (int i = 0; i < ingredientImages.Length; i++)
         {
-            ingredientImages[i].sprite = ingredientSprites[(int)_menu.Recipe[i]];
-            ingredientImages[i].gameObject.SetActive(true);
+            if (i < _menu.Recipe.Length)
+            {
+                ingredientImages[i].sprite = ingredientSprites[(int)_menu.Recipe[i]];
+            }
+            ingredientImages[i].gameObject.SetActive(i < _menu.Recipe.Length);
         }
     }
 
@@ -86,8 +119,7 @@ public class FoodOrder : MonoBehaviour
         if (_timerCount > 0) return;
         
         _scoreManager.UpdateScore(GetBaseScore(),-1);
-        Deactivate();
-        _orderManager.RemoveOrder(this);
+        Deactivate(true);
     }
 
     public float CalculateTimerRatio()

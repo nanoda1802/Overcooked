@@ -19,10 +19,11 @@ public class StageResultData : ScriptableObject
       score = maxCombo = deliveredOrder = totalOrder = 0;
    }
 
-   public void ApplyPoint(int point)
+   public int ApplyPoint(int point)
    {
       score += point;
       if (score < 0) score = 0;
+      return score;
    }
 
    public bool IsMaxCombo(int combo)
