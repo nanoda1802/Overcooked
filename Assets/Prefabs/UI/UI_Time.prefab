@@ -94,7 +94,7 @@ MonoBehaviour:
   timerTxt: {fileID: 1757641746332114996}
   feverTimeTextColor: {r: 0.87843144, g: 0.34509805, b: 0.3254902, a: 1}
   tweenScaleModifier: 0.05
-  tweenDuration: 0.5
+  tweenDuration: 0.25
   feverTime: 60
   timerFillImg: {fileID: 2689115434251152997}
   fillColors:

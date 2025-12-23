@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +17,7 @@ public class ScoreBoard : MonoBehaviour
     [SF] private Color[] comboTxtColors;
 
     [SF] private float tweenDuration;
-    [SF,Range(1,2)] private float tweenScaleModifier;
+    [SF,Range(0,2)] private float tweenScaleModifier;
     
     [SF] private AudioClip addScoreSoundClip;
     [SF] private AudioClip deductScoreSoundClip;
@@ -39,8 +36,8 @@ public class ScoreBoard : MonoBehaviour
         
         _scoreTxtSeq = DOTween.Sequence();
         _scoreTxtSeq.Append(scoreTxt.DOCounter(from,to, tweenDuration, false))
-            .Append(scoreTxt.DOColor(hasPoint ? addScoreTxtColor : deductScoreTxtColor, tweenDuration * 0.5f).SetLoops(2, LoopType.Yoyo))
-            .Join(scoreTxtRect.DOPunchScale(tweenScaleModifier * Vector3.one, tweenDuration,1))
+            .Append(scoreTxt.DOColor(hasPoint ? addScoreTxtColor : deductScoreTxtColor, tweenDuration).SetLoops(2, LoopType.Yoyo))
+            .Join(scoreTxtRect.DOPunchScale(tweenScaleModifier * Vector3.one, tweenDuration * 2f,1))
             .JoinCallback(()=>GameManager.Instance.SoundManager.PlaySfx(hasPoint ? addScoreSoundClip : deductScoreSoundClip))
             .OnKill(OnKillScoreTxtSequence);
     }

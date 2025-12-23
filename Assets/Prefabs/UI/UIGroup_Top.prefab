@@ -491,10 +491,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI_Score
       objectReference: {fileID: 0}
-    - target: {fileID: 6244900273305170386, guid: 1bc9cbf1ead057144b25f69c694b6e8e, type: 3}
-      propertyPath: tweenScaleModifier
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

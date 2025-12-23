@@ -104,8 +104,8 @@ MonoBehaviour:
   - {r: 0.9150943, g: 0.69392264, b: 0.22877358, a: 1}
   - {r: 0.8584906, g: 0.47565147, b: 0.17412782, a: 1}
   - {r: 0.76470596, g: 0.34901962, b: 0.33333334, a: 1}
-  tweenDuration: 0.5
-  tweenScaleModifier: 1.05
+  tweenDuration: 0.2
+  tweenScaleModifier: 0.8
   addScoreSoundClip: {fileID: 8300000, guid: de0b9a52e1637f941b2c32024ce92b1e, type: 3}
   deductScoreSoundClip: {fileID: 8300000, guid: 9ade9c77745701c438833ea12ce34a41, type: 3}
 --- !u!1 &2665355817855885027

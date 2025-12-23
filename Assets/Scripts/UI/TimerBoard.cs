@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 using DG.Tweening;
 using UnityEngine;
@@ -70,10 +68,10 @@ public class TimerBoard : MonoBehaviour
         _timerTxtSeq?.Kill();
         
         _timerTxtSeq = DOTween.Sequence();
-        _timerTxtSeq.Append(timerTxtRect.DOPunchScale(tweenScaleModifier * Vector3.one, tweenDuration, 1))
-            .Join(timerTxt.DOColor(feverTimeTextColor, tweenDuration * 0.5f).SetLoops(2, LoopType.Yoyo))
-            //.JoinCallback() [sfx] 경고음 내기
+        _timerTxtSeq.Append(timerTxtRect.DOPunchScale(tweenScaleModifier * Vector3.one, tweenDuration * 2f, 1))
+            .Join(timerTxt.DOColor(feverTimeTextColor, tweenDuration).SetLoops(2, LoopType.Yoyo))
             .OnKill(OnKillTimerTxtSequence);
+            //.JoinCallback() [sfx] 경고음 내기
     }
     
     private void OnKillTimerTxtSequence()
