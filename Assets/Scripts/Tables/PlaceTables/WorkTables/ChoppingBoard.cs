@@ -4,7 +4,7 @@ using SF = UnityEngine.SerializeField;
 
 public class ChoppingBoard : WorkTable
 {
-    private Action _onFinished;
+    private event Action OnFinished;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -23,11 +23,6 @@ public class ChoppingBoard : WorkTable
 
     public override void PlaceItem(Item item)
     {
-        // if (item.IsMaxDone())
-        // {
-        //     item.ActivatePhysics();
-        //     return;
-        // }
         base.PlaceItem(item);
     }
 
@@ -46,8 +41,8 @@ public class ChoppingBoard : WorkTable
         if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
         
         player.OnWorkStopped += StopWork;
-        _onFinished += player.GetHandledItem;
-        _onFinished += player.FinishWork;
+        OnFinished += player.GetHandledItem;
+        OnFinished += player.FinishWork;
         
         return true;
     }
@@ -55,12 +50,12 @@ public class ChoppingBoard : WorkTable
     protected override void StopWork()
     {
         base.StopWork();
-        _onFinished = null;
+        OnFinished = null;
     }
 
     protected override void FinishWork()
     {
-        _onFinished?.Invoke();
+        OnFinished?.Invoke();
         base.FinishWork();
         
         DeactivateUI();

@@ -20,13 +20,12 @@ public class DishRack : PlaceTable
     {
         if (item is not Plate plate) return;
         
-        plate.IsPlaced = true;
+        plate.IsInDishRack = plate.IsPlaced = true;
         
         plate.SetParent(pivot);
         SetLocalPos(plate);
         
         _plates.Push(plate);
-        plate.IsInDishRack = true;
     }
 
     public override Item DisplaceItem()

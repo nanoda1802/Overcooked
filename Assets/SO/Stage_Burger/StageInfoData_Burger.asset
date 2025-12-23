@@ -18,7 +18,7 @@ MonoBehaviour:
   stageImage: {fileID: 21300000, guid: df313f54f0930dd4a98ca617501e51e0, type: 3}
   bestScore: 0
   scoreCuts: c8000000f4010000e8030000
-  stageDuration: 300
+  stageDuration: 180
   gridInfos: []
   respawnPoints:
   - {x: -3.5, y: 1, z: 0.5}

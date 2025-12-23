@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 308080061440645847}
   - component: {fileID: 5336286887417969789}
   - component: {fileID: 5304904704246530717}
+  - component: {fileID: 6244900273305170386}
   m_Layer: 5
   m_Name: UI_Score
   m_TagString: Untagged
@@ -25,7 +26,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1469271353456588005}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -78,6 +79,35 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6244900273305170386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469271353456588005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec301803310db6746aee738d53b1e134, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fireImg: {fileID: 6011414201624838843}
+  scoreTxtRect: {fileID: 3883251859895141145}
+  scoreTxt: {fileID: 693594213031049158}
+  scoreTxtOriginalColor: {r: 0.95686275, g: 0.7137255, b: 0.2784314, a: 1}
+  addScoreTxtColor: {r: 0.6348732, g: 0.95686275, b: 0.2784314, a: 1}
+  deductScoreTxtColor: {r: 0.95686275, g: 0.44598305, b: 0.2784314, a: 1}
+  comboTxt: {fileID: 4771310993546277040}
+  comboTxtColors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 0.9433962, g: 0.8493171, b: 0.06674972, a: 1}
+  - {r: 0.9150943, g: 0.69392264, b: 0.22877358, a: 1}
+  - {r: 0.8584906, g: 0.47565147, b: 0.17412782, a: 1}
+  - {r: 0.76470596, g: 0.34901962, b: 0.33333334, a: 1}
+  tweenDuration: 0.5
+  tweenScaleModifier: 1.05
+  addScoreSoundClip: {fileID: 8300000, guid: de0b9a52e1637f941b2c32024ce92b1e, type: 3}
+  deductScoreSoundClip: {fileID: 8300000, guid: 9ade9c77745701c438833ea12ce34a41, type: 3}
 --- !u!1 &2665355817855885027
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,7 +120,6 @@ GameObject:
   - component: {fileID: 1041792150119428088}
   - component: {fileID: 693594213031049158}
   - component: {fileID: 7742822099293605879}
-  - component: {fileID: 6531350798842736772}
   m_Layer: 5
   m_Name: Txt_Score
   m_TagString: Untagged
@@ -114,9 +143,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -50}
   m_SizeDelta: {x: 0, y: 100}
-  m_Pivot: {x: 0.5, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1041792150119428088
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -147,11 +176,11 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: b0b25c7081699704f917d02e28f31692, type: 3}
-    m_FontSize: 14
+    m_FontSize: 70
     m_FontStyle: 0
-    m_BestFit: 1
+    m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 70
+    m_MaxSize: 80
     m_Alignment: 7
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -174,27 +203,6 @@ MonoBehaviour:
   m_EffectColor: {r: 1, g: 1, b: 1, a: 0.5}
   m_EffectDistance: {x: 0, y: -3}
   m_UseGraphicAlpha: 1
---- !u!95 &6531350798842736772
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2665355817855885027}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 475b5304902d1d84fb0b413628b45a57, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3955563097834436664
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,8 +336,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 25}
-  m_SizeDelta: {x: 0, y: 30}
-  m_Pivot: {x: 0.5, y: 0}
+  m_SizeDelta: {x: 0, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6995614879013828261
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -360,10 +368,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: b0b25c7081699704f917d02e28f31692, type: 3}
-    m_FontSize: 14
+    m_FontSize: 25
     m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 10
+    m_BestFit: 0
+    m_MinSize: 0
     m_MaxSize: 30
     m_Alignment: 1
     m_AlignByGeometry: 0

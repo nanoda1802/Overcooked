@@ -180,7 +180,10 @@ public class Item : MonoBehaviour, IPoolable
 
     public virtual void Deactivate()
     {
+        IsThrown = IsFalling = false;
         DeactivateTrail();
+        DeactivatePhysics();
+        
         _pool.ReturnToPool(this);
         gameObject.SetActive(false);
     }

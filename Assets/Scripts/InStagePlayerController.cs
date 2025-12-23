@@ -31,7 +31,7 @@ public class InStagePlayerController : MonoBehaviour
     public Item pickedItem;
     /* 작업 */
     [HideInInspector] public bool isWorking;
-    public Action OnWorkStopped;
+    public event Action OnWorkStopped;
 
     [SF] private AudioClip interactBlockSoundClip; // [임시]
     [SF] private AudioClip despawnSoundClip; // [임시]

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8647877840440049089}
   - component: {fileID: 1692671341370275722}
   - component: {fileID: 6552469787696208642}
+  - component: {fileID: 6393141242742728616}
   m_Layer: 5
   m_Name: UI_Time
   m_TagString: Untagged
@@ -77,6 +78,30 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6393141242742728616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397166958556770636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7acfb4dd17e4b3a4ebab3fac8ce4cfe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timerTxtRect: {fileID: 6551198027818824340}
+  timerTxt: {fileID: 1757641746332114996}
+  feverTimeTextColor: {r: 0.87843144, g: 0.34509805, b: 0.3254902, a: 1}
+  tweenScaleModifier: 0.05
+  tweenDuration: 0.5
+  feverTime: 60
+  timerFillImg: {fileID: 2689115434251152997}
+  fillColors:
+  - serializedVersion: 2
+    rgba: 4286476777
+  - serializedVersion: 2
+    rgba: 4285655430
 --- !u!1 &1489122319592792001
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,9 +137,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -50}
   m_SizeDelta: {x: 0, y: 100}
-  m_Pivot: {x: 0.5, y: 1}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2037396640911031688
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -136,7 +161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.990566, g: 0.990566, b: 0.990566, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -145,9 +170,9 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 12800000, guid: b0b25c7081699704f917d02e28f31692, type: 3}
-    m_FontSize: 14
+    m_FontSize: 70
     m_FontStyle: 0
-    m_BestFit: 1
+    m_BestFit: 0
     m_MinSize: 0
     m_MaxSize: 70
     m_Alignment: 7

@@ -9,7 +9,7 @@ public class Sink : WorkTable, IPool<Item>
     [SF] private DishRack dishRack;
     [SF] private Canvas sinkCanvas;
     [SF] private Text sinkText;
-    private Action _onFinished;
+    private event Action OnFinished;
 
     [SF] private GameObject platePrefab;
     [SF] private Transform poolPivot;
@@ -79,7 +79,7 @@ public class Sink : WorkTable, IPool<Item>
         base.BeginWork();
         
         player.OnWorkStopped += StopWork;
-        _onFinished = player.FinishWork;
+        OnFinished += player.FinishWork;
         
         return true;
     }
@@ -87,12 +87,12 @@ public class Sink : WorkTable, IPool<Item>
     protected override void StopWork()
     {
         base.StopWork();
-        _onFinished = null;
+        OnFinished = null;
     }
 
     protected override void FinishWork()
     {
-        _onFinished.Invoke();
+        OnFinished?.Invoke();
         base.FinishWork();
         
         DeactivateUI();
@@ -138,6 +138,7 @@ public class Sink : WorkTable, IPool<Item>
             }
             plateObj.name = $"Plate_{i}";
             plate.InitComponents(this);
+            plate.IsPlaced = true; // pick 버그 방지...
             plate.Deactivate();
         }
     }

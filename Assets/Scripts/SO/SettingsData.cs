@@ -28,10 +28,10 @@ public class SettingsData : ScriptableObject
     [SF] private FrameRate currentFrameRate;
     [SF] private GraphicLevel currentGraphicLevel;
 
-    private Action<float> _onBgmVolumeChanged;
-    private Action<float> _onSfxVolumeChanged;
-    private Action<bool> _onIsBgmMuteChanged;
-    private Action<bool> _onIsSfxMuteChanged;
+    private event Action<float> OnBgmVolumeChanged;
+    private event Action<float> OnSfxVolumeChanged;
+    private event Action<bool> OnIsBgmMuteChanged;
+    private event Action<bool> OnIsSfxMuteChanged;
     
     public float BgmVolume => bgmVolume;
     public float SfxVolume => sfxVolume;
@@ -56,43 +56,43 @@ public class SettingsData : ScriptableObject
 
     public void Subscribe(SoundManager manager)
     {
-        _onBgmVolumeChanged += manager.OnBgmVolumeChanged;
-        _onSfxVolumeChanged += manager.OnSfxVolumeChanged;
-        _onIsBgmMuteChanged += manager.OnBgmMuteChanged;
-        _onIsSfxMuteChanged += manager.OnSfxMuteChanged;
+        OnBgmVolumeChanged += manager.OnBgmVolumeChanged;
+        OnSfxVolumeChanged += manager.OnSfxVolumeChanged;
+        OnIsBgmMuteChanged += manager.OnBgmMuteChanged;
+        OnIsSfxMuteChanged += manager.OnSfxMuteChanged;
     }
 
     public void Unsubscribe(SoundManager manager)
     {
-        _onBgmVolumeChanged -= manager.OnBgmVolumeChanged;
-        _onSfxVolumeChanged -= manager.OnSfxVolumeChanged;
-        _onIsBgmMuteChanged -= manager.OnBgmMuteChanged;
-        _onIsSfxMuteChanged -= manager.OnSfxMuteChanged;
+        OnBgmVolumeChanged -= manager.OnBgmVolumeChanged;
+        OnSfxVolumeChanged -= manager.OnSfxVolumeChanged;
+        OnIsBgmMuteChanged -= manager.OnBgmMuteChanged;
+        OnIsSfxMuteChanged -= manager.OnSfxMuteChanged;
     }
 
     public void SetBgmVolume(float volume)
     {
         volume = Mathf.Clamp01(volume);
         bgmVolume = volume;
-        _onBgmVolumeChanged?.Invoke(volume);
+        OnBgmVolumeChanged?.Invoke(volume);
     }
     
     public void SetSfxVolume(float volume)
     {
         volume = Mathf.Clamp01(volume);
         sfxVolume = volume;
-        _onSfxVolumeChanged?.Invoke(volume);
+        OnSfxVolumeChanged?.Invoke(volume);
     }
 
     public void SetIsBgmMute(bool isMute)
     {
         isBgmMute = isMute;
-        _onIsBgmMuteChanged?.Invoke(isMute);
+        OnIsBgmMuteChanged?.Invoke(isMute);
     }
 
     public void SetIsSfxMute(bool isMute)
     {
         isSfxMute = isMute;
-        _onIsSfxMuteChanged?.Invoke(isMute);
+        OnIsSfxMuteChanged?.Invoke(isMute);
     }
 }
