@@ -49,7 +49,7 @@ public class OutStagePlayerController : MonoBehaviour
     private void Start()
     {
         _waitPathPending = new WaitUntil(() => !agent.pathPending);
-        _waitAgentArrival = new WaitUntil(IsAgentArrived);
+        _waitAgentArrival = new WaitUntil(() => agent.remainingDistance <= arrivalDistanceThreshold);
         _waitVCamBlendingStart = new WaitUntil(() => cineBrain.IsBlending);
         _waitVCamBlendingEnd = new WaitUntil(() => !cineBrain.IsBlending);
         
@@ -57,7 +57,7 @@ public class OutStagePlayerController : MonoBehaviour
         
         Time.timeScale = 1;
         
-        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, agent.areaMask))
         {
             transform.position = hit.position;
         }
@@ -112,15 +112,10 @@ public class OutStagePlayerController : MonoBehaviour
         return true;
     }
 
-    private bool IsAgentArrived()
-    {
-        return agent.remainingDistance <= arrivalDistanceThreshold;
-    }
-
     private IEnumerator CoSelectStage()
     {
         if (curTargetEatery is null) yield break;
-        if (!NavMesh.SamplePosition(curTargetEatery.Marker.position, out NavMeshHit hit, 3f, NavMesh.AllAreas)) yield break;
+        if (!NavMesh.SamplePosition(curTargetEatery.Marker.position, out NavMeshHit hit, 3f, agent.areaMask)) yield break;
         agent.SetDestination(hit.position);
         yield return _waitPathPending;
         yield return _waitAgentArrival;

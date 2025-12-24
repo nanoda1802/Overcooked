@@ -5,18 +5,20 @@ using SF = UnityEngine.SerializeField;
 public class ObjPool<T> : MonoBehaviour where T : Component
 {
     public ObjectPool<T> Pool { get; private set; }
-
+    
     private bool _isPrewarming;
 
     private int _objIdx;
     [SF] private string objName;
     [SF] private int poolMaxSize;
     [SF] private int poolCapacity;
+    
+    public int PoolMaxSize => poolMaxSize;
     // collectionCheck; true 면 "중복 반납" 발생 시 에러 발생시켜줌...
     
     [SF] private T prefab;
 
-    public void InitPool()
+    public virtual void InitPool()
     {
         // mobPrefab = Resources.Load<GameObject>("Prefabs/Mob");
         Pool = new ObjectPool<T>(Create, OnGet, OnRelease, OnDestroyObj, true, poolCapacity,
@@ -35,11 +37,10 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     private void Prewarm()
     {
         _isPrewarming = true;
-
-        for (int i = 0; i < poolCapacity; i++)
-        {
-            Pool.Release(Pool.Get());
-        }
+        
+        T[] prePool = new T[poolCapacity];
+        for (int i = 0; i < poolCapacity; i++) prePool[i] = Pool.Get();
+        for (int i = 0; i < poolCapacity; i++) Pool.Release(prePool[i]);
         
         _isPrewarming = false;
     }
@@ -48,6 +49,7 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     {
         T mob = Instantiate(prefab, transform);
         mob.name = _isPrewarming ? $"{objName}_{_objIdx++}" : $"{objName}_Instant";
+        mob.gameObject.SetActive(false);
         return mob;
     }
 

@@ -1,3 +1,6 @@
+using System;
+using UnityEngine;
+
 public class VehicleMob : Mob
 {
     // 차량은 entryPoint와 endPoint를 짝지어둠
@@ -9,4 +12,31 @@ public class VehicleMob : Mob
     // 감지 카운트를 하든, 감지 목록을 관리하든 혀 (VehicleMob)
     // 감지됐던 대상이 전방에서 사라지면 기록 제거 (VehicleMob -> triggerExit)
     // 감지되는 게 아예 없어지면 다시 이동 (VehicleMob)
+
+    private int _detectedMobCount;
+
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     if (other.CompareTag("Peds") || other.CompareTag("Player"))
+    //     {
+    //         _detectedMobCount += 1;
+    //         Debug.Log("Trig Enter " + _detectedMobCount);
+    //     }
+    //     if (agent.isStopped) return;
+    //     
+    //     StartCoroutine(CoSmoothBreak());
+    // }
+    //
+    // private void OnTriggerExit(Collider other)
+    // {
+    //     if (other.CompareTag("Peds") || other.CompareTag("Player"))
+    //     {
+    //         _detectedMobCount -= 1;
+    //         Debug.Log("Trig Exit " + _detectedMobCount);
+    //     }
+    //     if (!agent.isStopped) return;
+    //     if (_detectedMobCount >= 1) return;
+    //
+    //     StartCoroutine(CoSmoothAccelerate());
+    // }
 }

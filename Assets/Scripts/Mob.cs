@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
 
 public class Mob : MonoBehaviour
@@ -11,32 +12,56 @@ public class Mob : MonoBehaviour
     // 목적지 설정
     // 목적지에 도착하면 pool에 복귀
     
-    [SF] private NavMeshAgent agent;
+    [SF] protected NavMeshAgent agent;
     private float _speed;
     
+    [SF] private float arrivalDistanceThreshold;
     private Coroutine _moveCoroutine;
-    private Action<Mob> _onArrived;
+    private WaitUntil _waitPathPending;
+    private WaitUntil _waitAgentArrival;
     
-    public void SetReleaseEvent(Action<Mob> onArrived)
+    private Action<Mob> _onArrived;
+
+    public void Init(int areaMask, Action<Mob> onArrived)
     {
+        if (!TryGetComponent(out agent))
+        {
+            agent = gameObject.AddComponent<NavMeshAgent>();
+            agent.areaMask = areaMask;
+        }
+        
         _onArrived = onArrived;
+        
+        _waitPathPending = new WaitUntil(()=>!agent.pathPending);
+        _waitAgentArrival = new WaitUntil(()=>agent.remainingDistance <= arrivalDistanceThreshold);
     }
 
-    public void ReadyFromEntryPoint(Transform entryPoint)
+    public void ResetAgentInfo()
+    {
+        agent.enabled = false; // 이걸 끄고 키는 것 만으로도 path 같은 정보가 클리어 된다는디?
+        // 모르겠엄ㄴㄹ
+    }
+
+    public bool TryReadyFromEntryPoint(Transform entryPoint)
     {
         if (NavMesh.SamplePosition(entryPoint.position, out NavMeshHit hit, 1f, agent.areaMask))
         {
-            transform.position = hit.position;
+            agent.Warp(hit.position);
             transform.LookAt(entryPoint.forward); 
-            return;
+            return true;
         }
         
         _onArrived?.Invoke(this);
+        return false;
     }
 
-    public void SetSpeed(float speed)
+    public void SetAgentInfo(float speed, float acceleration)
     {
         _speed = speed;
+        agent.enabled = true;
+        agent.angularSpeed = speed * 10;
+        agent.avoidancePriority = Random.Range(1, 30);
+        agent.acceleration = acceleration;
     }
 
     public void SetEndPoint(Transform endPoint) // [임시]
@@ -47,32 +72,32 @@ public class Mob : MonoBehaviour
 
     private IEnumerator CoMove(Transform endPoint) // [작성중]
     {
+        agent.speed = _speed;
         agent.SetDestination(endPoint.position);
-        yield return null;
+        yield return _waitPathPending;
+        yield return _waitAgentArrival;
+        _onArrived?.Invoke(this);
     }
 
-    private IEnumerator CoSmoothBreak()
+    protected IEnumerator CoSmoothBreak()
     {
+        agent.speed = _speed;
         while (agent.speed > 0)
         {
-            agent.speed = Mathf.Lerp(_speed, 0, Time.deltaTime*3);
+            agent.speed = Mathf.Lerp(_speed, 0, agent.speed - Time.deltaTime*2);
             yield return null;
         }
         agent.isStopped = true;
     }
 
-    private IEnumerator CoSmoothAccelerate()
+    protected IEnumerator CoSmoothAccelerate()
     {
+        agent.isStopped = false;
+        agent.speed = 0;
         while (agent.speed < _speed)
         {
-            agent.speed = Mathf.Lerp(0, _speed, Time.deltaTime*3);
+            agent.speed = Mathf.Lerp(0, _speed, agent.speed + Time.deltaTime*2);
             yield return null;
         }
-        agent.isStopped = false;
-    }
-
-    public void OnArrived() // [임시]
-    {
-        _onArrived?.Invoke(this);
     }
 }
