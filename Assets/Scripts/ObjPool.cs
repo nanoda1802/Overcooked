@@ -10,10 +10,8 @@ public class ObjPool<T> : MonoBehaviour where T : Component
 
     private int _objIdx;
     [SF] private string objName;
-    [SF] private int poolMaxSize;
-    [SF] private int poolCapacity;
-    
-    public int PoolMaxSize => poolMaxSize;
+    [SF] private int poolSize;
+    public int PoolSize => poolSize;
     // collectionCheck; true 면 "중복 반납" 발생 시 에러 발생시켜줌...
     
     [SF] private T prefab;
@@ -21,8 +19,8 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     public virtual void InitPool()
     {
         // mobPrefab = Resources.Load<GameObject>("Prefabs/Mob");
-        Pool = new ObjectPool<T>(Create, OnGet, OnRelease, OnDestroyObj, true, poolCapacity,
-            poolMaxSize);
+        Pool = new ObjectPool<T>(Create, OnGet, OnRelease, OnDestroyObj, true, poolSize,
+            poolSize);
         
         _objIdx = 0;
         
@@ -38,9 +36,9 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     {
         _isPrewarming = true;
         
-        T[] prePool = new T[poolCapacity];
-        for (int i = 0; i < poolCapacity; i++) prePool[i] = Pool.Get();
-        for (int i = 0; i < poolCapacity; i++) Pool.Release(prePool[i]);
+        T[] prePool = new T[poolSize];
+        for (int i = 0; i < poolSize; i++) prePool[i] = Pool.Get();
+        for (int i = 0; i < poolSize; i++) Pool.Release(prePool[i]);
         
         _isPrewarming = false;
     }

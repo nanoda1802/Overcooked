@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
 
-[System.Serializable]
+[Serializable]
 public struct WaypointPair
 {
     public Transform entryPoint;
@@ -64,7 +66,7 @@ public class MobManager : MonoBehaviour
         
         for (int i = 0; i < pedsWaypoints.Length; i++)
         {
-            if (pedsPool.Pool.CountActive >= pedsPool.PoolMaxSize) break;
+            if (pedsPool.Pool.CountActive >= pedsPool.PoolSize) break;
             
             float rnd = Random.Range(0f, 10f);
             if (rnd < 5f) continue;
@@ -78,7 +80,7 @@ public class MobManager : MonoBehaviour
         
         for (int i = 0; i < vehicleWaypoints.Length; i++)
         {
-            if (vehiclePool.Pool.CountActive >= vehiclePool.PoolMaxSize) break;
+            if (vehiclePool.Pool.CountActive >= vehiclePool.PoolSize) break;
             
             SpawnVehicle(vehicleWaypoints[i].entryPoint, vehicleWaypoints[i].endPoint);
         }

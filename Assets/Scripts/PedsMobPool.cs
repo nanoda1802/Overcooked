@@ -7,6 +7,7 @@ public class PedsMobPool : ObjPool<PedsMob>
     private int _areaMask;
     [SF] private float pedsMinSpeed;
     [SF] private float pedsMaxSpeed;
+    [SF] private float pedsAngularSpeed;
     [SF] private float pedsAcceleration;
     
     
@@ -26,7 +27,7 @@ public class PedsMobPool : ObjPool<PedsMob>
     protected override void OnGet(PedsMob obj)
     {
         base.OnGet(obj);
-        obj.SetAgentInfo(Random.Range(pedsMinSpeed, pedsMaxSpeed), pedsAcceleration);
+        obj.SetAgentInfo(Random.Range(pedsMinSpeed, pedsMaxSpeed), pedsAngularSpeed, pedsAcceleration);
     }
 
     protected override void OnRelease(PedsMob obj)

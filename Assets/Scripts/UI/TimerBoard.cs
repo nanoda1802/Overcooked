@@ -14,6 +14,8 @@ public class TimerBoard : MonoBehaviour
     [SF] private float tweenDuration;
     [SF] private float feverTime;
     
+    [SF] private AudioClip feverTimeSfx;
+    
     private Sequence _timerTxtSeq;
     
     [SF] private Image timerFillImg;
@@ -70,8 +72,8 @@ public class TimerBoard : MonoBehaviour
         _timerTxtSeq = DOTween.Sequence();
         _timerTxtSeq.Append(timerTxtRect.DOPunchScale(tweenScaleModifier * Vector3.one, tweenDuration * 2f, 1))
             .Join(timerTxt.DOColor(feverTimeTextColor, tweenDuration).SetLoops(2, LoopType.Yoyo))
+            .JoinCallback(() => GameManager.Instance.SoundManager.PlaySfx(feverTimeSfx))
             .OnKill(OnKillTimerTxtSequence);
-            //.JoinCallback() [sfx] 경고음 내기
     }
     
     private void OnKillTimerTxtSequence()

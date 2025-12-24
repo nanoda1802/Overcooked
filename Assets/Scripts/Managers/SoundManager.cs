@@ -38,7 +38,7 @@ public class SoundManager : MonoBehaviour, IPool<AudioSource>
         }
     }
 
-    public bool TryGetItem(out AudioSource poolable)
+    public bool TryGetItem(out AudioSource poolable) // [버그 발생] 확실하진 않은데 이거 블로킹 발생하는 듯? 순서 잘 정해줘야...?
     {
         if (_pool.TryDequeue(out poolable))
         {

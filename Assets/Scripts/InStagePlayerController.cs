@@ -219,7 +219,6 @@ public class InStagePlayerController : MonoBehaviour
         
         StopMoveImmediately();
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
-        // [sfx] 대시 소리
         GameManager.Instance.SoundManager.PlaySfx(dashSoundClip);
         yield return _waitInertiaDecay;
         StopMoveImmediately();
@@ -270,7 +269,6 @@ public class InStagePlayerController : MonoBehaviour
         bool hasInteraction = _detectedTable.Interact(this);
         if (!hasInteraction)
         {
-            // [sfx] 상호작용 블락 소리   
             GameManager.Instance.SoundManager.PlaySfx(interactBlockSoundClip);
         }
         _detectedTable = null;
@@ -346,7 +344,6 @@ public class InStagePlayerController : MonoBehaviour
     {
         DetachItem().SetThrowValues(pivot.position, dir, _moveSpeedModifier);
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
-        // [sfx] 던지는 소리
         GameManager.Instance.SoundManager.PlaySfx(throwSoundClip);
     }
     
@@ -354,7 +351,6 @@ public class InStagePlayerController : MonoBehaviour
     {
         item.SetParent(pivot);
         pickedItem = item;
-        // [sfx] 재료 줍는 소리
         GameManager.Instance.SoundManager.PlaySfx(attachSoundClip);
     }
 

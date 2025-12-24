@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class VehicleMob : Mob
@@ -13,7 +12,7 @@ public class VehicleMob : Mob
     // 감지됐던 대상이 전방에서 사라지면 기록 제거 (VehicleMob -> triggerExit)
     // 감지되는 게 아예 없어지면 다시 이동 (VehicleMob)
 
-    private int _detectedMobCount;
+    // private int _detectedMobCount;
 
     // private void OnTriggerEnter(Collider other)
     // {
@@ -39,4 +38,22 @@ public class VehicleMob : Mob
     //
     //     StartCoroutine(CoSmoothAccelerate());
     // }
+
+    private Coroutine _smoothShift;
+    
+    private void OnTriggerEnter(Collider other)
+    {
+        if (agent.isStopped) return;
+        if (!other.CompareTag("Mob") && !other.CompareTag("Player")) return;
+        if (_smoothShift is not null) StopCoroutine(_smoothShift);
+        _smoothShift = StartCoroutine(CoSmoothBreak());
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!agent.isStopped) return;
+        if (!other.CompareTag("Mob") && !other.CompareTag("Player")) return;
+        if (_smoothShift is not null) StopCoroutine(_smoothShift);
+        _smoothShift = StartCoroutine(CoSmoothAccelerate());
+    }
 }

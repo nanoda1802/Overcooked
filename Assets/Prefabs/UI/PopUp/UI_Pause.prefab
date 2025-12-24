@@ -2104,6 +2104,8 @@ MonoBehaviour:
   sfxSlider: {fileID: 1961607595941897100}
   bgmMuteToggle: {fileID: 5064127735517627339}
   sfxMuteToggle: {fileID: 5470763941618127392}
+  pauseSfx: {fileID: 8300000, guid: 391650a6e640ec040ab2d5e5c09d99a0, type: 3}
+  unpauseSfx: {fileID: 8300000, guid: e1f95b7040f0a8941bb0f09118e822aa, type: 3}
 --- !u!1001 &2473838112429973324
 PrefabInstance:
   m_ObjectHideFlags: 0

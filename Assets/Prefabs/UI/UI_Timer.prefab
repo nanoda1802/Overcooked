@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6552469787696208642}
   - component: {fileID: 6393141242742728616}
   m_Layer: 5
-  m_Name: UI_Time
+  m_Name: UI_Timer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,6 +96,7 @@ MonoBehaviour:
   tweenScaleModifier: 0.05
   tweenDuration: 0.25
   feverTime: 60
+  feverTimeSfx: {fileID: 8300000, guid: a80453cb43c6d204c838f2a49fcab82d, type: 3}
   timerFillImg: {fileID: 2689115434251152997}
   fillColors:
   - serializedVersion: 2

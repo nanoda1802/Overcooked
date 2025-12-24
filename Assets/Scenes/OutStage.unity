@@ -1320,6 +1320,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8125141175643520257, guid: ae4b4f1a65850fd44864b0b9aa9cfe20, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8599706611939104919, guid: ae4b4f1a65850fd44864b0b9aa9cfe20, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.5
@@ -4398,6 +4402,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7030990062741436542, guid: 2dc8ea848287cb648be1ded3e30ad478, type: 3}
+      propertyPath: m_Height
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7030990062741436542, guid: 2dc8ea848287cb648be1ded3e30ad478, type: 3}
+      propertyPath: m_Radius
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7030990062741436542, guid: 2dc8ea848287cb648be1ded3e30ad478, type: 3}
       propertyPath: m_WalkableMask
       value: 40
       objectReference: {fileID: 0}
@@ -6055,11 +6067,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objName: Vehicle
-  poolMaxSize: 15
-  poolCapacity: 10
+  poolSize: 8
   prefab: {fileID: -6606899513580758035, guid: 7e8587a6ed632a04a84a24f68fa5b7a7, type: 3}
-  vehicleMinSpeed: 10
-  vehicleMaxSpeed: 15
+  vehicleMinSpeed: 5
+  vehicleMaxSpeed: 8
+  vehicleAngularSpeed: 300
   vehicleAcceleration: 300
 --- !u!4 &1031933785 stripped
 Transform:
@@ -10918,12 +10930,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objName: Peds
-  poolMaxSize: 30
-  poolCapacity: 20
+  poolSize: 15
   prefab: {fileID: -2167200271884108984, guid: cb3e790f35cb30a489f7b067d50f9c51, type: 3}
   pedsMinSpeed: 1
   pedsMaxSpeed: 2
-  pedsAcceleration: 150
+  pedsAngularSpeed: 200
+  pedsAcceleration: 200
 --- !u!4 &2085134211 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6617084648951696749, guid: ae4b4f1a65850fd44864b0b9aa9cfe20, type: 3}

@@ -8,7 +8,7 @@ TagManager:
   - Box
   - Ground
   - Table
-  - Peds
+  - Mob
   layers:
   - Default
   - TransparentFX

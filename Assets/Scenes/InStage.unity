@@ -2411,6 +2411,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 992935538}
     - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
+      propertyPath: despawnSoundClip
+      value: 
+      objectReference: {fileID: 8300000, guid: e56ed06144c00e24e94a907c5f3f3be5, type: 3}
+    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: interactBlockedSfx
       value: 
       objectReference: {fileID: 8300000, guid: aa3080448ea1d484eaf98e10fe063b80, type: 3}

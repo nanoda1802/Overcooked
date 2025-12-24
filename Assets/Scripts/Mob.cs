@@ -55,11 +55,11 @@ public class Mob : MonoBehaviour
         return false;
     }
 
-    public void SetAgentInfo(float speed, float acceleration)
+    public void SetAgentInfo(float speed, float angularSpeed, float acceleration)
     {
         _speed = speed;
         agent.enabled = true;
-        agent.angularSpeed = speed * 10;
+        agent.angularSpeed = angularSpeed;
         agent.avoidancePriority = Random.Range(1, 30);
         agent.acceleration = acceleration;
     }
@@ -84,7 +84,7 @@ public class Mob : MonoBehaviour
         agent.speed = _speed;
         while (agent.speed > 0)
         {
-            agent.speed = Mathf.Lerp(_speed, 0, agent.speed - Time.deltaTime*2);
+            agent.speed = Mathf.Lerp(_speed, 0, agent.speed - Time.deltaTime * 0.2f);
             yield return null;
         }
         agent.isStopped = true;
@@ -96,7 +96,7 @@ public class Mob : MonoBehaviour
         agent.speed = 0;
         while (agent.speed < _speed)
         {
-            agent.speed = Mathf.Lerp(0, _speed, agent.speed + Time.deltaTime*2);
+            agent.speed = Mathf.Lerp(0, _speed, agent.speed + Time.deltaTime * 0.2f);
             yield return null;
         }
     }

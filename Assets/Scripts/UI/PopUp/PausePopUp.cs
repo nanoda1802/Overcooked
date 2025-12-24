@@ -1,4 +1,5 @@
 using DG.Tweening;
+using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
@@ -20,6 +21,9 @@ public class PausePopUp : PopUpUI
     [SF] private Toggle bgmMuteToggle;
     [SF] private Toggle sfxMuteToggle;
 
+    [SF] private AudioClip pauseSfx;
+    [SF] private AudioClip unpauseSfx;
+    
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -29,14 +33,13 @@ public class PausePopUp : PopUpUI
         SubscribeEvents();
         
         GameManager.Instance.SoundManager.PauseAllSounds(true);
-        // [sfx] 퍼즈될 때 소리
+        GameManager.Instance.SoundManager.PlaySfx(pauseSfx);
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         UnsubscribeEvents();
-        
         GameManager.Instance.SoundManager.PauseAllSounds(false);
     }
 

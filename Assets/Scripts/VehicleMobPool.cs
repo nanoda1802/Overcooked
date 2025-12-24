@@ -7,6 +7,7 @@ public class VehicleMobPool : ObjPool<VehicleMob>
     private int _areaMask;
     [SF] private float vehicleMinSpeed;
     [SF] private float vehicleMaxSpeed;
+    [SF] private float vehicleAngularSpeed;
     [SF] private float vehicleAcceleration;
     
     public override void InitPool()
@@ -25,7 +26,7 @@ public class VehicleMobPool : ObjPool<VehicleMob>
     protected override void OnGet(VehicleMob obj)
     {
         base.OnGet(obj);
-        obj.SetAgentInfo(Random.Range(vehicleMinSpeed, vehicleMaxSpeed), vehicleAcceleration);
+        obj.SetAgentInfo(Random.Range(vehicleMinSpeed, vehicleMaxSpeed), vehicleAngularSpeed, vehicleAcceleration);
     }
 
     protected override void OnRelease(VehicleMob obj)

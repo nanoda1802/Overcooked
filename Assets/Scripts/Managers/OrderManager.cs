@@ -80,7 +80,6 @@ public class OrderManager : MonoBehaviour, IManager
         _activeOrderList.Add(order);
         
         _stageResult.CountTotalOrder();
-        // [sfx] 신규 주문 소리
         GameManager.Instance.SoundManager.PlaySfx(newOrderSoundClip);
     }
 

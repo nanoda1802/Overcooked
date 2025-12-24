@@ -22,7 +22,6 @@ public class WorkTable : PlaceTable
     public virtual bool BeginWork(InStagePlayerController player = null)
     {
         _isWorking = true;
-        // [sfx] 테이블 별 일하는 소리 시작
         curSfx = GameManager.Instance.SoundManager.PlayLoopingSfx(workSoundClip);
         return true;
     }
@@ -30,7 +29,6 @@ public class WorkTable : PlaceTable
     protected virtual void StopWork()
     {
         _isWorking = false;
-        // [sfx] 테이블 별 일하는 소리 끝
         GameManager.Instance.SoundManager.TurnOffLoopingSfx(curSfx);
         curSfx = null;
     }
