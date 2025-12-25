@@ -16,6 +16,7 @@ public class InStagePlayerController : MonoBehaviour
     /* 이동 */
     [Header("[ Move ]")] 
     [SF] private PlayerMovementData moveData;
+    [SF] private ParticleSystem dashVfx;
     private Vector3 _moveDir;
     private float _moveSpeedModifier = 1f;
     private Coroutine _dashCoroutine;
@@ -220,6 +221,7 @@ public class InStagePlayerController : MonoBehaviour
         StopMoveImmediately();
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
         GameManager.Instance.SoundManager.PlaySfx(dashSoundClip);
+        PlayDashVfx();
         yield return _waitInertiaDecay;
         StopMoveImmediately();
     }
@@ -228,6 +230,19 @@ public class InStagePlayerController : MonoBehaviour
     {
         _rb.velocity = _rb.angularVelocity = Vector3.zero;
     }
+
+    private void PlayDashVfx()
+    {
+        if (dashVfx is null) return;
+        if (dashVfx.isPlaying) StopDashVfxSmoothly();
+        dashVfx.Play();
+    }
+
+    private void StopDashVfxSmoothly()
+    {
+        dashVfx?.Stop(true,ParticleSystemStopBehavior.StopEmitting);
+    }
+
     #endregion
 
     #region 리스폰 메서드

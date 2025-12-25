@@ -6405,6 +6405,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 113686205}
     m_Modifications:
+    - target: {fileID: 2703031937714174020, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5656253126730348687, guid: 87ea98a799732d54fb426a04c575d3cb, type: 3}
       propertyPath: m_SizeDelta.y
       value: 500.1311

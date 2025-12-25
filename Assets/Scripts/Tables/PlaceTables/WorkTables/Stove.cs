@@ -3,6 +3,8 @@ using SF = UnityEngine.SerializeField;
 
 public class Stove : WorkTable
 {
+    [SF] private ParticleSystem fireVfx;
+    
     private void OnTriggerEnter(Collider other)
     {
         if (placedItem is not null) return;
@@ -34,19 +36,37 @@ public class Stove : WorkTable
     {
         DeactivateUI();
         StopWork();
+        StopFireVfxSmoothly();
         return base.DisplaceItem();
+    }
+
+    public override bool BeginWork(InStagePlayerController player = null)
+    {
+        bool hasBegun = base.BeginWork(player);
+        if (hasBegun) PlayFireVfx();
+        return hasBegun;
     }
 
     protected override void StopWork()
     {
         base.StopWork();
-        // Debug.Log($"{gameObject.name} StopWork!");
     }
 
     protected override void FinishWork()
     {
         // 근데 이거 maxDone 기준이라 finish는 다 탔을 때 호출되는디
         base.FinishWork();
-        // Debug.Log($"{gameObject.name} FinishWork!");
+    }
+    
+    private void PlayFireVfx()
+    {
+        if (fireVfx is null) return;
+        if (fireVfx.isPlaying) StopFireVfxSmoothly();
+        fireVfx.Play();
+    }
+
+    private void StopFireVfxSmoothly()
+    {
+        fireVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
 }
