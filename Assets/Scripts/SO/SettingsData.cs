@@ -48,7 +48,7 @@ public class SettingsData : ScriptableObject
         
         /* 임시 */
         bgmVolume = sfxVolume = 1;
-        isBgmMute = true; 
+        isBgmMute = false; 
         isSfxMute = false;
         currentFrameRate = FrameRate.Opt3;
         currentGraphicLevel = GraphicLevel.High;

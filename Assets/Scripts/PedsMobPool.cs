@@ -5,6 +5,7 @@ using SF = UnityEngine.SerializeField;
 public class PedsMobPool : ObjPool<PedsMob>
 {
     private int _areaMask;
+    [SF] private int agentPriorityOffset;
     [SF] private float pedsMinSpeed;
     [SF] private float pedsMaxSpeed;
     [SF] private float pedsAngularSpeed;
@@ -21,19 +22,20 @@ public class PedsMobPool : ObjPool<PedsMob>
     {
         PedsMob mob = base.Create();
         mob.Init(_areaMask, m => Pool.Release(m as PedsMob));
+        mob.SetAgentInfo(agentPriorityOffset + objIdx++, pedsAngularSpeed, pedsAcceleration);
         return mob;
     }
 
     protected override void OnGet(PedsMob obj)
     {
         base.OnGet(obj);
-        obj.SetAgentInfo(Random.Range(pedsMinSpeed, pedsMaxSpeed), pedsAngularSpeed, pedsAcceleration);
+        obj.ActivateAgent(Random.Range(pedsMinSpeed, pedsMaxSpeed));
     }
 
     protected override void OnRelease(PedsMob obj)
     {
         base.OnRelease(obj); // 비활성화
         // 풀로 넣을 때 해줄 초기화
-        obj.ResetAgentInfo();
+        obj.DeactivateAgent();
     }
 }

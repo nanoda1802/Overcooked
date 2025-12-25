@@ -8,7 +8,7 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     
     private bool _isPrewarming;
 
-    private int _objIdx;
+    protected int objIdx;
     [SF] private string objName;
     [SF] private int poolSize;
     public int PoolSize => poolSize;
@@ -22,7 +22,7 @@ public class ObjPool<T> : MonoBehaviour where T : Component
         Pool = new ObjectPool<T>(Create, OnGet, OnRelease, OnDestroyObj, true, poolSize,
             poolSize);
         
-        _objIdx = 0;
+        objIdx = 0;
         
         Prewarm();
     }
@@ -46,7 +46,7 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     protected virtual T Create()
     {
         T mob = Instantiate(prefab, transform);
-        mob.name = _isPrewarming ? $"{objName}_{_objIdx++}" : $"{objName}_Instant";
+        mob.name = _isPrewarming ? $"{objName}_{objIdx}" : $"{objName}_Instant";
         mob.gameObject.SetActive(false);
         return mob;
     }

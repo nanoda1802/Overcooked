@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
 
 public class Mob : MonoBehaviour
@@ -36,7 +35,7 @@ public class Mob : MonoBehaviour
         _waitAgentArrival = new WaitUntil(()=>agent.remainingDistance <= arrivalDistanceThreshold);
     }
 
-    public void ResetAgentInfo()
+    public void DeactivateAgent()
     {
         agent.enabled = false; // 이걸 끄고 키는 것 만으로도 path 같은 정보가 클리어 된다는디?
         // 모르겠엄ㄴㄹ
@@ -55,13 +54,17 @@ public class Mob : MonoBehaviour
         return false;
     }
 
-    public void SetAgentInfo(float speed, float angularSpeed, float acceleration)
+    public void SetAgentInfo(int priority, float angularSpeed, float acceleration)
     {
-        _speed = speed;
-        agent.enabled = true;
+        agent.avoidancePriority = priority;
         agent.angularSpeed = angularSpeed;
-        agent.avoidancePriority = Random.Range(1, 30);
         agent.acceleration = acceleration;
+    }
+
+    public void ActivateAgent(float speed)
+    {
+        agent.enabled = true;
+        _speed = speed;
     }
 
     public void SetEndPoint(Transform endPoint) // [임시]
