@@ -35,8 +35,7 @@ public class TutorialPopUp : MonoBehaviour
 
     private void OnDisable()
     {
-        GameManager.Instance.InputManager.EnterInStage();
-        _inStageManager.ResumeStage();
+        _inStageManager.StageCueUI.Activate(CueType.Start);
 
         UnsubscribeEvents();
         

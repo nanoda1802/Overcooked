@@ -23,12 +23,14 @@ public class InStageManager : MonoBehaviour
     [SF] private StageResultData stageResult;
     public StageInfoData StageInfo => stageInfo;
     public StageResultData StageResult => stageResult;
-    
+
+    [SF] private StageCue stageCueUI;
     [SF] private StageResult stageResultUI;
     [SF] private TutorialPopUp tutorialUI;
-    
     [SF] private PausePopUp pauseUI;
     [SF] private bool isStagePaused;
+    public StageCue StageCueUI => stageCueUI; // [임시]
+    public StageResult StageResultUI => stageResultUI; // [임시]
     public bool IsStagePaused => isStagePaused;
     
     // 하위 매니저들에 대한 참조
@@ -55,6 +57,7 @@ public class InStageManager : MonoBehaviour
         timeManager.Init(this);
         // poolManager.Init();
         
+        stageCueUI.Init(this);
         stageResultUI.Init(this);
         pauseUI.Init(this);
         tutorialUI.Init(this);
@@ -66,9 +69,14 @@ public class InStageManager : MonoBehaviour
         }
         else
         {
-            ResumeStage();
-            gameManager?.InputManager.EnterInStage();
+            stageCueUI.Activate(CueType.Start);
         }
+    }
+
+    public void StartStage()
+    {
+        ResumeStage();
+        GameManager.Instance.InputManager.EnterInStage();
     }
 
     public void PauseStage(bool withPopUp = false)
@@ -102,15 +110,19 @@ public class InStageManager : MonoBehaviour
         gameManager.ChangeScene("InStage");
     }
 
-    public void QuitStage()
+    public void QuitStage() // [임시] 이 retry quit end 삼형제 어케... 개선해봐... 
     {
         if (pauseUI.IsActive) pauseUI.Deactivate();
-        gameManager.SoundManager.TurnOffAllSfx();
-        gameManager.SoundManager.TurnOffCurrentBgm(true);
-        FinishStage(); 
+        gameManager.InputManager.ExitInStage();
+        gameManager.SoundManager.TurnOffCurrentBgm(true); // [임시]
+        gameManager.SoundManager.TurnOffAllSfx(); // [임시]
+        timeManager.Deinit(); // [임시]
+        orderManager.Deinit(); // [임시]
+        scoreManager.Deinit(); // [임시]
+        stageCueUI.Activate(CueType.Quit);
     }
 
-    public void FinishStage() // [임시]
+    public void EndStage() // [임시]
     {
         gameManager.InputManager.ExitInStage();
         gameManager.SoundManager.TurnOffCurrentBgm(); // [임시]
@@ -119,6 +131,8 @@ public class InStageManager : MonoBehaviour
         orderManager.Deinit(); // [임시]
         scoreManager.Deinit(); // [임시]
         PauseStage();
-        stageResultUI.Activate();
+        
+        stageCueUI.Activate(CueType.End);
+        // stageResultUI.Activate();
     }
 }

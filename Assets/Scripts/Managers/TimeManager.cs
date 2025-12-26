@@ -21,7 +21,7 @@ public class TimeManager : MonoBehaviour, IManager
     
     public void Init(InStageManager sm)
     {
-        OnTimerDone += sm.FinishStage;
+        OnTimerDone += sm.EndStage;
         _stageInfo = sm.StageInfo;
         _leftTime = _stageInfo.StageDuration;
     }
