@@ -1,221 +1,208 @@
 using System.Collections;
 using System.Collections.Generic;
+using Sfx;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public class SoundManager : MonoBehaviour, IPool<AudioSource>
+// [참고링크] https://youtu.be/BgpqoRFCNOs?si=WOMq5QCAx7gXHQVM
+
+public class SoundManager : ObjPool<SfxEmitter>
 {
-    private SettingsData _settingsInfo;
+    /* Settings */
+    private SettingsData _settings;
+    /* BGM */
+    private AudioSource _bgmAudioSource;
+    private Coroutine _coBgmFade;
+    [SF] private float bgmFadeSpeed = 1.5f;
+    /* SFX */
+    // public Queue<SfxEmitter> FrequentSfx { get; private set; }
+    private List<SfxEmitter> _activeSfx;
+    [SF] private int maxSfx = 30;
+    // [메모] Project Settings의 Audio 탭에 Max Real Voices와 Max Virtual Voices가 있음
+    // Real은 프로젝트에서 실제로 발생할 수 있는 소리의 개수를 뜻함 (작동 가능한 Audio Source 개수)
+    // Virtual은 후보로 대기할 수 있는 소리의 개수를 뜻함 (실제 작동 X)
+    // 현재 Play 중인 Audio Source의 Priority를 기준으로 경쟁하게 되고, 값이 작을수록 우선순위가 높음
     
-    [SF] private AudioSource bgm;
-    [SF] private int poolSize;
-    private Queue<AudioSource> _pool;
-
-    [SF] private float volumeFadeSpeed = 1.5f;
-    [SF] private AudioClip btnDefaultSoundClip;
-
-    private List<AudioSource> _activeSfx;
-
     public void Init(SettingsData data)
     {
-        _settingsInfo = data;
-        _settingsInfo.Subscribe(this);
+        if (!TryGetComponent(out _bgmAudioSource))
+            _bgmAudioSource = gameObject.AddComponent<AudioSource>();
+        
+        _settings = data;
+        _settings.Subscribe(this);
+        
         InitPool();
-        _activeSfx = new List<AudioSource>(poolSize);
-
-        OnBgmMuteChanged(_settingsInfo.IsBgmMute);
-        OnSfxMuteChanged(_settingsInfo.IsSfxMute);
-    }
-
-    public void InitPool()
-    {
-        _pool = new Queue<AudioSource>(poolSize);
-
-        for (int i = 0; i < poolSize; i++)
-        {
-            AudioSource sfx = InstantiateSfxObj(i);
-            ReturnToPool(sfx);
-        }
-    }
-
-    public bool TryGetItem(out AudioSource poolable) // [버그 발생] 확실하진 않은데 이거 블로킹 발생하는 듯? 순서 잘 정해줘야...?
-    {
-        if (_pool.TryDequeue(out poolable))
-        {
-            poolable.gameObject.SetActive(true);
-            return true;
-        }
-
-        poolable = InstantiateSfxObj();
-        return true;
+        
+        _bgmAudioSource.loop = true;
+        _bgmAudioSource.volume = _settings.BgmVolume;
+        
+        _activeSfx = new List<SfxEmitter>(defaultCapacity);
+        // FrequentSfx = new Queue<SfxEmitter>(defaultCapacity);
     }
     
-    public void ReturnToPool(AudioSource poolable)
+    #region Sfx Build Methods
+    public SfxBuilder BuildSfx()
     {
-        poolable.loop = false;
-        poolable.clip = null;
-        poolable.gameObject.SetActive(false);
-        _pool.Enqueue(poolable);
+        return new SfxBuilder(this);
     }
 
-    private AudioSource InstantiateSfxObj(int idx = -1)
+    public bool CanBuildSfx(ClipInfo info) // [보류] 총소리 같은 거 과도하게 나지 않도록 방지하는 건데, 정상 작동을 안 한다...
     {
-        string sfxName = idx >= 0 ? $"Sfx_{idx}" : "Sfx_Instant";
-        GameObject sfxObj = new GameObject(sfxName);
-        sfxObj.transform.SetParent(transform);
-        
-        AudioSource audioSource = sfxObj.AddComponent<AudioSource>();
-        audioSource.playOnAwake = false;
-        audioSource.loop = false;
-        return audioSource;
+        return _activeSfx.Count <= maxSfx;
+        // if (!info.isFrequent) return true;
+        // if (FrequentSfx.Count < maxSfx) return true;
+        // if (!FrequentSfx.TryDequeue(out var sfx)) return true;
+        //
+        // try
+        // {
+        //     sfx.Stop();
+        //     return true;
+        // }   
+        // catch
+        // {
+        //     Debug.Log("sfx is already stopped");
+        //     return false;
+        // }
     }
+    #endregion
 
+    #region Settings Event Methods
     public void OnBgmVolumeChanged(float volume)
     {
-        bgm.volume = volume;
+        _bgmAudioSource.volume = volume;
     }
 
     public void OnBgmMuteChanged(bool isMute)
     {
-        bgm.mute = isMute;
+        _bgmAudioSource.mute = isMute;
     }
-
+    
     public void OnSfxVolumeChanged(float volume)
     {
-        foreach (AudioSource sfx in _activeSfx)     
+        foreach (SfxEmitter sfx in _activeSfx)     
         {
-            sfx.volume = volume;
+            sfx.AudioSource.volume = volume;
         }
     }
 
     public void OnSfxMuteChanged(bool isMute)
     {
-        foreach (AudioSource sfx in _activeSfx)
+        foreach (SfxEmitter sfx in _activeSfx)     
         {
-            sfx.mute = isMute;
+            sfx.AudioSource.mute = isMute;
         }
     }
-
+    #endregion
+    
+    #region Sound Control Methods
     public void PauseAllSounds(bool isPaused)
     {
-        foreach (AudioSource sfx in _activeSfx)
+        foreach (SfxEmitter sfx in _activeSfx)     
         {
-            if (isPaused) sfx.Pause();
-            else sfx.UnPause();
+            if (isPaused) sfx.AudioSource.Pause();
+            else sfx.AudioSource.UnPause();
         }
+        
+        if (isPaused) _bgmAudioSource.Pause();
+        else _bgmAudioSource.UnPause();
+    }
 
-        if (isPaused) bgm.Pause();
-        else bgm.UnPause();
+    public void TurnOffActiveSfx()
+    {
+        /* 컬렉션 순회 삭제는 "역순 for문"인 이유 */
+        // "foreach"는 열거자를 활용하지비. 그리고 이 열거자엔 순회 시작 시 컬렉션의 Version이 기록돼이씀
+        // Version은 컬렉션에 Remove나 Add가 호출될 때마다 변하는데,
+        // 순회 도중 요소나 구성이 변하면 이 Version이 달라지며,
+        // foreach는 현재 순회에 대한 신뢰성을 잃고 InvalidOperation 예외를 내버림
+        // "정순 for문"은 현재 순회 대상이 List기 때문에 문제.
+        // List는 요소가 사라지면 그 이후 요소들의 인덱스를 당겨와버림.
+        // for문은 인덱스를 기준으로 순회하기 때문에, 요소별 인덱스가 변하며,
+        // 순회 대상이 누락되거나, 중복되거나, 또는 범위를 벗어나 OutOfRange 예외를 내버릴 수 이씀
+        for (int i = _activeSfx.Count-1; i >= 0; i--)
+        { 
+            _activeSfx[i].Stop();
+        }
+        
+        // FrequentSfx.Clear();
     }
 
     public void TurnOffCurrentBgm(bool immediately = false)
     {
-        if (bgm.clip is null) return;
+        if (_bgmAudioSource.clip is null) return;
         if (immediately)
         {
-            bgm.Stop();
-            bgm.clip = null;
+            _bgmAudioSource.Stop();
+            _bgmAudioSource.clip = null;
             return;
         }
-        StartCoroutine(CoFadeOutBgm());
+        StartCoroutine(FadeOutBgm());
+    }
+    
+    public void ChangeBgm(ClipInfo info)
+    {
+        if (info.clip is null) return;
+        _bgmAudioSource.clip = info.clip;
+        _bgmAudioSource.volume = _settings.BgmVolume; // Fade에서 volume을 0으로 낮춰서, 여기서 다시 초기화해줘야해
+        StartCoroutine(FadeInBgm());
     }
 
-    public void ChangeBgm(AudioClip clip)
+    private IEnumerator FadeOutBgm()
     {
-        if (clip is null) return;
-        bgm.clip = clip;
-        bgm.volume = _settingsInfo.BgmVolume;
-        StartCoroutine(CoFadeInBgm());
-    }
-
-    private IEnumerator CoFadeOutBgm()
-    {
-        while (bgm.volume > 0)
+        while (_bgmAudioSource.volume > 0)
         {
-            bgm.volume -= Time.unscaledDeltaTime * volumeFadeSpeed * _settingsInfo.BgmVolume;
+            _bgmAudioSource.volume -= _settings.BgmVolume * bgmFadeSpeed * Time.unscaledDeltaTime;
             yield return null;
         }
         
-        bgm.Stop();
-        bgm.clip = null;
+        _bgmAudioSource.Stop();
+        _bgmAudioSource.clip = null;
     }
 
-    private IEnumerator CoFadeInBgm()
+    private IEnumerator FadeInBgm()
     {
-        bgm.Play();
-
-        while (bgm.volume < _settingsInfo.BgmVolume)
+        _bgmAudioSource.Play();
+        
+        while (_bgmAudioSource.volume < _settings.BgmVolume)
         {
-            bgm.volume += Time.unscaledDeltaTime * volumeFadeSpeed * _settingsInfo.BgmVolume;
+            _bgmAudioSource.volume += _settings.BgmVolume * bgmFadeSpeed * Time.unscaledDeltaTime;
             yield return null;
         }
     }
+    #endregion
 
-    public void TurnOffAllSfx()
+    #region Pool Methods
+    public SfxEmitter GetSfx()
     {
-        foreach (AudioSource sfx in _activeSfx)
-        {
-            sfx.Stop();
-            ReturnToPool(sfx);
-        }
-        
-        _activeSfx.Clear();
+        return Pool.Get();
     }
 
-    public void PlaySfx(AudioClip clip = null)
+    public void ReleaseSfx(SfxEmitter sfx)
     {
-        TryGetItem(out AudioSource sfx);
-        sfx.clip = clip is null ? btnDefaultSoundClip : clip;
-        sfx.volume = _settingsInfo.SfxVolume;
-        sfx.mute = _settingsInfo.IsSfxMute;
-        
-        _activeSfx.Add(sfx);
-        StartCoroutine(CoPlaySfx(sfx));
+        Pool.Release(sfx);
     }
 
-    private IEnumerator CoPlaySfx(AudioSource sfx)
+    protected override SfxEmitter CreateObj()
     {
-        sfx.Play();
-        yield return new WaitForSeconds(sfx.clip.length); // [임시]
-
-        while (sfx.isPlaying) // 혹시 모를 잔여 재생 대기
-        {
-            yield return null;
-        }
-
-        _activeSfx.Remove(sfx);
-        ReturnToPool(sfx);
-    }
-
-    public AudioSource PlayLoopingSfx(AudioClip clip)
-    {
-        TryGetItem(out AudioSource sfx);
-        sfx.clip = clip;
-        sfx.loop = true;
-        sfx.mute = _settingsInfo.IsSfxMute;
-        sfx.volume = _settingsInfo.SfxVolume; 
-        
-        _activeSfx.Add(sfx);
-        sfx.Play();
+        SfxEmitter sfx = base.CreateObj();
+        objIdx += 1;
+        sfx.AudioSource.playOnAwake = sfx.AudioSource.loop = false;
+        sfx.AudioSource.volume = _settings.SfxVolume;
         return sfx;
     }
 
-    public void TurnOffLoopingSfx(AudioSource sfx)
+    protected override void OnGot(SfxEmitter obj)
     {
-        if (sfx is null) return;
-        StartCoroutine(CoFadeOutLoopingSfx(sfx));
+        if (isPrewarming) return;
+        base.OnGot(obj);
+        obj.Init(_settings.SfxVolume, _settings.IsSfxMute);
+        _activeSfx.Add(obj);
     }
 
-    private IEnumerator CoFadeOutLoopingSfx(AudioSource sfx)
+    protected override void OnReleased(SfxEmitter obj)
     {
-        while (sfx.volume > 0)
-        {
-            sfx.volume -= Time.unscaledDeltaTime * volumeFadeSpeed * _settingsInfo.SfxVolume;
-            yield return null;
-        }
-        
-        sfx.Stop();
-        _activeSfx.Remove(sfx);
-        ReturnToPool(sfx);
+        if (isPrewarming) return;
+        base.OnReleased(obj);
+        _activeSfx.Remove(obj);
     }
+    #endregion
 }

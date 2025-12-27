@@ -55,8 +55,11 @@ MonoBehaviour:
   fillBarCanvas: {fileID: 7832359582252983652}
   barImages:
   - {fileID: 2327372339560708381}
-  workSoundClip: {fileID: 8300000, guid: f2a887498579faa40af26c25d30262be, type: 3}
-  curSfx: {fileID: 0}
+  workSfx:
+    clip: {fileID: 8300000, guid: f2a887498579faa40af26c25d30262be, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 1
+    isFrequent: 0
 --- !u!65 &1545303299914478099
 BoxCollider:
   m_ObjectHideFlags: 0

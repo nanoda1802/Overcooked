@@ -18,23 +18,23 @@ public class PedsMobPool : ObjPool<PedsMob>
         _areaMask = 1 << NavMesh.GetAreaFromName("Peds") | 1 << NavMesh.GetAreaFromName("Both");
     }
 
-    protected override PedsMob Create()
+    protected override PedsMob CreateObj()
     {
-        PedsMob mob = base.Create();
+        PedsMob mob = base.CreateObj();
         mob.Init(_areaMask, m => Pool.Release(m as PedsMob));
         mob.SetAgentInfo(agentPriorityOffset + objIdx++, pedsAngularSpeed, pedsAcceleration);
         return mob;
     }
 
-    protected override void OnGet(PedsMob obj)
+    protected override void OnGot(PedsMob obj)
     {
-        base.OnGet(obj);
+        base.OnGot(obj);
         obj.ActivateAgent(Random.Range(pedsMinSpeed, pedsMaxSpeed));
     }
 
-    protected override void OnRelease(PedsMob obj)
+    protected override void OnReleased(PedsMob obj)
     {
-        base.OnRelease(obj); // 비활성화
+        base.OnReleased(obj); // 비활성화
         // 풀로 넣을 때 해줄 초기화
         obj.DeactivateAgent();
     }

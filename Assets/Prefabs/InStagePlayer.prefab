@@ -95,7 +95,6 @@ GameObject:
   - component: {fileID: 6371081438917920930}
   - component: {fileID: 5196186138760199806}
   - component: {fileID: 2051715068445477126}
-  - component: {fileID: 6326611014065916027}
   m_Layer: 8
   m_Name: InStagePlayer
   m_TagString: Player
@@ -142,11 +141,7 @@ MonoBehaviour:
   pivot: {fileID: 4884989298701289034}
   pickedItem: {fileID: 0}
   isWorking: 0
-  interactBlockSoundClip: {fileID: 8300000, guid: aa3080448ea1d484eaf98e10fe063b80, type: 3}
-  despawnSoundClip: {fileID: 8300000, guid: e56ed06144c00e24e94a907c5f3f3be5, type: 3}
-  dashSoundClip: {fileID: 8300000, guid: bb19cc7d9c72dc5468efa6218e801784, type: 3}
-  attachSoundClip: {fileID: 8300000, guid: a7604af10ba0bd844927885a1be5b962, type: 3}
-  throwSoundClip: {fileID: 8300000, guid: 564dca54f8e6ec846b75c4aae0c32218, type: 3}
+  sfxData: {fileID: 11400000, guid: 768c4546eb0755647b8a0ebdec9f1b9f, type: 2}
 --- !u!54 &5196186138760199806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -181,7 +176,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2328292139524303937}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: ed37e02d6d276eb4b971fcb8420dae6f, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -197,116 +192,6 @@ CapsuleCollider:
   m_Height: 1.3
   m_Direction: 1
   m_Center: {x: 0, y: 0.65, z: 0}
---- !u!114 &6326611014065916027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2328292139524303937}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 5f3d81b310bfd4544b9d44735a2524a3, type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6371081438917920930}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnMove
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: a61d7158-8d67-4301-b365-f2b953c367f7
-    m_ActionName: Player/Arrows[/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6371081438917920930}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnDash
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: a79a9a02-8d1e-4ebb-9901-983cadb85caa
-    m_ActionName: Player/LeftCtrl[/Keyboard/leftCtrl]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6371081438917920930}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnInteract
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 7c7c134d-b9cf-4b64-9daf-32c954fc7c56
-    m_ActionName: Player/Space[/Keyboard/space]
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6371081438917920930}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
-        m_MethodName: OnThrow
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: d00f0b3c-3866-496c-a514-7ab7e36e52ce
-    m_ActionName: Player/LeftCtrl[/Keyboard/c]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 0ebe20d6-8fc9-4eb1-b9cd-8fdf3aa3a412
-    m_ActionName: InStage/Pause[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 435cf2e2-0b23-420b-9424-eec71d42e41d
-    m_ActionName: OutStage/CursorPos[/Mouse/position]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: c3f6bdec-1c39-4556-974d-eb03be308f6c
-    m_ActionName: OutStage/LeftClick[/Mouse/leftButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 79b59ec2-3b3c-4ef1-97e7-d985f48ddab8
-    m_ActionName: OutStage/Scroll[/Mouse/scroll]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: PC
-  m_DefaultActionMap: 
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!1 &4021617750095250983
 GameObject:
   m_ObjectHideFlags: 0

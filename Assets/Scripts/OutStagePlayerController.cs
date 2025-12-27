@@ -1,5 +1,6 @@
 using System.Collections;
 using Cinemachine;
+using Sfx;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -24,7 +25,7 @@ public class OutStagePlayerController : MonoBehaviour
     [SF] private Eatery curTargetEatery;
     [SF] private int maxCamPriority;
 
-    [SF] private AudioClip bgm;
+    [SF] private ClipInfo bgm;
     
     private void Awake()
     {
@@ -53,7 +54,8 @@ public class OutStagePlayerController : MonoBehaviour
         _waitVCamBlendingStart = new WaitUntil(() => cineBrain.IsBlending);
         _waitVCamBlendingEnd = new WaitUntil(() => !cineBrain.IsBlending);
         
-        gameManager.SoundManager.ChangeBgm(bgm);
+        // gameManager.SoundManager.ChangeBgm(bgm);
+        GameManager.Instance.SoundManager.ChangeBgm(bgm);
         
         Time.timeScale = 1;
         

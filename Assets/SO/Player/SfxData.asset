@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a18497e1be76704a8eda63944091db8, type: 3}
+  m_Name: SfxData
+  m_EditorClassIdentifier: 
+  moveSfx:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  actionBlockedSfx:
+    clip: {fileID: 8300000, guid: aa3080448ea1d484eaf98e10fe063b80, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  despawnSfx:
+    clip: {fileID: 8300000, guid: e56ed06144c00e24e94a907c5f3f3be5, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  dashSfx:
+    clip: {fileID: 8300000, guid: bb19cc7d9c72dc5468efa6218e801784, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  attachSfx:
+    clip: {fileID: 8300000, guid: a7604af10ba0bd844927885a1be5b962, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
+  throwSfx:
+    clip: {fileID: 8300000, guid: 564dca54f8e6ec846b75c4aae0c32218, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 0

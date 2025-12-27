@@ -1,12 +1,12 @@
 using DG.Tweening;
-using UnityEngine;
+using Sfx;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
 public class PausePopUp : PopUpUI
 {
     private InStageManager _inStageManager;
-    private SettingsData _settingsInfo;
+    private SettingsData _settings;
     
     private bool _isActive;
     public bool IsActive => _isActive;
@@ -21,8 +21,8 @@ public class PausePopUp : PopUpUI
     [SF] private Toggle bgmMuteToggle;
     [SF] private Toggle sfxMuteToggle;
 
-    [SF] private AudioClip pauseSfx;
-    [SF] private AudioClip unpauseSfx;
+    [SF] private ClipInfo pauseSfx;
+    [SF] private ClipInfo unpauseSfx;
     
     protected override void OnEnable()
     {
@@ -33,7 +33,7 @@ public class PausePopUp : PopUpUI
         SubscribeEvents();
         
         GameManager.Instance.SoundManager.PauseAllSounds(true);
-        GameManager.Instance.SoundManager.PlaySfx(pauseSfx);
+        GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(pauseSfx).Play();
     }
 
     protected override void OnDisable()
@@ -46,7 +46,7 @@ public class PausePopUp : PopUpUI
     public void Init(InStageManager sm)
     {
         _inStageManager = sm;
-        _settingsInfo = GameManager.Instance.SettingsData;
+        _settings = GameManager.Instance.SettingsData;
     }
 
     public void Activate()
@@ -66,8 +66,8 @@ public class PausePopUp : PopUpUI
         resumeBtn.SubscribeEvent(_inStageManager.ResumeStage);
         retryBtn.SubscribeEvent(_inStageManager.RetryStage);
         quitBtn.SubscribeEvent(_inStageManager.QuitStage);
-        bgmSlider.SubscribeEvent(_settingsInfo.SetBgmVolume);
-        sfxSlider.SubscribeEvent(_settingsInfo.SetSfxVolume);
+        bgmSlider.SubscribeEvent(_settings.SetBgmVolume);
+        sfxSlider.SubscribeEvent(_settings.SetSfxVolume);
         OnBgClicked += _inStageManager.ResumeStage;
         
         bgmMuteToggle.onValueChanged.AddListener(OnBgmMuteToggleChanged);
@@ -79,8 +79,8 @@ public class PausePopUp : PopUpUI
         resumeBtn.UnsubscribeEvent(_inStageManager.ResumeStage);
         retryBtn.UnsubscribeEvent(_inStageManager.RetryStage);
         quitBtn.UnsubscribeEvent(_inStageManager.QuitStage);
-        bgmSlider.UnsubscribeEvent(_settingsInfo.SetBgmVolume);
-        sfxSlider.UnsubscribeEvent(_settingsInfo.SetSfxVolume);
+        bgmSlider.UnsubscribeEvent(_settings.SetBgmVolume);
+        sfxSlider.UnsubscribeEvent(_settings.SetSfxVolume);
         OnBgClicked -= _inStageManager.ResumeStage;
         
         bgmMuteToggle.onValueChanged.RemoveAllListeners();
@@ -89,20 +89,20 @@ public class PausePopUp : PopUpUI
 
     private void ApplyDataToUI()
     {
-        bgmSlider.SyncSliderElements(_settingsInfo.BgmVolume);
-        sfxSlider.SyncSliderElements(_settingsInfo.SfxVolume);
+        bgmSlider.SyncSliderElements(_settings.BgmVolume);
+        sfxSlider.SyncSliderElements(_settings.SfxVolume);
         
-        bgmMuteToggle.isOn = _settingsInfo.IsBgmMute;
-        sfxMuteToggle.isOn = _settingsInfo.IsSfxMute;
+        bgmMuteToggle.isOn = _settings.IsBgmMute;
+        sfxMuteToggle.isOn = _settings.IsSfxMute;
     }
 
     private void OnBgmMuteToggleChanged(bool value)
     {
-        _settingsInfo.SetIsBgmMute(value);
+        _settings.SetIsBgmMute(value);
     }
 
     private void OnSfxMuteToggleChanged(bool value)
     {
-        _settingsInfo.SetIsSfxMute(value);
+        _settings.SetIsSfxMute(value);
     }
 }

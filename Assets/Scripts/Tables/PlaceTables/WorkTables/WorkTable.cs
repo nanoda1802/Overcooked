@@ -1,3 +1,5 @@
+using System;
+using Sfx;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -5,11 +7,15 @@ using SF = UnityEngine.SerializeField;
 public class WorkTable : PlaceTable
 {
     private bool _isWorking;
+    
+    protected event Action OnFinished;
+    protected event Action OnStopped;
+    
     [SF] protected Canvas fillBarCanvas;
     [SF] protected Image[] barImages;
-    [SF] protected AudioClip workSoundClip;
+    [SF] protected ClipInfo workSfx;
     
-    [SF] protected AudioSource curSfx;
+    // [SF] protected SfxEmitter curSfx;
     
     protected void Update()
     {
@@ -22,19 +28,23 @@ public class WorkTable : PlaceTable
     public virtual bool BeginWork(InStagePlayerController player = null)
     {
         _isWorking = true;
-        curSfx = GameManager.Instance.SoundManager.PlayLoopingSfx(workSoundClip);
+        SfxEmitter curSfx = GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(workSfx).WithPos(transform.position).Play();
+        if (curSfx is not null) OnStopped += curSfx.Stop;
         return true;
     }
 
     protected virtual void StopWork()
     {
         _isWorking = false;
-        GameManager.Instance.SoundManager.TurnOffLoopingSfx(curSfx);
-        curSfx = null;
+        OnStopped?.Invoke();
+        // GameManager.Instance.SoundManager.TurnOffLoopingSfx(curSfx);
+        // curSfx = null;
+        OnStopped = OnFinished = null;
     }
 
     protected virtual void FinishWork()
     {
+        OnFinished?.Invoke();
         StopWork();
     }
 

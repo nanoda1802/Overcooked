@@ -1,7 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
+using Sfx;
 using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
@@ -18,9 +17,9 @@ public class StageCue : MonoBehaviour
     [SF] private Text cueTxt;
     [SF] private RectTransform cueRect;
 
-    [SF] private AudioClip alertSfx;
-    [SF] private AudioClip stageStartSfx;
-    [SF] private AudioClip stageEndSfx;
+    [SF] private ClipInfo alertSfx;
+    [SF] private ClipInfo stageStartSfx;
+    [SF] private ClipInfo stageEndSfx;
 
     [SF] private string[] startCueTexts;
     [SF] private string[] endCueTexts;
@@ -36,6 +35,8 @@ public class StageCue : MonoBehaviour
     {
         _cueSeq?.Kill();
         _cueSeq = null;
+        
+        cueTxt.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -62,7 +63,7 @@ public class StageCue : MonoBehaviour
 
         if (cueTexts is null) return;
         
-        gameObject.SetActive(true); // 페이드로 변경
+        gameObject.SetActive(true); // [임시] 페이드로 변경
         DisplayCue(cueDuration, cueTexts, cueType == CueType.Start);
     }
 
@@ -71,14 +72,14 @@ public class StageCue : MonoBehaviour
         _cueSeq?.Kill(true);
         
         _cueSeq = DOTween.Sequence();
+        _cueSeq.AppendInterval(duration*0.25f)
+            .AppendCallback(()=>cueTxt.gameObject.SetActive(true));
         
-        int cueCount = cueTexts.Length;
-        
-        for (int i = 0; i < cueCount; i++)
+        for (int i = 0; i < cueTexts.Length; i++)
         {
             string cueText = cueTexts[i]; 
-            bool isLastText = (i == cueCount - 1);
-            AudioClip sfx = alertSfx;
+            bool isLastText = (i == cueTexts.Length - 1);
+            ClipInfo sfx = alertSfx;
             if (isLastText) sfx = isStartCue ? stageStartSfx : stageEndSfx;
 
             // 여기서 바로 cueTexts[i]를 할당하면, 클로져 문제로 시퀀스가 실행될 시점엔 i가 이미 초기화돼있어서 적절한 string이 할당되지 않음.
@@ -92,11 +93,11 @@ public class StageCue : MonoBehaviour
         }
 
         _cueSeq.SetUpdate(true) // timeScale 영향 X
-            .OnComplete(() => OnStartCueComplete(isStartCue))
+            .OnComplete(() => OnCueComplete(isStartCue))
             .OnKill(() => _cueSeq = null);
     }
 
-    private void OnStartCueComplete(bool isStageStart)
+    private void OnCueComplete(bool isStageStart)
     {
         if (isStageStart) _onStageStarted?.Invoke();
         else _onStageEnded?.Invoke();
@@ -104,9 +105,9 @@ public class StageCue : MonoBehaviour
         gameObject.SetActive(false); // [임시] 페이드로 변경
     }
 
-    private void UpdateCueTxt(string cueText, AudioClip sfx)
+    private void UpdateCueTxt(string cueText, ClipInfo sfx)
     {
         cueTxt.text = cueText;
-        GameManager.Instance.SoundManager.PlaySfx(sfx);
+        GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(sfx).Play();
     }
 }

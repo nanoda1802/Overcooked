@@ -6,12 +6,14 @@ public class ObjPool<T> : MonoBehaviour where T : Component
 {
     public ObjectPool<T> Pool { get; private set; }
     
-    private bool _isPrewarming;
+    protected bool isPrewarming;
 
     protected int objIdx;
-    [SF] private string objName;
-    [SF] private int poolSize;
-    public int PoolSize => poolSize;
+    [SF] protected string objName;
+    [SF] protected bool collectionCheck = true;
+    [SF] protected int defaultCapacity = 10;
+    [SF] protected int maxPoolSize = 20;
+    public int MaxPoolSize => maxPoolSize;
     // collectionCheck; true 면 "중복 반납" 발생 시 에러 발생시켜줌...
     
     [SF] private T prefab;
@@ -19,11 +21,9 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     public virtual void InitPool()
     {
         // mobPrefab = Resources.Load<GameObject>("Prefabs/Mob");
-        Pool = new ObjectPool<T>(Create, OnGet, OnRelease, OnDestroyObj, true, poolSize,
-            poolSize);
-        
+        Pool = new ObjectPool<T>(CreateObj, OnGot, OnReleased, OnDestroyed, collectionCheck, defaultCapacity,
+            maxPoolSize);
         objIdx = 0;
-        
         Prewarm();
     }
     
@@ -34,34 +34,34 @@ public class ObjPool<T> : MonoBehaviour where T : Component
     
     private void Prewarm()
     {
-        _isPrewarming = true;
+        isPrewarming = true;
         
-        T[] prePool = new T[poolSize];
-        for (int i = 0; i < poolSize; i++) prePool[i] = Pool.Get();
-        for (int i = 0; i < poolSize; i++) Pool.Release(prePool[i]);
+        T[] prePool = new T[defaultCapacity];
+        for (int i = 0; i < defaultCapacity; i++) prePool[i] = Pool.Get();
+        for (int i = 0; i < defaultCapacity; i++) Pool.Release(prePool[i]);
         
-        _isPrewarming = false;
+        isPrewarming = false;
     }
 
-    protected virtual T Create()
+    protected virtual T CreateObj()
     {
         T mob = Instantiate(prefab, transform);
-        mob.name = _isPrewarming ? $"{objName}_{objIdx}" : $"{objName}_Instant";
+        mob.name = isPrewarming ? $"{objName}_{objIdx}" : $"{objName}_{objIdx}_Instant";
         mob.gameObject.SetActive(false);
         return mob;
     }
 
-    protected virtual void OnGet(T obj)
+    protected virtual void OnGot(T obj)
     {
         obj.gameObject.SetActive(true);
     }
 
-    protected virtual void OnRelease(T obj)
+    protected virtual void OnReleased(T obj)
     {
         obj.gameObject.SetActive(false);
     }
 
-    private void OnDestroyObj(T obj)
+    private void OnDestroyed(T obj)
     {
         Destroy(obj.gameObject);
     }

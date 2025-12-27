@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DG.Tweening;
+using Sfx;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
@@ -13,7 +14,7 @@ public class OrderManager : MonoBehaviour, IManager
     /* 주문 생성 */
     private List<FoodOrder> _activeOrderList;
     private float _intervalCount;
-    [SF] private AudioClip newOrderSoundClip; // [임시]
+    [SF] private ClipInfo newOrderSfx; // [임시]
     /* UI */
     [SF] private Transform orderGroupUI;
     [SF] private int[] orderPosXs;
@@ -80,7 +81,7 @@ public class OrderManager : MonoBehaviour, IManager
         _activeOrderList.Add(order);
         
         _stageResult.CountTotalOrder();
-        GameManager.Instance.SoundManager.PlaySfx(newOrderSoundClip);
+        GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(newOrderSfx).Play();
     }
 
     public void RemoveOrder(FoodOrder order)

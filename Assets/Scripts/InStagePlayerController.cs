@@ -9,7 +9,6 @@ using SF = UnityEngine.SerializeField;
 
 public class InStagePlayerController : MonoBehaviour
 {
-    #region 필드와 프로퍼티
     /* 컴포넌트 */
     private Rigidbody _rb;
     [SF] private InStageManager inStageManager;
@@ -34,12 +33,14 @@ public class InStagePlayerController : MonoBehaviour
     [HideInInspector] public bool isWorking;
     public event Action OnWorkStopped;
 
-    [SF] private AudioClip interactBlockSoundClip; // [임시]
-    [SF] private AudioClip despawnSoundClip; // [임시]
-    [SF] private AudioClip dashSoundClip; // [임시]
-    [SF] private AudioClip attachSoundClip; // [임시]
-    [SF] private AudioClip throwSoundClip; // [임시]
-    #endregion
+    /* SFX */
+    // 플레이어용 sfx 데이터 SO 만들어서 정리하자
+    [SF] private PlayerSfxData sfxData;
+    // [SF] private ClipInfo interactBlockSfx; // [임시]
+    // [SF] private ClipInfo despawnSfx; // [임시]
+    // [SF] private ClipInfo dashSfx; // [임시]
+    // [SF] private ClipInfo attachSfx; // [임시]
+    // [SF] private ClipInfo throwSfx; // [임시]
 
     #region 유니티 이벤트 메서드
     private void Awake()
@@ -214,13 +215,25 @@ public class InStagePlayerController : MonoBehaviour
         _rb.MoveRotation(smoothRot);
     }
 
+    private void RotateImmediately(Vector3 lookPos)
+    {
+        Quaternion rotDir = Quaternion.LookRotation(lookPos);
+        _rb.MoveRotation(rotDir);
+    }
+
     private IEnumerator CoDash()
     {
         if (_moveDir == Vector3.zero) yield break;
         
         StopMoveImmediately();
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
-        GameManager.Instance.SoundManager.PlaySfx(dashSoundClip);
+        
+        GameManager.Instance.SoundManager.BuildSfx()
+            .WithSfxInfo(sfxData.DashSfx)
+            .WithPos(transform.position)
+            .WithRandomPitch()
+            .Play();
+        
         PlayDashVfx();
         yield return _waitInertiaDecay;
         StopMoveImmediately();
@@ -251,8 +264,10 @@ public class InStagePlayerController : MonoBehaviour
         _rb.Sleep();
         gameObject.SetActive(false);
         
-        // [sfx] 떨어지는 소리
-        GameManager.Instance.SoundManager.PlaySfx(despawnSoundClip);
+        GameManager.Instance.SoundManager.BuildSfx()
+            .WithSfxInfo(sfxData.DespawnSfx)
+            .WithPos(transform.position)
+            .Play();
 
         if (pickedItem is not null) DetachItem().Deactivate();
         
@@ -280,19 +295,38 @@ public class InStagePlayerController : MonoBehaviour
     private bool TryInteract()
     {
         if (!DetectTable()) return false;
-        
-        bool hasInteraction = _detectedTable.Interact(this);
-        if (!hasInteraction)
+        if (!_detectedTable.Interact(this))
         {
-            GameManager.Instance.SoundManager.PlaySfx(interactBlockSoundClip);
+            GameManager.Instance.SoundManager.BuildSfx()
+                .WithSfxInfo(sfxData.ActionBlockedSfx)
+                .WithPos(transform.position)
+                .WithRandomPitch()
+                .Play();
+            return false;
         }
+        
+        // RotateImmediately(_detectedTable.transform.position);
         _detectedTable = null;
-        return hasInteraction;
+        return true;
+        
+        // bool hasInteraction = _detectedTable.Interact(this);
+        // if (!hasInteraction)
+        // {
+        //     GameManager.Instance.SoundManager.BuildSfx()
+        //         .WithSfxInfo(interactBlockSfx)
+        //         .WithPos(transform.position)
+        //         .WithRandomPitch()
+        //         .Play();
+        // }
+        // RotateImmediately(_detectedTable.transform.position);
+        // _detectedTable = null;
+        // return hasInteraction;
     }
 
     private void BeginWork(WorkTable table)
     {
         StopMoveImmediately();
+        // RotateImmediately(table.transform.position);
         isWorking = table.BeginWork(this);
     }
 
@@ -359,14 +393,22 @@ public class InStagePlayerController : MonoBehaviour
     {
         DetachItem().SetThrowValues(pivot.position, dir, _moveSpeedModifier);
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
-        GameManager.Instance.SoundManager.PlaySfx(throwSoundClip);
+        GameManager.Instance.SoundManager.BuildSfx()
+            .WithSfxInfo(sfxData.ThrowSfx)
+            .WithPos(transform.position)
+            .WithRandomPitch()
+            .Play();
     }
     
     public void AttachItem(Item item)
     {
         item.SetParent(pivot);
         pickedItem = item;
-        GameManager.Instance.SoundManager.PlaySfx(attachSoundClip);
+        GameManager.Instance.SoundManager.BuildSfx()
+            .WithSfxInfo(sfxData.AttachSfx)
+            .WithPos(transform.position)
+            .WithRandomPitch()
+            .Play();
     }
 
     public Item DetachItem()

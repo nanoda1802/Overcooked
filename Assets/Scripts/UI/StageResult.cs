@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
@@ -8,6 +7,8 @@ public class StageResult : MonoBehaviour
     private StageResultData _stageResult;
 
     private GameManager _gameManager;
+    
+    // [개편] 여기도 커스텀 버튼 하고 트윈하고 고고
     
     [SF] private Text scoreValueTxt;
     [SF] private Text maxComboValueTxt;
@@ -46,13 +47,13 @@ public class StageResult : MonoBehaviour
     {
         _gameManager.ChangeScene("InStage");
         Deactivate();
-        GameManager.Instance.SoundManager.PlaySfx();
+        // GameManager.Instance.SoundManager.PlaySfx();
     }
     
     public void OnLobbyButton()
     {
         _gameManager.ChangeScene("OutStage");
         Deactivate();
-        GameManager.Instance.SoundManager.PlaySfx();
+        // GameManager.Instance.SoundManager.PlaySfx();
     }
 }

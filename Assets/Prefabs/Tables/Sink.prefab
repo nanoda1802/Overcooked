@@ -241,8 +241,11 @@ MonoBehaviour:
   availableItems: 05000000
   fillBarCanvas: {fileID: 0}
   barImages: []
-  workSoundClip: {fileID: 8300000, guid: 91661e197e36d684ab93b0e91f2e23b6, type: 3}
-  curSfx: {fileID: 0}
+  workSfx:
+    clip: {fileID: 8300000, guid: 91661e197e36d684ab93b0e91f2e23b6, type: 3}
+    mixerGroup: {fileID: 0}
+    isLoop: 1
+    isFrequent: 0
   dishRack: {fileID: 0}
   sinkCanvas: {fileID: 7047687936998075697}
   sinkText: {fileID: 6071369978114239700}

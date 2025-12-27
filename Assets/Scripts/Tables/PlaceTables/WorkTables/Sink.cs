@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +9,7 @@ public class Sink : WorkTable, IPool<Item>
     [SF] private Canvas sinkCanvas;
     [SF] private Text sinkText;
     [SF] private ParticleSystem bubbleVfx;
-    private event Action OnFinished;
+    // private event Action OnFinished;
 
     [SF] private GameObject platePrefab;
     [SF] private Transform poolPivot;
@@ -91,12 +90,12 @@ public class Sink : WorkTable, IPool<Item>
     {
         base.StopWork();
         StopBubbleVfxSmoothly();
-        OnFinished = null;
+        // OnFinished = null;
     }
 
     protected override void FinishWork()
     {
-        OnFinished?.Invoke();
+        // OnFinished?.Invoke();
         base.FinishWork();
         
         DeactivateUI();

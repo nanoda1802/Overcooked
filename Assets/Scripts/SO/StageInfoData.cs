@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using Sfx;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -17,7 +16,7 @@ public class StageInfoData : ScriptableObject
     [SF] private Vector3[] respawnPoints;
     [SF] private OrderInfoData orderInfoData;
     
-    [SF] private AudioClip bgm;
+    [SF] private ClipInfo bgm;
     [SF] private bool showTutorial = true;
     
     public int StageId => stageId;
@@ -29,7 +28,7 @@ public class StageInfoData : ScriptableObject
     public float StageDuration => stageDuration;
     public Grid[] GridInfos => gridInfos;
     public OrderInfoData OrderInfoData => orderInfoData;
-    public AudioClip Bgm => bgm;
+    public ClipInfo Bgm => bgm;
     public bool ShowTutorial => showTutorial;
     
     public int CalculateAchievedScoreCutIndex() // [임시] 매개변수로 최고 점수 받아야해

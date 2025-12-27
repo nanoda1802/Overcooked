@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7655400044765701097
 RectTransform:
   m_ObjectHideFlags: 0
@@ -92,8 +92,8 @@ MonoBehaviour:
   cueTxt: {fileID: 216474023313957482}
   cueRect: {fileID: 6025482680710090005}
   alertSfx: {fileID: 8300000, guid: 139a3d5689c17544caf1ffd5c3b4e2b5, type: 3}
-  stageStartSfx: {fileID: 8300000, guid: 4e389d59341e37a4d9fa1872f007eb37, type: 3}
-  stageEndSfx: {fileID: 8300000, guid: 9de762b8bbe211c47b09858edc0909a9, type: 3}
+  stageStartSfx: {fileID: 8300000, guid: ea9d4b550b7967a4e9d382210d3e7c40, type: 3}
+  stageEndSfx: {fileID: 8300000, guid: ea1eef329fc53e44681394c4f00f4eb0, type: 3}
   startCueTexts:
   - 1
   - 2

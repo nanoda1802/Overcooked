@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public class ChoppingBoard : WorkTable
 {
-    private event Action OnFinished;
+    // private event Action OnFinished;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -50,12 +49,12 @@ public class ChoppingBoard : WorkTable
     protected override void StopWork()
     {
         base.StopWork();
-        OnFinished = null;
+        // OnFinished = null;
     }
 
     protected override void FinishWork()
     {
-        OnFinished?.Invoke();
+        // OnFinished?.Invoke();
         base.FinishWork();
         
         DeactivateUI();

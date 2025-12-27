@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using Sfx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -8,6 +9,8 @@ using SF = UnityEngine.SerializeField;
 public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     private int _instanceId;
+
+    [SF] private ClipInfo clickSfx;
     
     private RectTransform _rect;
     private Image _img;
@@ -112,7 +115,7 @@ public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        GameManager.Instance.SoundManager.PlaySfx();
+        GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(clickSfx).WithRandomPitch().Play();
         _clickTween?.Restart(); // 굳이 IsPlaying 확인할 필요 없이 무조건 리스타트하면 의도대로 동작
         OnClicked?.Invoke();
     }

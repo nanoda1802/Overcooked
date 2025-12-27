@@ -104,7 +104,7 @@ public class InStageManager : MonoBehaviour
     public void RetryStage() // [임시] 씬 전환 없이 할 방법 생각해보기
     {
         if (pauseUI.IsActive) pauseUI.Deactivate();
-        gameManager.SoundManager.TurnOffAllSfx();
+        gameManager.SoundManager.TurnOffActiveSfx();
         gameManager.SoundManager.TurnOffCurrentBgm(true);
         gameManager.InputManager.ExitInStage();
         gameManager.ChangeScene("InStage");
@@ -115,7 +115,7 @@ public class InStageManager : MonoBehaviour
         if (pauseUI.IsActive) pauseUI.Deactivate();
         gameManager.InputManager.ExitInStage();
         gameManager.SoundManager.TurnOffCurrentBgm(true); // [임시]
-        gameManager.SoundManager.TurnOffAllSfx(); // [임시]
+        gameManager.SoundManager.TurnOffActiveSfx(); // [임시]
         timeManager.Deinit(); // [임시]
         orderManager.Deinit(); // [임시]
         scoreManager.Deinit(); // [임시]
@@ -126,7 +126,7 @@ public class InStageManager : MonoBehaviour
     {
         gameManager.InputManager.ExitInStage();
         gameManager.SoundManager.TurnOffCurrentBgm(); // [임시]
-        gameManager.SoundManager.TurnOffAllSfx(); // [임시]
+        gameManager.SoundManager.TurnOffActiveSfx(); // [임시]
         timeManager.Deinit(); // [임시]
         orderManager.Deinit(); // [임시]
         scoreManager.Deinit(); // [임시]
