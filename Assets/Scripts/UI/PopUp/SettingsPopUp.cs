@@ -17,26 +17,45 @@ public class SettingsPopUp : PopUpUI
     protected override void OnEnable()
     {
         ApplyDataToUI();
-        bgmSlider.SubscribeEvent(settingsInfo.SetBgmVolume);
-        sfxSlider.SubscribeEvent(settingsInfo.SetSfxVolume);
-        applyBtn.SubscribeEvent(OnApplyButton);
-        closeBtn.SubscribeEvent(OnCloseButtonClicked);
 
-        OnBgClicked += OnCloseButtonClicked;
-        
+        SubscribeEvents();
         base.OnEnable();
     }
 
     protected override void OnDisable()
     {
-        bgmSlider.UnsubscribeEvent(settingsInfo.SetBgmVolume);
-        sfxSlider.UnsubscribeEvent(settingsInfo.SetSfxVolume);
-        applyBtn.UnsubscribeEvent(OnApplyButton);
-        closeBtn.UnsubscribeEvent(OnCloseButtonClicked);
-        
-        OnBgClicked -= OnCloseButtonClicked;
-        
+        UnsubscribeEvents();
         base.OnDisable();
+    }
+
+    public void Activate()
+    {
+        if (IsPopping()) return;
+        gameObject.SetActive(true);
+    }
+
+    private void Deactivate()
+    {
+        if (IsPopping()) return;
+        Pop(0,popUpTweenTargetPosY,Ease.InBack,1f,()=>gameObject.SetActive(false));
+    }
+
+    private void SubscribeEvents()
+    {
+        bgmSlider.OnValueChanged += settingsInfo.SetBgmVolume;
+        sfxSlider.OnValueChanged += settingsInfo.SetSfxVolume;
+        applyBtn.OnClicked += OnApplyClicked;
+        closeBtn.OnClicked += OnCloseClicked;
+        OnBgClicked += OnCloseClicked;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        bgmSlider.OnValueChanged -= settingsInfo.SetBgmVolume;
+        sfxSlider.OnValueChanged -= settingsInfo.SetSfxVolume;
+        applyBtn.OnClicked -= OnApplyClicked;
+        closeBtn.OnClicked -= OnCloseClicked;
+        OnBgClicked -= OnCloseClicked;
     }
 
     private void ApplyDataToUI()
@@ -48,15 +67,15 @@ public class SettingsPopUp : PopUpUI
         sfxMuteToggle.isOn = settingsInfo.IsSfxMute;
     }
 
-    private void OnApplyButton()
+    private void OnApplyClicked()
     {
         // 나중에 다른 설정값 갱신... 그래픽이나 프레임 같은 거...
         settingsInfo.SetIsBgmMute(bgmMuteToggle.isOn);
         settingsInfo.SetIsSfxMute(sfxMuteToggle.isOn);
     }
     
-    private void OnCloseButtonClicked()
+    private void OnCloseClicked()
     {
-        DoMoveYTransition(0,popUpTweenTargetPosY,Ease.InBack,1f,()=>gameObject.SetActive(false));
+        Deactivate();
     }
 }

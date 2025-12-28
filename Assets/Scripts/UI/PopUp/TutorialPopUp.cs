@@ -5,59 +5,56 @@ using SF = UnityEngine.SerializeField;
 
 public class TutorialPopUp : MonoBehaviour
 {
-    [SF] private CanvasGroup canvasGroup;
-    [SF] private RectTransform popUpRect;
+    /* Components */
+    [SF] private Animator previewAnim; // [임시] GetComponentInChildren 하든가...
+    [SF] private TutorialData tutorialData; // [임시] StageManager한테 받아서 init 하기
+    [SF] private CanvasGroup canvasGroup; // [임시] GetComponentInChildren 하든가...
+    [SF] private RectTransform popUpRect; // [임시] 이거 본인 Rect임
+    [SF] private Image bg;
     [SF, Range(0, 1)] private float originalScaleRatio; // 0.6;
-    private Sequence _popUpSequence;
-    
+    /* UI Elements */ 
+    [Header("[ Texts ]")]
     [SF] private Text titleTxt;
     [SF] private Text descriptionTxt;
-    [SF] private Animator previewAnim;
-    private readonly int _paramHash = Animator.StringToHash("PageIdx");
-
     [SF] private Text pageTxt;
+    [Header("[ Buttons ]")]
     [SF] private CustomButton prevPageBtn;
     [SF] private CustomButton nextPageBtn;
-    
     [SF] private CustomButton exitBtn;
+    [Header("[ Toggles ]")]
     [SF] private Toggle dontShowTutorialToggle;
-    
-    [SF] private TutorialData tutorialInfo;
+    /* Fields */
     private int _curPageIdx;
-    
+    private readonly int _paramHash = Animator.StringToHash("PageIdx");
+    private Sequence _popUpSequence;
     private InStageManager _inStageManager;
 
+    #region Unity Event Methods
     private void OnEnable()
     {
         SubscribeEvents();
-        DoEnableSequence();
+        PopUp();
     }
 
     private void OnDisable()
     {
-        _inStageManager.StageCueUI.Activate(CueType.Start);
+        _inStageManager.StageCueUI.Activate(CueType.Start); // [임시] 더 좋은 흐름이 없을지 고민해보자
 
         UnsubscribeEvents();
         
         _popUpSequence?.Kill();
         _popUpSequence = null;
     }
+    #endregion
 
+    #region Initialize Methods
     public void Init(InStageManager inStageManager)
     {
-        previewAnim.runtimeAnimatorController = tutorialInfo.PreviewAnimController;
+        previewAnim.runtimeAnimatorController = tutorialData.PreviewAnimController;
         previewAnim.updateMode = AnimatorUpdateMode.UnscaledTime;
         _inStageManager = inStageManager;
     }
     
-    public void Activate()
-    {
-        _curPageIdx = 0;
-        UpdateContents();
-        popUpRect.localScale = Vector3.zero;
-        gameObject.SetActive(true);
-    }
-
     private void SubscribeEvents()
     {
         prevPageBtn.SubscribeEvent(OnPrevButton);
@@ -73,36 +70,27 @@ public class TutorialPopUp : MonoBehaviour
         exitBtn.UnsubscribeEvent(OnExitButton);
         dontShowTutorialToggle.onValueChanged.RemoveAllListeners();
     }
+    #endregion
 
-    private void DoEnableSequence()
+    #region UI Control Methods
+    public void Activate()
     {
-        _popUpSequence?.Kill();
-
-        _popUpSequence = DOTween.Sequence()
-            .Append(canvasGroup.DOFade(1,0.2f).From(0))
-            .Join(popUpRect.DOScaleX(originalScaleRatio, 0.2f).From(0).SetEase(Ease.OutCubic))
-            .Append(popUpRect.DOScaleY(originalScaleRatio, 0.3f).From(0.01f).SetEase(Ease.OutBack))
-            .SetUpdate(true)
-            .OnKill(()=>_popUpSequence=null);
+        _curPageIdx = 0;
+        UpdateContents();
+        popUpRect.localScale = Vector3.zero;
+        if (!bg.gameObject.activeSelf) bg.gameObject.SetActive(true);
+        gameObject.SetActive(true);
     }
 
-    private void DoDisableSequence()
+    private void Deactivate()
     {
-        _popUpSequence?.Kill();
-        
-        _popUpSequence = DOTween.Sequence()
-            .Append(popUpRect.DOScaleY(0.01f, 0.2f).From(originalScaleRatio).SetEase(Ease.InBack))
-            .Append(popUpRect.DOScaleX(0f, 0.15f).From(originalScaleRatio).SetEase(Ease.InCubic))
-            .Join(canvasGroup.DOFade(0,0.15f).From(1))
-            .SetUpdate(true)
-            .OnComplete(()=>gameObject.SetActive(false))
-            .OnKill(()=>_popUpSequence=null);
+        gameObject.SetActive(false);
     }
 
     private void UpdateContents()
     {
-        titleTxt.text = tutorialInfo.GetCurrentTitle(_curPageIdx);
-        descriptionTxt.text = tutorialInfo.GetCurrentDescription(_curPageIdx);
+        titleTxt.text = tutorialData.GetCurrentTitle(_curPageIdx);
+        descriptionTxt.text = tutorialData.GetCurrentDescription(_curPageIdx);
         previewAnim.SetInteger(_paramHash, _curPageIdx);
         
         UpdatePageText();
@@ -110,15 +98,15 @@ public class TutorialPopUp : MonoBehaviour
         if (_curPageIdx == 0) OnFirstPage();
         else ActivatePrevButton();
 
-        if (_curPageIdx == tutorialInfo.PageCount - 1) OnLastPage();
+        if (_curPageIdx == tutorialData.PageCount - 1) OnLastPage();
         else ActivateNextButton();
     }
 
     private void UpdatePageText()
     {
-        pageTxt.text = $"{_curPageIdx+1} / {tutorialInfo.PageCount}";
+        pageTxt.text = $"{_curPageIdx+1} / {tutorialData.PageCount}";
     }
-
+    
     private void OnFirstPage()
     {
         DeactivatePrevButton();
@@ -130,7 +118,7 @@ public class TutorialPopUp : MonoBehaviour
         DeactivateNextButton();
         ActivateExitButton();
     }
-
+    
     private void ActivateExitButton()
     {
         if (exitBtn.gameObject.activeSelf) return;
@@ -166,7 +154,36 @@ public class TutorialPopUp : MonoBehaviour
         if (!nextPageBtn.gameObject.activeSelf) return;
         nextPageBtn.gameObject.SetActive(false);
     }
+    #endregion
 
+    #region Tween Methods
+    private void PopUp()
+    {
+        _popUpSequence?.Kill();
+
+        _popUpSequence = DOTween.Sequence()
+            .Append(canvasGroup.DOFade(1,0.2f).From(0))
+            .Join(popUpRect.DOScaleX(originalScaleRatio, 0.2f).From(0).SetEase(Ease.OutCubic))
+            .Append(popUpRect.DOScaleY(originalScaleRatio, 0.3f).From(0.01f).SetEase(Ease.OutBack))
+            .SetUpdate(true)
+            .OnKill(()=>_popUpSequence=null);
+    }
+
+    private void PopDown()
+    {
+        _popUpSequence?.Kill();
+        
+        _popUpSequence = DOTween.Sequence()
+            .Append(popUpRect.DOScaleY(0.01f, 0.2f).From(originalScaleRatio).SetEase(Ease.InBack))
+            .Append(popUpRect.DOScaleX(0f, 0.15f).From(originalScaleRatio).SetEase(Ease.InCubic))
+            .Join(canvasGroup.DOFade(0,0.15f).From(1))
+            .SetUpdate(true)
+            .OnComplete(Deactivate)
+            .OnKill(()=>_popUpSequence=null);
+    }
+    #endregion
+
+    #region UI Event Methods
     private void OnPrevButton()
     {
         if (_curPageIdx == 0) return;
@@ -176,7 +193,7 @@ public class TutorialPopUp : MonoBehaviour
 
     private void OnNextButton()
     {
-        if (_curPageIdx == tutorialInfo.PageCount - 1) return;
+        if (_curPageIdx == tutorialData.PageCount - 1) return;
         _curPageIdx++;
         UpdateContents();
     }
@@ -186,11 +203,12 @@ public class TutorialPopUp : MonoBehaviour
         if (!isOn) return; // 애초에 저게 꺼져있으면 튜토리얼 ui를 볼 수가 없엉
         
         _inStageManager.StageInfo.SetShowTutorial(false);
-        DoDisableSequence();
+        PopDown();
     }
 
     private void OnExitButton()
     {
-        DoDisableSequence();
+        PopDown();
     }
+    #endregion
 }

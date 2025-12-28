@@ -221,6 +221,10 @@ MonoBehaviour:
   arrivalDistanceThreshold: 0.3
   curTargetEatery: {fileID: 0}
   maxCamPriority: 10
+  bgm:
+    clip: {fileID: 0}
+    mixerGroup: {fileID: 0}
+    isLoop: 0
 --- !u!195 &7030990062741436542
 NavMeshAgent:
   m_ObjectHideFlags: 0

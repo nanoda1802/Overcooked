@@ -50,7 +50,6 @@ public class StageInfoData : ScriptableObject
         foreach (Vector3 point in respawnPoints)
         {
             float dist = (point - pos).sqrMagnitude;
-            Debug.Log($"이번 지점 {point}, 거리 {dist}");
             if (dist >= minDist) continue;
             
             minDist = dist;

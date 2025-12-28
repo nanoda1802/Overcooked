@@ -102,6 +102,7 @@ public class InStagePlayerController : MonoBehaviour
     private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
         _moveDir = Vector3.zero;
+        StopMoveImmediately();
     }
 
     private void OnDashStarted(InputAction.CallbackContext ctx)
@@ -170,8 +171,17 @@ public class InStagePlayerController : MonoBehaviour
 
     private void OnPauseStated(InputAction.CallbackContext ctx)
     {
-        if (inStageManager.IsStagePaused) inStageManager.ResumeStage();  
-        else inStageManager.PauseStage(true);
+        if (inStageManager.PauseUI.IsPopping()) return;
+        
+        if (inStageManager.PauseUI.gameObject.activeSelf)
+        {
+            inStageManager.ResumeStage();
+            inStageManager.PauseUI.PopDown();
+        }
+        else
+        {
+            inStageManager.PauseUI.PopUp();
+        }
     }
 
     public void SubscribeInStageInputEvents(PlayerInput.InStageActions actionMap)

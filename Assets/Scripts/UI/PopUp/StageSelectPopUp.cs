@@ -31,23 +31,38 @@ public class StageSelectPopUp : PopUpUI
         base.OnDisable();
     }
 
-    public void SubscribeEvents(OutStagePlayerController player)
+    public void Activate(OutStagePlayerController player, StageInfoData stageInfo)
     {
-        enterBtn.SubscribeEvent(EnterStage);
-        closeBtn.SubscribeEvent(player.DeselectEatery);
+        if (IsPopping()) return;
+        SubscribeEvents(player);
+        SetDisplayInfos(stageInfo);
+        gameObject.SetActive(true);
+    }
+
+    public void Deactivate(OutStagePlayerController player)
+    {
+        if (IsPopping()) return;
+        UnsubscribeEvents(player);
+        Pop(0,popUpTweenTargetPosY,Ease.InBack,1f,()=>gameObject.SetActive(false));
+    }
+
+    private void SubscribeEvents(OutStagePlayerController player)
+    {
+        enterBtn.OnClicked += EnterStage;
+        closeBtn.OnClicked += player.DeselectEatery;
         OnBgClicked += player.DeselectEatery;
         dontShowTutorialToggle.onValueChanged.AddListener(OnToggleChanged);
     }
 
-    public void UnsubscribeEvents(OutStagePlayerController player)
+    private void UnsubscribeEvents(OutStagePlayerController player)
     {
-        enterBtn.UnsubscribeEvent(EnterStage);
-        closeBtn.UnsubscribeEvent(player.DeselectEatery);
+        enterBtn.OnClicked -= EnterStage;
+        closeBtn.OnClicked -= player.DeselectEatery;
         OnBgClicked -= player.DeselectEatery;
         dontShowTutorialToggle.onValueChanged.RemoveAllListeners();
     }
 
-    public void SetDisplayInfos(StageInfoData stageInfo)
+    private void SetDisplayInfos(StageInfoData stageInfo)
     {
         stageImg.sprite = stageInfo.StageImage;
         stageTitle.text = stageInfo.StageName;
@@ -65,20 +80,15 @@ public class StageSelectPopUp : PopUpUI
         _stageInfo = stageInfo;
     }
     
-    private void EnterStage()
+    private void EnterStage() // [임시] 이게 여깄으면 안 되지 적어도 player나, manager 단에 있어야해
     {
         if (_stageInfo.StageId <= 0) return; // [임시]
         GameManager.Instance.InputManager.ExitOutStage();
         GameManager.Instance.ChangeScene("InStage");
     }
 
-    public void ClosePopUp()
-    {
-        DoMoveYTransition(0,popUpTweenTargetPosY,Ease.InBack,1f,()=>gameObject.SetActive(false));
-    }
-
     private void OnToggleChanged(bool value)
     {
-        _stageInfo.SetShowTutorial(!value);
+        _stageInfo?.SetShowTutorial(!value);
     }
 }

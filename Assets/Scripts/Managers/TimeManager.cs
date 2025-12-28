@@ -1,7 +1,5 @@
 using System;
-using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 using SF =  UnityEngine.SerializeField;
 
 public class TimeManager : MonoBehaviour, IManager
@@ -28,6 +26,7 @@ public class TimeManager : MonoBehaviour, IManager
 
     public void Deinit()
     {
+        OnTimerDone = null;
         gameObject.SetActive(false);
     }
 

@@ -28,14 +28,14 @@ public class Eatery : MonoBehaviour
 
     public void ActivatePopUpUI(OutStagePlayerController player)
     {
-        popUpUI.SetDisplayInfos(stageInfo);
-        popUpUI.SubscribeEvents(player);
-        popUpUI.gameObject.SetActive(true);
+        popUpUI.Activate(player, stageInfo);
+        // popUpUI.SetDisplayInfos(stageInfo);
+        // popUpUI.SubscribeEvents(player);
+        // popUpUI.gameObject.SetActive(true);
     }
     
     public void DeactivatePopUpUI(OutStagePlayerController player)
     {
-        popUpUI.UnsubscribeEvents(player);
-        popUpUI.ClosePopUp();
+        popUpUI.Deactivate(player);
     }
 }

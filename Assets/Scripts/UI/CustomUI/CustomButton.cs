@@ -14,7 +14,7 @@ public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     
     private RectTransform _rect;
     private Image _img;
-    private event Action OnClicked;
+    public event Action OnClicked;
 
     // private Vector2 _originalSizeDelta; 자체 크기를 조작하는 거라 layout rebuild 발생
     private Vector3 _originalLocalScale;

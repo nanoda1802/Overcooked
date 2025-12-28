@@ -8,7 +8,7 @@ using SF = UnityEngine.SerializeField;
 public class CustomSlider : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHandler,IPointerDownHandler,IScrollHandler
 {
     private int _instanceId;
-    private event Action<float> OnValueChanged;
+    public event Action<float> OnValueChanged;
     [Range(0,1)] private float _value;
 
     private RectTransform _sliderRect;
