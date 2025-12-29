@@ -32,15 +32,8 @@ public class InStagePlayerController : MonoBehaviour
     /* 작업 */
     [HideInInspector] public bool isWorking;
     public event Action OnWorkStopped;
-
     /* SFX */
-    // 플레이어용 sfx 데이터 SO 만들어서 정리하자
     [SF] private PlayerSfxData sfxData;
-    // [SF] private ClipInfo interactBlockSfx; // [임시]
-    // [SF] private ClipInfo despawnSfx; // [임시]
-    // [SF] private ClipInfo dashSfx; // [임시]
-    // [SF] private ClipInfo attachSfx; // [임시]
-    // [SF] private ClipInfo throwSfx; // [임시]
 
     #region 유니티 이벤트 메서드
     private void Awake()
