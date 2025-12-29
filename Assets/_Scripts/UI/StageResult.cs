@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using Sfx;
 using UnityEngine;
@@ -15,44 +14,44 @@ public class StageResult : MonoBehaviour
     [SF] private CustomButton retryBtn;
     /* SFX */
     [Header("[ SFX ]")]
-    [SF] private ClipInfo activateItemSfx; // [임시] 클립 바꿔야함
-    [SF] private ClipInfo fanfareSfx; // [임시] 클립 바꿔야함
+    [SF] private ClipInfo fanfareSfx;
+    [SF] private ClipInfo coinSfx;
     /* Fields */
     private StageResultData _stageResult;
     private RectTransform[] _resultItems;
     private Text[] _valueTexts;
 
     #region Unity Event Methods
-    private void OnEnable()
+    private void OnEnable() // [임시] 고쳐야해....... 읽기 너무 힘들어.......
     {
-        // score 나오고, maxcombo 나오고, orderdelivered나오고, income나오면서 숫자는 카운터,
-        // 카운터 끝나면 punchScale하면서 팡파레 양쪽에서 근데 overlay라서 팡파레가 가려지는디
         Sequence activeSeq = DOTween.Sequence();
-
+        activeSeq.AppendCallback(() =>
+            GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(fanfareSfx).WithRandomPitch().Play());
+        
         for (int i = 0; i < _resultItems.Length; i++)
         {
             RectTransform curItem = _resultItems[i];
-            activeSeq.AppendCallback(() => curItem.gameObject.SetActive(true))
-                .JoinCallback(() =>
-                    GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(activateItemSfx).WithRandomPitch().Play());
+            activeSeq.AppendCallback(() => curItem.gameObject.SetActive(true));
             
             if (i == _resultItems.Length - 1)
             {
+                int incomeResult = _stageResult.CalculateIncome();
+                if (incomeResult <= 0) continue;
+                
                 Text curValueTxt = _valueTexts[i];
                 int incomeValue = 0;
-                int incomeResult = _stageResult.CalculateIncome();
 
-                activeSeq.Append(DOTween.To(() => incomeValue, x => incomeValue = x, incomeResult, 1.8f)
+                activeSeq.Append(DOTween.To(() => incomeValue, x => incomeValue = x, incomeResult, 1.2f)
                         .OnUpdate(() => curValueTxt.text = $"$ {incomeValue / 100}.{incomeValue % 100:D2}").SetEase(Ease.OutExpo))
-                    .AppendInterval(0.2f)
+                    .AppendInterval(0.1f)
                     .Append(curItem.DOScale(1.1f, 0.2f).SetEase(Ease.OutBack))
-                    .JoinCallback(() => GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(fanfareSfx).Play())
+                    .JoinCallback(() => GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(coinSfx).Play())
                     .Append(curItem.DOScale(1f, 0.5f).SetEase(Ease.InBack));
             }
             else
             {
                 activeSeq.Append(curItem.DOScale(1, 0.7f).From(1.02f).SetEase(Ease.OutBack))
-                    .AppendInterval(0.3f);
+                    .AppendInterval(0.1f);
             }
         }
         
@@ -133,6 +132,7 @@ public class StageResult : MonoBehaviour
         _valueTexts[0].text = _stageResult.Score.ToString();
         _valueTexts[1].text = _stageResult.MaxCombo.ToString();
         _valueTexts[2].text = $"{_stageResult.DeliveredOrder} ({_stageResult.CalculateDeliverRate()*100:F0}%)";
+        _valueTexts[3].text = "ZERO"; // 여기도 문자열 캐싱해두고
     }
     #endregion
 

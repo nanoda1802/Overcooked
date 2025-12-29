@@ -37,8 +37,6 @@ public class WorkTable : PlaceTable
     {
         _isWorking = false;
         OnStopped?.Invoke();
-        // GameManager.Instance.SoundManager.TurnOffLoopingSfx(curSfx);
-        // curSfx = null;
         OnStopped = OnFinished = null;
     }
 

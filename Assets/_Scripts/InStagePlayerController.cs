@@ -11,6 +11,7 @@ public class InStagePlayerController : MonoBehaviour
 {
     /* 컴포넌트 */
     private Rigidbody _rb;
+    private Animator _anim;
     [SF] private InStageManager inStageManager;
     /* 이동 */
     [Header("[ Move ]")] 
@@ -34,7 +35,10 @@ public class InStagePlayerController : MonoBehaviour
     public event Action OnWorkStopped;
     /* SFX */
     [SF] private PlayerSfxData sfxData;
-
+    /* Anim */
+    private readonly int _moveHash = Animator.StringToHash("Move"); // [임시] SO로 뺄 것임, 테스트용
+    private readonly int _dashHash = Animator.StringToHash("Dash"); // [임시] SO로 뺄 것임, 테스트용
+    
     #region 유니티 이벤트 메서드
     private void Awake()
     {
@@ -46,6 +50,8 @@ public class InStagePlayerController : MonoBehaviour
             _rb.drag = 1.5f;
             _rb.angularDrag = 0.05f;
         }
+        
+        _anim = GetComponentInChildren<Animator>(); // [임시]
     }
 
     private void Start()
@@ -90,19 +96,22 @@ public class InStagePlayerController : MonoBehaviour
         Vector2 input = ctx.ReadValue<Vector2>();  
         _moveDir.x = input.x;  
         _moveDir.z = input.y;
+        
+        _anim.SetBool(_moveHash,true); // [임시] 테스트용
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
         _moveDir = Vector3.zero;
         StopMoveImmediately();
+        _anim.SetBool(_moveHash,false); // [임시] 테스트용
     }
 
     private void OnDashStarted(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
         if (_dashCoroutine is not null) StopCoroutine(_dashCoroutine);  
-        _dashCoroutine = StartCoroutine(CoDash());  
+        _dashCoroutine = StartCoroutine(Dash());  
         _moveSpeedModifier = moveData.RunSpeedMultiplier;
     }
 
@@ -224,7 +233,7 @@ public class InStagePlayerController : MonoBehaviour
         _rb.MoveRotation(rotDir);
     }
 
-    private IEnumerator CoDash()
+    private IEnumerator Dash()
     {
         if (_moveDir == Vector3.zero) yield break;
         
@@ -238,6 +247,7 @@ public class InStagePlayerController : MonoBehaviour
             .Play();
         
         PlayDashVfx();
+        
         yield return _waitInertiaDecay;
         StopMoveImmediately();
     }

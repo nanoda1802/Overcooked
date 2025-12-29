@@ -5428,7 +5428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   newOrderSfx:
-    clip: {fileID: 8300000, guid: 109a8fd3f0bc83e44b3d843ea8664cf5, type: 3}
+    clip: {fileID: 8300000, guid: ed01d1e542b1994429f4c71daf887921, type: 3}
     mixerGroup: {fileID: 0}
     isLoop: 0
   orderGroupUI: {fileID: 931042406009026930}
@@ -11941,6 +11941,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7697604613460896520}
     - target: {fileID: 8207454285807762829, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
+      propertyPath: coinSfx.clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 735fc1ed3a2b17f4a9345ae38bf7d09a, type: 3}
+    - target: {fileID: 8207454285807762829, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
       propertyPath: lobbyBtnRect
       value: 
       objectReference: {fileID: 718056874}
@@ -11959,7 +11963,7 @@ PrefabInstance:
     - target: {fileID: 8207454285807762829, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
       propertyPath: fanfareSfx.clip
       value: 
-      objectReference: {fileID: 8300000, guid: 9de762b8bbe211c47b09858edc0909a9, type: 3}
+      objectReference: {fileID: 8300000, guid: 61b7ec48df29d574b969ed25aae17846, type: 3}
     - target: {fileID: 8207454285807762829, guid: 64e0ab23689b63541ba5c31273238300, type: 3}
       propertyPath: maxComboValueTxt
       value: 
