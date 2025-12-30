@@ -26,7 +26,7 @@ public class Eatery : MonoBehaviour
         return vCam.transform.position;
     }
 
-    public void ActivatePopUpUI(OutStagePlayerController player)
+    public void ActivatePopUpUI(PlayerController_Lobby player)
     {
         popUpUI.Activate(player, stageInfo);
         // popUpUI.SetDisplayInfos(stageInfo);
@@ -34,7 +34,7 @@ public class Eatery : MonoBehaviour
         // popUpUI.gameObject.SetActive(true);
     }
     
-    public void DeactivatePopUpUI(OutStagePlayerController player)
+    public void DeactivatePopUpUI(PlayerController_Lobby player)
     {
         popUpUI.Deactivate(player);
     }

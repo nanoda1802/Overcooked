@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 using SF = UnityEngine.SerializeField;
 
-public class OutStagePlayerController : MonoBehaviour
+public class PlayerController_Lobby : MonoBehaviour
 {
     [SF] private GameManager gameManager;
     [SF] private NavMeshAgent agent;
@@ -25,7 +25,7 @@ public class OutStagePlayerController : MonoBehaviour
     [SF] private Eatery curTargetEatery;
     [SF] private int maxCamPriority;
 
-    [SF] private ClipInfo bgm;
+    [SF] private SfxInfo bgm;
     
     private void Awake()
     {

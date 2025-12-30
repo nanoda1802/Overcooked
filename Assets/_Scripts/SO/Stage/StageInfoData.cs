@@ -16,7 +16,7 @@ public class StageInfoData : ScriptableObject
     [SF] private Vector3[] respawnPoints;
     [SF] private OrderInfoData orderInfoData;
     
-    [SF] private ClipInfo bgm;
+    [SF] private SfxInfo bgm;
     [SF] private bool showTutorial = true;
     
     public int StageId => stageId;
@@ -28,7 +28,7 @@ public class StageInfoData : ScriptableObject
     public float StageDuration => stageDuration;
     public Grid[] GridInfos => gridInfos;
     public OrderInfoData OrderInfoData => orderInfoData;
-    public ClipInfo Bgm => bgm;
+    public SfxInfo Bgm => bgm;
     public bool ShowTutorial => showTutorial;
     
     public int CalculateAchievedScoreCutIndex() // [임시] 매개변수로 최고 점수 받아야해

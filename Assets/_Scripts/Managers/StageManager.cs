@@ -3,7 +3,7 @@ using SF =  UnityEngine.SerializeField;
 
 public interface IManager
 {
-    public void Init(InStageManager sm);
+    public void Init(StageManager sm);
     public void Deinit();
 }
 
@@ -14,7 +14,7 @@ public enum StageState
     Finished
 }
 
-public class InStageManager : MonoBehaviour
+public class StageManager : MonoBehaviour
 {
     [SF] private GameManager gameManager;
     public GameManager GameManager => gameManager;

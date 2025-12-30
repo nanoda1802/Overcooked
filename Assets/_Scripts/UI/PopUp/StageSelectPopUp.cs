@@ -31,7 +31,7 @@ public class StageSelectPopUp : PopUpUI
         base.OnDisable();
     }
 
-    public void Activate(OutStagePlayerController player, StageInfoData stageInfo)
+    public void Activate(PlayerController_Lobby player, StageInfoData stageInfo)
     {
         if (IsPopping()) return;
         SubscribeEvents(player);
@@ -39,14 +39,14 @@ public class StageSelectPopUp : PopUpUI
         gameObject.SetActive(true);
     }
 
-    public void Deactivate(OutStagePlayerController player)
+    public void Deactivate(PlayerController_Lobby player)
     {
         if (IsPopping()) return;
         UnsubscribeEvents(player);
         Pop(0,popUpTweenTargetPosY,Ease.InBack,1f,()=>gameObject.SetActive(false));
     }
 
-    private void SubscribeEvents(OutStagePlayerController player)
+    private void SubscribeEvents(PlayerController_Lobby player)
     {
         enterBtn.OnClicked += EnterStage;
         closeBtn.OnClicked += player.DeselectEatery;
@@ -54,7 +54,7 @@ public class StageSelectPopUp : PopUpUI
         dontShowTutorialToggle.onValueChanged.AddListener(OnToggleChanged);
     }
 
-    private void UnsubscribeEvents(OutStagePlayerController player)
+    private void UnsubscribeEvents(PlayerController_Lobby player)
     {
         enterBtn.OnClicked -= EnterStage;
         closeBtn.OnClicked -= player.DeselectEatery;

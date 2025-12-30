@@ -19,16 +19,16 @@ public class PausePopUp : PopUpUI
     [SF] private Toggle bgmMuteToggle;
     [SF] private Toggle sfxMuteToggle;
     [Header("[ SFX ]")]
-    [SF] private ClipInfo pauseSfx;
-    [SF] private ClipInfo unpauseSfx;
+    [SF] private SfxInfo pauseSfx;
+    [SF] private SfxInfo unpauseSfx;
     /* Fields */
-    private InStageManager _inStageManager;
+    private StageManager _stageManager;
     private SettingsData _settings;
 
     #region Unity Event Methods
     protected override void OnEnable()
     {
-        _inStageManager?.PauseStage();
+        _stageManager?.PauseStage();
         base.OnEnable(); // 요기서 Tween 함
         
         pauseBtn.OnClicked -= PopUp;
@@ -48,26 +48,26 @@ public class PausePopUp : PopUpUI
     #endregion
 
     #region Initialize Methods
-    public void Init(InStageManager sm)
+    public void Init(StageManager sm)
     {
-        _inStageManager = sm;
+        _stageManager = sm;
         _settings = GameManager.Instance.SettingsData;
         pauseBtn.OnClicked += PopUp;
     }
 
     private void SubscribeEvents()
     {
-        resumeBtn.OnClicked += _inStageManager.ResumeStage;
+        resumeBtn.OnClicked += _stageManager.ResumeStage;
         resumeBtn.OnClicked += PopDown;
-        retryBtn.OnClicked += _inStageManager.RetryStage;
+        retryBtn.OnClicked += _stageManager.RetryStage;
         retryBtn.OnClicked += PopDown;
-        quitBtn.OnClicked += _inStageManager.QuitStage;
+        quitBtn.OnClicked += _stageManager.QuitStage;
         quitBtn.OnClicked += PopDown;
 
         bgmSlider.OnValueChanged += _settings.SetBgmVolume;
         sfxSlider.OnValueChanged += _settings.SetSfxVolume;
         
-        OnBgClicked += _inStageManager.ResumeStage;
+        OnBgClicked += _stageManager.ResumeStage;
         OnBgClicked += PopDown;
         
         bgmMuteToggle.onValueChanged.AddListener(OnBgmMuteToggleChanged);
@@ -76,17 +76,17 @@ public class PausePopUp : PopUpUI
 
     private void UnsubscribeEvents()
     {
-        resumeBtn.OnClicked -= _inStageManager.ResumeStage;
+        resumeBtn.OnClicked -= _stageManager.ResumeStage;
         resumeBtn.OnClicked -= PopDown;
-        retryBtn.OnClicked -= _inStageManager.RetryStage;
+        retryBtn.OnClicked -= _stageManager.RetryStage;
         retryBtn.OnClicked -= PopDown;
-        quitBtn.OnClicked -= _inStageManager.QuitStage;
+        quitBtn.OnClicked -= _stageManager.QuitStage;
         quitBtn.OnClicked -= PopDown;
 
         bgmSlider.OnValueChanged -= _settings.SetBgmVolume;
         sfxSlider.OnValueChanged -= _settings.SetSfxVolume;
         
-        OnBgClicked -= _inStageManager.ResumeStage;
+        OnBgClicked -= _stageManager.ResumeStage;
         OnBgClicked -= PopDown;
         
         bgmMuteToggle.onValueChanged.RemoveAllListeners();

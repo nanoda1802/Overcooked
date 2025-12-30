@@ -46,7 +46,7 @@ public class SoundManager : ObjPool<SfxEmitter>
         return new SfxBuilder(this);
     }
 
-    public bool CanBuildSfx(ClipInfo info) // [보류] 총소리 같은 거 과도하게 나지 않도록 방지하는 건데, 정상 작동을 안 한다...
+    public bool CanBuildSfx(SfxInfo info) // [보류] 총소리 같은 거 과도하게 나지 않도록 방지하는 건데, 정상 작동을 안 한다...
     {
         return _activeSfx.Count <= maxSfx;
         // if (!info.isFrequent) return true;
@@ -138,10 +138,10 @@ public class SoundManager : ObjPool<SfxEmitter>
         StartCoroutine(FadeOutBgm());
     }
     
-    public void ChangeBgm(ClipInfo info)
+    public void ChangeBgm(SfxInfo info)
     {
-        if (info.clip is null) return;
-        _bgmAudioSource.clip = info.clip;
+        if (info.Clip is null) return;
+        _bgmAudioSource.clip = info.Clip;
         _bgmAudioSource.volume = _settings.BgmVolume; // Fade에서 volume을 0으로 낮춰서, 여기서 다시 초기화해줘야해
         StartCoroutine(FadeInBgm());
     }

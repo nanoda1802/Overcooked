@@ -26,9 +26,9 @@ public class StageCue : MonoBehaviour
     [SF] private string[] quitCue; // [임시] 따로 SO로 뺄까?
     [SF,Range(1,2)] private float cueDuration; // [임시] 따로 SO로 뺄까?
     [Header("[ SFX ]")]
-    [SF] private ClipInfo alertSfx;
-    [SF] private ClipInfo stageStartSfx;
-    [SF] private ClipInfo stageEndSfx;
+    [SF] private SfxInfo alertSfx;
+    [SF] private SfxInfo stageStartSfx;
+    [SF] private SfxInfo stageEndSfx;
     /* Fields */
     private Action _onStageStarted;
     private Action _onStageEnded;
@@ -49,10 +49,10 @@ public class StageCue : MonoBehaviour
     #endregion
 
     #region Initialize Methods
-    public void Init(InStageManager inStageManager)
+    public void Init(StageManager stageManager)
     {
-        _onStageStarted = inStageManager.StartStage;
-        _onStageEnded = inStageManager.StageResultUI.Activate;
+        _onStageStarted = stageManager.StartStage;
+        _onStageEnded = stageManager.StageResultUI.Activate;
     }
     #endregion
 
@@ -93,7 +93,7 @@ public class StageCue : MonoBehaviour
         {
             bool isLastText = (i == cue.Length - 1);
             string curCue = cue[i]; 
-            ClipInfo curSfx = alertSfx;
+            SfxInfo curSfx = alertSfx;
             if (isLastText) curSfx = isStartCue ? stageStartSfx : stageEndSfx;
 
             // 여기서 바로 cueTexts[i]를 할당하면, 클로져 문제로 시퀀스가 실행될 시점엔 i가 이미 초기화돼있어서 적절한 string이 할당되지 않음.
@@ -111,7 +111,7 @@ public class StageCue : MonoBehaviour
             .OnKill(() => _cueSeq = null);
     }
     
-    private void UpdateCueTxt(string cueText, ClipInfo sfx)
+    private void UpdateCueTxt(string cueText, SfxInfo sfx)
     {
         cueTxt.text = cueText;
         GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(sfx).Play();

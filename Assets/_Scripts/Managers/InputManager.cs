@@ -13,8 +13,8 @@ public class InputManager : MonoBehaviour
     private PlayerInput.OutStageActions _outStageActionMap;
     public PlayerInput.OutStageActions OutStageActionMap => _outStageActionMap;
 
-    [SF] private InStagePlayerController inStagePlayerInStage;
-    [SF] private OutStagePlayerController playerOutStage;
+    [SF] private PlayerController_Stage player_stage;
+    [SF] private PlayerController_Lobby player_lobby;
     
     private void Awake()
     {
@@ -26,7 +26,6 @@ public class InputManager : MonoBehaviour
     private void OnEnable()
     {
         _inputs.Enable();
-        // EnterOutStage(); // [임시]
     }
 
     private void OnDisable()
@@ -64,28 +63,28 @@ public class InputManager : MonoBehaviour
     public void EnterInStage()
     {
         SetEnableInStageActionMap();
-        inStagePlayerInStage = GameObject.FindWithTag("Player").GetComponent<InStagePlayerController>();
-        inStagePlayerInStage.SubscribeInStageInputEvents(_inStageActionMap);
+        player_stage = GameObject.FindWithTag("Player").GetComponent<PlayerController_Stage>();
+        player_stage.SubscribeStageInputEvents(_inStageActionMap);
     }
 
     public void ExitInStage()
     {
-        inStagePlayerInStage.UnsubscribeInStageInputEvents(_inStageActionMap);
-        inStagePlayerInStage = null;
+        player_stage.UnsubscribeStageInputEvents(_inStageActionMap);
+        player_stage = null;
         SetDisableInStageActionMap();
     }
 
     public void EnterOutStage() // [임시]
     {
         SetEnableOutStageActionMap();
-        playerOutStage = GameObject.FindWithTag("Player").GetComponent<OutStagePlayerController>();
-        playerOutStage.SubscribeOutStageInputEvents(_outStageActionMap);
+        player_lobby = GameObject.FindWithTag("Player").GetComponent<PlayerController_Lobby>();
+        player_lobby.SubscribeOutStageInputEvents(_outStageActionMap);
     }
 
     public void ExitOutStage() // [임시]
     {
-        playerOutStage.UnsubscribeOutStageInputEvents(_outStageActionMap);
-        playerOutStage = null;
+        player_lobby.UnsubscribeOutStageInputEvents(_outStageActionMap);
+        player_lobby = null;
         SetDisableOutStageActionMap();
     }
 }

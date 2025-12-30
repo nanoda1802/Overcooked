@@ -20,7 +20,7 @@ public class Pantry : Table, IPool<Item>
         pivot.GetChild((int)type).gameObject.SetActive(true);
     }
 
-    public override bool Interact(InStagePlayerController player)
+    public override bool Interact(PlayerController_Stage player)
     {
         if (player.pickedItem is not null) return false;
         if (!TryGetItem(out Item item)) return false;

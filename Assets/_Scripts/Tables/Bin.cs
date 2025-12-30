@@ -13,7 +13,7 @@ public class Bin : Table
         item.Deactivate();
     }
     
-    public override bool Interact(InStagePlayerController player)
+    public override bool Interact(PlayerController_Stage player)
     {
         if (player.pickedItem is null) return false;
         

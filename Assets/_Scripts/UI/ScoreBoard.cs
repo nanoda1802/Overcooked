@@ -20,8 +20,8 @@ public class ScoreBoard : MonoBehaviour
     [SF] private float tweenDuration;
     [SF,Range(0,2)] private float tweenScaleModifier;
     
-    [SF] private ClipInfo addScoreSfx;
-    [SF] private ClipInfo deductScoreSfx;
+    [SF] private SfxInfo addScoreSfx;
+    [SF] private SfxInfo deductScoreSfx;
     
     private Sequence _scoreTxtSeq;
     private Sequence _comboTxtSeq;
@@ -43,7 +43,7 @@ public class ScoreBoard : MonoBehaviour
             .OnKill(OnKillScoreTxtSequence);
     }
 
-    private void PlayScoreSfx(ClipInfo sfx)
+    private void PlayScoreSfx(SfxInfo sfx)
     {
         GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(sfx).WithRandomPitch().Play();
     }

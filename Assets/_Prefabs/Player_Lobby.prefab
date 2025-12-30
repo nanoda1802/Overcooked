@@ -178,7 +178,7 @@ GameObject:
   - component: {fileID: 8003715883191873784}
   - component: {fileID: 7030990062741436542}
   m_Layer: 8
-  m_Name: OutStagePlayer
+  m_Name: Player_Lobby
   m_TagString: Player
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -423,6 +423,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: e90b229b8f0ea8344a16c2e08f4753a6, type: 2}
+    - target: {fileID: 8556858493818309525, guid: 12348fc04884c514184365cc4df792af, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

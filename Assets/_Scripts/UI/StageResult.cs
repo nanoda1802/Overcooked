@@ -14,8 +14,8 @@ public class StageResult : MonoBehaviour
     [SF] private CustomButton retryBtn;
     /* SFX */
     [Header("[ SFX ]")]
-    [SF] private ClipInfo fanfareSfx;
-    [SF] private ClipInfo coinSfx;
+    [SF] private SfxInfo fanfareSfx;
+    [SF] private SfxInfo coinSfx;
     /* Fields */
     private StageResultData _stageResult;
     private RectTransform[] _resultItems;
@@ -68,7 +68,7 @@ public class StageResult : MonoBehaviour
     #endregion
 
     #region Initialize Methods
-    public void Init(InStageManager sm)
+    public void Init(StageManager sm)
     {
         _stageResult = sm.StageResult;
 

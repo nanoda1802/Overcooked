@@ -121,8 +121,7 @@ public class Item : MonoBehaviour, IPoolable
         DeactivatePhysics();
         
         transform.SetParent(parent);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
+        transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
     }
 
     public void RemoveParent()

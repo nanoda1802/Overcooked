@@ -476,7 +476,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: d7b6689aab8ca014a83cf2727583c86f, type: 3}
     mixerGroup: {fileID: 0}
     isLoop: 1
-    isFrequent: 0
+  workVfx: {fileID: 4505316262364947633}
+  animParamName: 
   fireVfx: {fileID: 4505316262364947633}
 --- !u!65 &664470068792072275
 BoxCollider:

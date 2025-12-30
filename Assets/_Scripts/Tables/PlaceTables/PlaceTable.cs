@@ -8,7 +8,7 @@ public class PlaceTable : Table
     [SF,Range(0f,1f)] private float scaleOffset;
     [SF] protected ItemType[] availableItems;
     
-    public override bool Interact(InStagePlayerController player)
+    public override bool Interact(PlayerController_Stage player)
     {
         if (player.pickedItem is null && placedItem is not null)
         {

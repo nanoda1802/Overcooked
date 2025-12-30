@@ -3,7 +3,7 @@ using SF = UnityEngine.SerializeField;
 
 public class Stove : WorkTable
 {
-    [SF] private ParticleSystem fireVfx;
+    // [SF] private ParticleSystem fireVfx;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -14,7 +14,7 @@ public class Stove : WorkTable
         PlaceItem(item);
     }
 
-    public override bool Interact(InStagePlayerController player)
+    public override bool Interact(PlayerController_Stage player)
     {
         if (player.pickedItem is not null && player.pickedItem.IsMaxDone()) return false;
         return base.Interact(player);
@@ -36,14 +36,14 @@ public class Stove : WorkTable
     {
         DeactivateUI();
         StopWork();
-        StopFireVfxSmoothly();
+        // StopFireVfxSmoothly();
         return base.DisplaceItem();
     }
 
-    public override bool BeginWork(InStagePlayerController player = null)
+    public override bool BeginWork(PlayerController_Stage player = null)
     {
         bool hasBegun = base.BeginWork(player);
-        if (hasBegun) PlayFireVfx();
+        // if (hasBegun) PlayFireVfx();
         return hasBegun;
     }
 
@@ -58,15 +58,15 @@ public class Stove : WorkTable
         base.FinishWork();
     }
     
-    private void PlayFireVfx()
-    {
-        if (fireVfx is null) return;
-        if (fireVfx.isPlaying) StopFireVfxSmoothly();
-        fireVfx.Play();
-    }
-
-    private void StopFireVfxSmoothly()
-    {
-        fireVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-    }
+    // private void PlayFireVfx()
+    // {
+    //     if (fireVfx is null) return;
+    //     if (fireVfx.isPlaying) StopFireVfxSmoothly();
+    //     fireVfx.Play();
+    // }
+    //
+    // private void StopFireVfxSmoothly()
+    // {
+    //     fireVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+    // }
 }

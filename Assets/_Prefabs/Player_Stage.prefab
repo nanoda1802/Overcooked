@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 5196186138760199806}
   - component: {fileID: 2051715068445477126}
   m_Layer: 8
-  m_Name: InStagePlayer
+  m_Name: Player_Stage
   m_TagString: Player
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -135,14 +135,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7985ac1b076ee2142b5ae203a8d44b0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inStageManager: {fileID: 0}
+  stageManager: {fileID: 0}
   moveData: {fileID: 11400000, guid: 1ac7603815979984ab1cab9b1f511ab1, type: 2}
   dashVfx: {fileID: 7245620087008542060}
   detectData: {fileID: 11400000, guid: eef123bc93ed3034ca89464c2a45a112, type: 2}
   pivot: {fileID: 4884989298701289034}
+  rightHand: {fileID: 8650441776689691480}
   pickedItem: {fileID: 0}
   isWorking: 0
   sfxData: {fileID: 11400000, guid: 768c4546eb0755647b8a0ebdec9f1b9f, type: 2}
+  animData: {fileID: 11400000, guid: e98134a769ba359429c2ccfbf9f37da7, type: 2}
 --- !u!54 &5196186138760199806
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -490,6 +492,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: e90b229b8f0ea8344a16c2e08f4753a6, type: 2}
+    - target: {fileID: 8556858493818309525, guid: 12348fc04884c514184365cc4df792af, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -498,6 +504,11 @@ PrefabInstance:
 --- !u!4 &1913222580039693316 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2314917975539241455, guid: 12348fc04884c514184365cc4df792af, type: 3}
+  m_PrefabInstance: {fileID: 4228066886151792107}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8650441776689691480 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4801284258446630579, guid: 12348fc04884c514184365cc4df792af, type: 3}
   m_PrefabInstance: {fileID: 4228066886151792107}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7560848466991762223

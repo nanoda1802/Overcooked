@@ -10,7 +10,7 @@ public class CustomButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 {
     private int _instanceId;
 
-    [SF] private ClipInfo clickSfx;
+    [SF] private SfxInfo clickSfx;
     
     private RectTransform _rect;
     private Image _img;

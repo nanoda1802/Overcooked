@@ -27,7 +27,7 @@ public class TutorialPopUp : MonoBehaviour
     private int _curPageIdx;
     private readonly int _paramHash = Animator.StringToHash("PageIdx");
     private Sequence _popUpSequence;
-    private InStageManager _inStageManager;
+    private StageManager _stageManager;
 
     #region Unity Event Methods
     private void OnEnable()
@@ -38,7 +38,7 @@ public class TutorialPopUp : MonoBehaviour
 
     private void OnDisable()
     {
-        _inStageManager.StageCueUI.Activate(CueType.Start); // [임시] 더 좋은 흐름이 없을지 고민해보자
+        _stageManager.StageCueUI.Activate(CueType.Start); // [임시] 더 좋은 흐름이 없을지 고민해보자
 
         UnsubscribeEvents();
         
@@ -48,11 +48,11 @@ public class TutorialPopUp : MonoBehaviour
     #endregion
 
     #region Initialize Methods
-    public void Init(InStageManager inStageManager)
+    public void Init(StageManager stageManager)
     {
         previewAnim.runtimeAnimatorController = tutorialData.PreviewAnimController;
         previewAnim.updateMode = AnimatorUpdateMode.UnscaledTime;
-        _inStageManager = inStageManager;
+        _stageManager = stageManager;
     }
     
     private void SubscribeEvents()
@@ -202,7 +202,7 @@ public class TutorialPopUp : MonoBehaviour
     {
         if (!isOn) return; // 애초에 저게 꺼져있으면 튜토리얼 ui를 볼 수가 없엉
         
-        _inStageManager.StageInfo.SetShowTutorial(false);
+        _stageManager.StageInfo.SetShowTutorial(false);
         PopDown();
     }
 

@@ -245,7 +245,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 91661e197e36d684ab93b0e91f2e23b6, type: 3}
     mixerGroup: {fileID: 0}
     isLoop: 1
-    isFrequent: 0
+  workVfx: {fileID: 2703031937714174020}
+  animParamName: WashDish
   dishRack: {fileID: 0}
   sinkCanvas: {fileID: 7047687936998075697}
   sinkText: {fileID: 6071369978114239700}

@@ -2522,6 +2522,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
+      propertyPath: stageManager
+      value: 
+      objectReference: {fileID: 992935538}
+    - target: {fileID: 6371081438917920930, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: inStageManager
       value: 
       objectReference: {fileID: 992935538}
@@ -5010,7 +5014,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiPool: {fileID: 1639228157}
-  inStageManager: {fileID: 992935538}
+  stageManager: {fileID: 992935538}
 --- !u!1001 &986386154
 PrefabInstance:
   m_ObjectHideFlags: 0

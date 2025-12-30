@@ -11,7 +11,7 @@ public class Box : PlaceTable
         PlaceItem(item);
     }
 
-    public override bool Interact(InStagePlayerController player)
+    public override bool Interact(PlayerController_Stage player)
     {
         if (placedItem is not Plate plate) return base.Interact(player);
         if (player.pickedItem is null)

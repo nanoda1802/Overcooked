@@ -18,7 +18,7 @@ MonoBehaviour:
   stageImage: {fileID: 21300000, guid: df313f54f0930dd4a98ca617501e51e0, type: 3}
   bestScore: 0
   scoreCuts: c8000000f4010000e8030000
-  stageDuration: 62
+  stageDuration: 300
   gridInfos: []
   respawnPoints:
   - {x: -3.5, y: 1, z: 0.5}
@@ -26,7 +26,6 @@ MonoBehaviour:
   orderInfoData: {fileID: 11400000, guid: d363296185e771049911670253c78af7, type: 2}
   bgm:
     clip: {fileID: 8300000, guid: 15b6d5d9628efc64bb50da0fd9c86c90, type: 3}
-    mixer: {fileID: 0}
+    mixerGroup: {fileID: 0}
     isLoop: 1
-    isFrequent: 0
   showTutorial: 0

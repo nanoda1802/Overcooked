@@ -8,7 +8,7 @@ public class ServingRack : Table
    [SF] private Sink sink;
    [SF] private ParticleSystem servingVfx;
 
-   public override bool Interact(InStagePlayerController player)
+   public override bool Interact(PlayerController_Stage player)
    {
       if (player.pickedItem is not Plate plate) return false;
       if (!plate.HasIngredient()) return false;

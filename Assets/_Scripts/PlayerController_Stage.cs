@@ -7,12 +7,12 @@ using SF = UnityEngine.SerializeField;
 
 // 참고 링크 https://rito15.github.io/posts/unity-rigidbody-move-and-jump/
 
-public class InStagePlayerController : MonoBehaviour
+public class PlayerController_Stage : MonoBehaviour
 {
     /* 컴포넌트 */
     private Rigidbody _rb;
     private Animator _anim;
-    [SF] private InStageManager inStageManager;
+    [SF] private StageManager stageManager;
     /* 이동 */
     [Header("[ Move ]")] 
     [SF] private PlayerMovementData moveData;
@@ -29,6 +29,7 @@ public class InStagePlayerController : MonoBehaviour
     /* 아이템 줍기 내려놓기 */
     [Header("[ Pick & Drop ]")] 
     [SF] private Transform pivot;
+    [SF] private Transform rightHand;
     public Item pickedItem;
     /* 작업 */
     [HideInInspector] public bool isWorking;
@@ -36,8 +37,10 @@ public class InStagePlayerController : MonoBehaviour
     /* SFX */
     [SF] private PlayerSfxData sfxData;
     /* Anim */
-    private readonly int _moveHash = Animator.StringToHash("Move"); // [임시] SO로 뺄 것임, 테스트용
-    private readonly int _dashHash = Animator.StringToHash("Dash"); // [임시] SO로 뺄 것임, 테스트용
+    [SF] private PlayerAnimData animData;
+    // private readonly int _moveHash = Animator.StringToHash("Move"); // [임시] SO로 뺄 것임, 테스트용
+    // private readonly int _dashHash = Animator.StringToHash("Dash"); // [임시] SO로 뺄 것임, 테스트용
+    // private readonly int _pickHash = Animator.StringToHash("Pick"); // [임시] SO로 뺄 것임, 테스트용
     
     #region 유니티 이벤트 메서드
     private void Awake()
@@ -57,6 +60,8 @@ public class InStagePlayerController : MonoBehaviour
     private void Start()
     {
         _waitInertiaDecay = new WaitForSeconds(moveData.InertiaDecayTime);
+        animData.Init();
+        _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
     }
 
     private void FixedUpdate()
@@ -89,6 +94,15 @@ public class InStagePlayerController : MonoBehaviour
     #endregion
 
     #region 인풋 이벤트 메서드
+
+    private void OnMoveStarted(InputAction.CallbackContext ctx)
+    {
+        if (!gameObject.activeSelf) return;
+        if (isWorking) return; 
+        StopAnim(animData.DashHash);
+        PlayAnim(animData.MoveHash);
+    }
+
     private void OnMovePerformed(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
@@ -96,15 +110,13 @@ public class InStagePlayerController : MonoBehaviour
         Vector2 input = ctx.ReadValue<Vector2>();  
         _moveDir.x = input.x;  
         _moveDir.z = input.y;
-        
-        _anim.SetBool(_moveHash,true); // [임시] 테스트용
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext ctx)
     {
         _moveDir = Vector3.zero;
         StopMoveImmediately();
-        _anim.SetBool(_moveHash,false); // [임시] 테스트용
+        StopAnim(animData.MoveHash);
     }
 
     private void OnDashStarted(InputAction.CallbackContext ctx)
@@ -112,12 +124,21 @@ public class InStagePlayerController : MonoBehaviour
         if (!gameObject.activeSelf) return;
         if (_dashCoroutine is not null) StopCoroutine(_dashCoroutine);  
         _dashCoroutine = StartCoroutine(Dash());  
+        
         _moveSpeedModifier = moveData.RunSpeedMultiplier;
+        _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
     }
 
     private void OnDashCanceled(InputAction.CallbackContext ctx)
     {
         _moveSpeedModifier = 1f;
+        _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+    }
+
+    private void OnInteractStarted(InputAction.CallbackContext ctx)
+    {
+        if (!gameObject.activeSelf) return;
+        StopAnim(animData.DashHash);
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext ctx)
@@ -171,45 +192,49 @@ public class InStagePlayerController : MonoBehaviour
         // Throw(throwDir);
     }
 
-    private void OnPauseStated(InputAction.CallbackContext ctx)
+    private void OnPauseStarted(InputAction.CallbackContext ctx)
     {
-        if (inStageManager.PauseUI.IsPopping()) return;
+        if (stageManager.PauseUI.IsPopping()) return;
         
-        if (inStageManager.PauseUI.gameObject.activeSelf)
+        if (stageManager.PauseUI.gameObject.activeSelf)
         {
-            inStageManager.ResumeStage();
-            inStageManager.PauseUI.PopDown();
+            stageManager.ResumeStage();
+            stageManager.PauseUI.PopDown();
         }
         else
         {
-            inStageManager.PauseUI.PopUp();
+            stageManager.PauseUI.PopUp();
         }
     }
 
-    public void SubscribeInStageInputEvents(PlayerInput.InStageActions actionMap)
+    public void SubscribeStageInputEvents(PlayerInput.InStageActions actionMap)
     {
+        actionMap.Move.started += OnMoveStarted;
         actionMap.Move.performed += OnMovePerformed;
         actionMap.Move.canceled += OnMoveCanceled;
         actionMap.Dash.started += OnDashStarted;
         actionMap.Dash.canceled += OnDashCanceled;
+        actionMap.Interact.started += OnInteractStarted;
         actionMap.Interact.performed += OnInteractPerformed;
         actionMap.Interact.canceled += OnInteractCanceled;
         actionMap.Throw.performed += OnThrowPerformed;
         actionMap.Throw.canceled += OnThrowCanceled;
-        actionMap.Pause.started += OnPauseStated;
+        actionMap.Pause.started += OnPauseStarted;
     }
 
-    public void UnsubscribeInStageInputEvents(PlayerInput.InStageActions actionMap)
+    public void UnsubscribeStageInputEvents(PlayerInput.InStageActions actionMap)
     {
+        actionMap.Move.started -= OnMoveStarted;
         actionMap.Move.performed -= OnMovePerformed;
         actionMap.Move.canceled -= OnMoveCanceled;
         actionMap.Dash.started -= OnDashStarted;
         actionMap.Dash.canceled -= OnDashCanceled;
+        actionMap.Interact.started -= OnInteractStarted;
         actionMap.Interact.performed -= OnInteractPerformed;
         actionMap.Interact.canceled -= OnInteractCanceled;
         actionMap.Throw.performed -= OnThrowPerformed;
         actionMap.Throw.canceled -= OnThrowCanceled;
-        actionMap.Pause.started -= OnPauseStated;
+        actionMap.Pause.started -= OnPauseStarted;
     }
     #endregion
 
@@ -240,6 +265,8 @@ public class InStagePlayerController : MonoBehaviour
         StopMoveImmediately();
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
         
+        PlayAnim(animData.DashHash);
+        
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.DashSfx)
             .WithPos(transform.position)
@@ -255,6 +282,7 @@ public class InStagePlayerController : MonoBehaviour
     private void StopMoveImmediately()
     {
         _rb.velocity = _rb.angularVelocity = Vector3.zero;
+        StopAnim(animData.DashHash);
     }
 
     private void PlayDashVfx()
@@ -308,6 +336,9 @@ public class InStagePlayerController : MonoBehaviour
     private bool TryInteract()
     {
         if (!DetectTable()) return false;
+        
+        StopMoveImmediately();
+        
         if (!_detectedTable.Interact(this))
         {
             GameManager.Instance.SoundManager.BuildSfx()
@@ -321,19 +352,6 @@ public class InStagePlayerController : MonoBehaviour
         // RotateImmediately(_detectedTable.transform.position);
         _detectedTable = null;
         return true;
-        
-        // bool hasInteraction = _detectedTable.Interact(this);
-        // if (!hasInteraction)
-        // {
-        //     GameManager.Instance.SoundManager.BuildSfx()
-        //         .WithSfxInfo(interactBlockSfx)
-        //         .WithPos(transform.position)
-        //         .WithRandomPitch()
-        //         .Play();
-        // }
-        // RotateImmediately(_detectedTable.transform.position);
-        // _detectedTable = null;
-        // return hasInteraction;
     }
 
     private void BeginWork(WorkTable table)
@@ -412,11 +430,21 @@ public class InStagePlayerController : MonoBehaviour
             .WithRandomPitch()
             .Play();
     }
-    
+
+    public void GrabKnife(Transform knife)
+    {
+        knife.SetParent(rightHand);
+        knife.SetLocalPositionAndRotation(0.15f * Vector3.forward, Quaternion.Euler(new Vector3(0,0,180)));
+        knife.gameObject.SetActive(true);
+    }
+
     public void AttachItem(Item item)
     {
         item.SetParent(pivot);
         pickedItem = item;
+        
+        PlayAnim(animData.PickHash);
+        
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.AttachSfx)
             .WithPos(transform.position)
@@ -429,6 +457,9 @@ public class InStagePlayerController : MonoBehaviour
         Item item = pickedItem;
         item.RemoveParent();
         pickedItem = null;
+        
+        StopAnim(animData.PickHash);
+        
         return item;
     }
 
@@ -436,6 +467,19 @@ public class InStagePlayerController : MonoBehaviour
     {
         if (_detectedTable is not PlaceTable table) return;
         AttachItem(table.DisplaceItem());
+    }
+    #endregion
+
+    #region Animation
+
+    public void PlayAnim(int hash)
+    {
+        _anim.SetBool(hash, true);
+    }
+    
+    public void StopAnim(int hash)
+    {
+        _anim.SetBool(hash, false);
     }
     #endregion
 }

@@ -14,7 +14,7 @@ public class OrderManager : MonoBehaviour, IManager
     /* 주문 생성 */
     private List<FoodOrder> _activeOrderList;
     private float _intervalCount;
-    [SF] private ClipInfo newOrderSfx; // [임시]
+    [SF] private SfxInfo newOrderSfx; // [임시]
     /* UI */
     [SF] private Transform orderGroupUI;
     [SF] private int[] orderPosXs;
@@ -26,7 +26,7 @@ public class OrderManager : MonoBehaviour, IManager
         UpdateOrderInterval();
     }
 
-    public void Init(InStageManager sm)
+    public void Init(StageManager sm)
     {
         _scoreManager = sm.ScoreManager;
         _orderInfo = sm.StageInfo.OrderInfoData;

@@ -4,7 +4,7 @@ using UnityEngine;
 public class SfxBuilder
 {
     private readonly SoundManager _soundManager;
-    private ClipInfo _clipInfo;
+    private SfxInfo _sfxInfo;
     private Vector3 _pos = Vector3.zero;
     private bool _hasClipInfo;
     
@@ -15,9 +15,9 @@ public class SfxBuilder
         _soundManager = sm;
     }
 
-    public SfxBuilder WithSfxInfo(ClipInfo info)
+    public SfxBuilder WithSfxInfo(SfxInfo info)
     {
-        _clipInfo = info;
+        _sfxInfo = info;
         _hasClipInfo = true;
         return this;
     }
@@ -37,11 +37,11 @@ public class SfxBuilder
     public SfxEmitter Play()
     {
         if (!_hasClipInfo) return null;
-        if (_clipInfo.clip is null) return null;
+        if (_sfxInfo.Clip is null) return null;
         // if (!_soundManager.CanBuildSfx(_clipInfo)) return null;
         
         SfxEmitter sfx = _soundManager.GetSfx();
-        sfx.ApplyClipInfo(_clipInfo);
+        sfx.ApplyClipInfo(_sfxInfo);
         sfx.SetPos(_pos, _soundManager.transform);
         
         if (_randomPitch) sfx.ApplyRandomPitch();

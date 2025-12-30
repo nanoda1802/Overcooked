@@ -13,10 +13,17 @@ public class WorkTable : PlaceTable
     
     [SF] protected Canvas fillBarCanvas;
     [SF] protected Image[] barImages;
-    [SF] protected ClipInfo workSfx;
+    [SF] protected SfxInfo workSfx;
+    [SF] protected ParticleSystem workVfx;
     
-    // [SF] protected SfxEmitter curSfx;
-    
+    [SF] private string animParamName;
+    protected int animHash;
+
+    protected virtual void Start() // [임시] 초기화해주는 함수 만들기... 근데 누가 테이블들을 초기화해줌?
+    {
+        animHash = Animator.StringToHash(animParamName);
+    }
+
     protected void Update()
     {
         if (!_isWorking) return;
@@ -25,11 +32,15 @@ public class WorkTable : PlaceTable
         Work();
     }
     
-    public virtual bool BeginWork(InStagePlayerController player = null)
+    public virtual bool BeginWork(PlayerController_Stage player = null)
     {
         _isWorking = true;
+        
         SfxEmitter curSfx = GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(workSfx).WithPos(transform.position).Play();
         if (curSfx is not null) OnStopped += curSfx.Stop;
+        if (workVfx is not null) OnStopped += StopVfxSmoothly;
+        PlayVfx();
+        
         return true;
     }
 
@@ -50,6 +61,20 @@ public class WorkTable : PlaceTable
     {
         FillBarImg(placedItem.Handle());
         if (placedItem.IsMaxDone()) FinishWork();
+    }
+    
+    private void PlayVfx()
+    {
+        if (workVfx is null) return;
+        if (workVfx.isPlaying) StopVfxSmoothly();
+        workVfx.Play();
+    }
+
+    private void StopVfxSmoothly()
+    {
+        // StopEmitting : 추가 파티클만 막음, 이미 나온 녀석들은 남아서 마저 진행됨
+        // StopEmittingAndClear : 아예 모든 파티클 제거
+        workVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
 
     protected void ActivateUI()

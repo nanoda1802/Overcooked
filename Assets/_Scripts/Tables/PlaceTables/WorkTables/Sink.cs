@@ -8,7 +8,7 @@ public class Sink : WorkTable, IPool<Item>
     [SF] private DishRack dishRack;
     [SF] private Canvas sinkCanvas;
     [SF] private Text sinkText;
-    [SF] private ParticleSystem bubbleVfx;
+    // [SF] private ParticleSystem bubbleVfx;
     // private event Action OnFinished;
 
     [SF] private GameObject platePrefab;
@@ -21,8 +21,9 @@ public class Sink : WorkTable, IPool<Item>
         InitPool();
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         UpdatePlateCount();
     }
 
@@ -36,7 +37,7 @@ public class Sink : WorkTable, IPool<Item>
         PlaceItem(item);
     }
 
-    public override bool Interact(InStagePlayerController player)
+    public override bool Interact(PlayerController_Stage player)
     {
         if (player.pickedItem is not Plate plate) return false;
         if (plate.HasIngredient()) return false;
@@ -66,7 +67,7 @@ public class Sink : WorkTable, IPool<Item>
         return null;
     }
     
-    public override bool BeginWork(InStagePlayerController player = null)
+    public override bool BeginWork(PlayerController_Stage player = null)
     {
         if (player is null) return false;
         if (placedItem is null) 
@@ -76,9 +77,12 @@ public class Sink : WorkTable, IPool<Item>
             ActivateUI();
         }
 
-        PlayBubbleVfx();
+        // PlayBubbleVfx();
         
         base.BeginWork();
+        
+        player.PlayAnim(animHash);
+        OnStopped += () => player.StopAnim(animHash);
         
         player.OnWorkStopped += StopWork;
         OnFinished += player.FinishWork;
@@ -89,7 +93,7 @@ public class Sink : WorkTable, IPool<Item>
     protected override void StopWork()
     {
         base.StopWork();
-        StopBubbleVfxSmoothly();
+        // StopBubbleVfxSmoothly();
         // OnFinished = null;
     }
 
@@ -102,19 +106,19 @@ public class Sink : WorkTable, IPool<Item>
         DisplaceItem();
     }
 
-    private void PlayBubbleVfx()
-    {
-        if (bubbleVfx is null) return;
-        if (bubbleVfx.isPlaying) StopBubbleVfxSmoothly();
-        bubbleVfx.Play();
-    }
-
-    private void StopBubbleVfxSmoothly()
-    {
-        // StopEmitting : 추가 파티클만 막음, 이미 나온 녀석들은 남아서 마저 진행됨
-        // StopEmittingAndClear : 아예 모든 파티클 제거
-        bubbleVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-    }
+    // private void PlayBubbleVfx()
+    // {
+    //     if (bubbleVfx is null) return;
+    //     if (bubbleVfx.isPlaying) StopBubbleVfxSmoothly();
+    //     bubbleVfx.Play();
+    // }
+    //
+    // private void StopBubbleVfxSmoothly()
+    // {
+    //     // StopEmitting : 추가 파티클만 막음, 이미 나온 녀석들은 남아서 마저 진행됨
+    //     // StopEmittingAndClear : 아예 모든 파티클 제거
+    //     bubbleVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+    // }
 
     private void ActivatePlateCount() // [임시]
     {

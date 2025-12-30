@@ -16,7 +16,7 @@ public class TimerBoard : MonoBehaviour
     [SF] private float tweenDuration;
     [SF] private float feverTime;
     
-    [SF] private ClipInfo alarmSfx;
+    [SF] private SfxInfo alarmSfx;
     
     private Sequence _timerTxtSeq;
     

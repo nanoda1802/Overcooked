@@ -10,7 +10,7 @@ public class ScoreManager : MonoBehaviour, IManager
 
     [SF] private ScoreBoard scoreUI;
     
-    public void Init(InStageManager sm)
+    public void Init(StageManager sm)
     {
         _stageResult = sm.StageResult;
         _stageResult.Init();

@@ -57,12 +57,12 @@ public class SfxEmitter : MonoBehaviour
         _audioSource.mute = isMute;
     }
 
-    public void ApplyClipInfo(ClipInfo info)
+    public void ApplyClipInfo(SfxInfo info)
     {
         // _clipInfo = info;
-        _audioSource.clip = info.clip;
-        _audioSource.outputAudioMixerGroup = info.mixerGroup;
-        _audioSource.loop = info.isLoop;
+        _audioSource.clip = info.Clip;
+        _audioSource.outputAudioMixerGroup = info.MixerGroup;
+        _audioSource.loop = info.IsLoop;
     }
     
     public void SetPos(Vector3 pos, Transform parent)

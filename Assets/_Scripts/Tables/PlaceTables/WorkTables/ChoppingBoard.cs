@@ -4,7 +4,10 @@ using SF = UnityEngine.SerializeField;
 public class ChoppingBoard : WorkTable
 {
     // private event Action OnFinished;
-
+    [SF] private Transform knife;
+    [SF] private Vector3 knifeLocalPos;
+    
+    
     private void OnTriggerEnter(Collider other)
     {
         if (placedItem is not null) return;
@@ -14,7 +17,7 @@ public class ChoppingBoard : WorkTable
         PlaceItem(item);
     }
 
-    public override bool Interact(InStagePlayerController player)
+    public override bool Interact(PlayerController_Stage player)
     {
         if (player.pickedItem is not null && player.pickedItem.IsMaxDone()) return false;
         return base.Interact(player);
@@ -23,6 +26,7 @@ public class ChoppingBoard : WorkTable
     public override void PlaceItem(Item item)
     {
         base.PlaceItem(item);
+        knife.gameObject.SetActive(false);
     }
 
     public override Item DisplaceItem()
@@ -31,13 +35,22 @@ public class ChoppingBoard : WorkTable
         return base.DisplaceItem();
     }
 
-    public override bool BeginWork(InStagePlayerController player = null)
+    public override bool BeginWork(PlayerController_Stage player = null)
     {
         if (player is null) return false;
         if (placedItem is null) return false;
+        
+        // [작업중] 파티클 시스템 색깔 정해주고 base 호출해야함!!
+        
         base.BeginWork();
         
         if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
+        
+        player.GrabKnife(knife);
+        
+        player.PlayAnim(animHash);
+        OnStopped += () => player.StopAnim(animHash);
+        OnStopped += ReturnKnife;
         
         player.OnWorkStopped += StopWork;
         OnFinished += player.GetHandledItem;
@@ -58,5 +71,11 @@ public class ChoppingBoard : WorkTable
         base.FinishWork();
         
         DeactivateUI();
+    }
+
+    private void ReturnKnife()
+    {
+        knife.SetParent(transform);
+        knife.SetLocalPositionAndRotation(knifeLocalPos, Quaternion.identity);
     }
 }
