@@ -3,10 +3,8 @@ using SF = UnityEngine.SerializeField;
 
 public class ChoppingBoard : WorkTable
 {
-    // private event Action OnFinished;
     [SF] private Transform knife;
     [SF] private Vector3 knifeLocalPos;
-    
     
     private void OnTriggerEnter(Collider other)
     {
@@ -40,8 +38,6 @@ public class ChoppingBoard : WorkTable
         if (player is null) return false;
         if (placedItem is null) return false;
         
-        // [작업중] 파티클 시스템 색깔 정해주고 base 호출해야함!!
-        
         base.BeginWork();
         
         if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
@@ -62,14 +58,11 @@ public class ChoppingBoard : WorkTable
     protected override void StopWork()
     {
         base.StopWork();
-        // OnFinished = null;
     }
 
     protected override void FinishWork()
     {
-        // OnFinished?.Invoke();
         base.FinishWork();
-        
         DeactivateUI();
     }
 

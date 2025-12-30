@@ -8,8 +8,6 @@ public class Sink : WorkTable, IPool<Item>
     [SF] private DishRack dishRack;
     [SF] private Canvas sinkCanvas;
     [SF] private Text sinkText;
-    // [SF] private ParticleSystem bubbleVfx;
-    // private event Action OnFinished;
 
     [SF] private GameObject platePrefab;
     [SF] private Transform poolPivot;
@@ -76,8 +74,6 @@ public class Sink : WorkTable, IPool<Item>
             placedItem.Activate();
             ActivateUI();
         }
-
-        // PlayBubbleVfx();
         
         base.BeginWork();
         
@@ -93,8 +89,6 @@ public class Sink : WorkTable, IPool<Item>
     protected override void StopWork()
     {
         base.StopWork();
-        // StopBubbleVfxSmoothly();
-        // OnFinished = null;
     }
 
     protected override void FinishWork()
@@ -105,20 +99,6 @@ public class Sink : WorkTable, IPool<Item>
         DeactivateUI();
         DisplaceItem();
     }
-
-    // private void PlayBubbleVfx()
-    // {
-    //     if (bubbleVfx is null) return;
-    //     if (bubbleVfx.isPlaying) StopBubbleVfxSmoothly();
-    //     bubbleVfx.Play();
-    // }
-    //
-    // private void StopBubbleVfxSmoothly()
-    // {
-    //     // StopEmitting : 추가 파티클만 막음, 이미 나온 녀석들은 남아서 마저 진행됨
-    //     // StopEmittingAndClear : 아예 모든 파티클 제거
-    //     bubbleVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-    // }
 
     private void ActivatePlateCount() // [임시]
     {

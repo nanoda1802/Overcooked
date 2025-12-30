@@ -32,36 +32,58 @@ public class PlayerController_Stage : MonoBehaviour
     [SF] private Transform rightHand;
     public Item pickedItem;
     /* 작업 */
-    [HideInInspector] public bool isWorking;
     public event Action OnWorkStopped;
+    private bool _isWorking;
     /* SFX */
     [SF] private PlayerSfxData sfxData;
     /* Anim */
-    [SF] private PlayerAnimData animData;
-    // private readonly int _moveHash = Animator.StringToHash("Move"); // [임시] SO로 뺄 것임, 테스트용
-    // private readonly int _dashHash = Animator.StringToHash("Dash"); // [임시] SO로 뺄 것임, 테스트용
-    // private readonly int _pickHash = Animator.StringToHash("Pick"); // [임시] SO로 뺄 것임, 테스트용
+    private AnimParams _animParams;
+    // [SF] private PlayerAnimData animData;
     
     #region 유니티 이벤트 메서드
     private void Awake()
     {
         if (!TryGetComponent(out _rb))
-        {
-            _rb = gameObject.AddComponent<Rigidbody>();
-            _rb.freezeRotation = true;
-            _rb.mass = 100;
-            _rb.drag = 1.5f;
-            _rb.angularDrag = 0.05f;
+        {  
+            #if UNITY_EDITOR
+            Debug.LogError("본인에게 부착된 RigidBody가 없슴다. [PlayerController_Stage.Awake]");
+            #endif
         }
         
-        _anim = GetComponentInChildren<Animator>(); // [임시]
+        if (this.TryGetComponentInChildren(out _anim)) // 확장 메서드 사용부
+        {
+            _animParams = new AnimParams(_anim);
+        }
+        else
+        {
+            #if UNITY_EDITOR
+            Debug.LogError("본인과 모든 자식들 중, 발견된 Animator가 없슴다. [PlayerController_Stage.Awake]");
+            #endif
+        }
+        
+        // [메모] 이거 Player RB Data든 뭐든 해서 빼놓자
+        // if (!TryGetComponent(out _rb))
+        // {
+        //     _rb = gameObject.AddComponent<Rigidbody>();
+        //     _rb.freezeRotation = true;
+        //     _rb.mass = 100;
+        //     _rb.drag = 1.5f;
+        //     _rb.angularDrag = 0.05f;
+        // }
+        
+        // _anim = GetComponentInChildren<Animator>(); // [임시]
+    }
+
+    private void OnEnable()
+    {
+        // _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+        ApplyMoveSpeedToAnim();
     }
 
     private void Start()
     {
         _waitInertiaDecay = new WaitForSeconds(moveData.InertiaDecayTime);
-        animData.Init();
-        _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+        // animData.Init();
     }
 
     private void FixedUpdate()
@@ -98,15 +120,17 @@ public class PlayerController_Stage : MonoBehaviour
     private void OnMoveStarted(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
-        if (isWorking) return; 
-        StopAnim(animData.DashHash);
-        PlayAnim(animData.MoveHash);
+        if (_isWorking) return; 
+        // StopAnim(animData.DashHash);
+        // PlayAnim(animData.MoveHash);
+        StopAnim(_animParams.GetHash("Dash"));
+        PlayAnim(_animParams.GetHash("Move"));
     }
 
     private void OnMovePerformed(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
-        if (isWorking) return;  
+        if (_isWorking) return;  
         Vector2 input = ctx.ReadValue<Vector2>();  
         _moveDir.x = input.x;  
         _moveDir.z = input.y;
@@ -116,7 +140,8 @@ public class PlayerController_Stage : MonoBehaviour
     {
         _moveDir = Vector3.zero;
         StopMoveImmediately();
-        StopAnim(animData.MoveHash);
+        // StopAnim(animData.MoveHash);
+        StopAnim(_animParams.GetHash("Move"));
     }
 
     private void OnDashStarted(InputAction.CallbackContext ctx)
@@ -126,19 +151,22 @@ public class PlayerController_Stage : MonoBehaviour
         _dashCoroutine = StartCoroutine(Dash());  
         
         _moveSpeedModifier = moveData.RunSpeedMultiplier;
-        _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+        // _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+        ApplyMoveSpeedToAnim();
     }
 
     private void OnDashCanceled(InputAction.CallbackContext ctx)
     {
         _moveSpeedModifier = 1f;
-        _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+        // _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+        ApplyMoveSpeedToAnim();
     }
 
     private void OnInteractStarted(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
-        StopAnim(animData.DashHash);
+        // StopAnim(animData.DashHash);
+        StopAnim(_animParams.GetHash("Dash"));
     }
 
     private void OnInteractPerformed(InputAction.CallbackContext ctx)
@@ -163,7 +191,7 @@ public class PlayerController_Stage : MonoBehaviour
     private void OnInteractCanceled(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
-        if (!isWorking) return; 
+        if (!_isWorking) return; 
         StopWork();
     }
 
@@ -265,7 +293,8 @@ public class PlayerController_Stage : MonoBehaviour
         StopMoveImmediately();
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
         
-        PlayAnim(animData.DashHash);
+        // PlayAnim(animData.DashHash);
+        PlayAnim(_animParams.GetHash("Dash"));
         
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.DashSfx)
@@ -282,7 +311,8 @@ public class PlayerController_Stage : MonoBehaviour
     private void StopMoveImmediately()
     {
         _rb.velocity = _rb.angularVelocity = Vector3.zero;
-        StopAnim(animData.DashHash);
+        // StopAnim(animData.DashHash);
+        StopAnim(_animParams.GetHash("Dash"));
     }
 
     private void PlayDashVfx()
@@ -358,7 +388,7 @@ public class PlayerController_Stage : MonoBehaviour
     {
         StopMoveImmediately();
         // RotateImmediately(table.transform.position);
-        isWorking = table.BeginWork(this);
+        _isWorking = table.BeginWork(this);
     }
 
     private void StopWork()
@@ -369,7 +399,7 @@ public class PlayerController_Stage : MonoBehaviour
 
     public void FinishWork()
     {
-        isWorking = false;
+        _isWorking = false;
         _detectedTable = null;
         OnWorkStopped = null;
     }
@@ -434,7 +464,7 @@ public class PlayerController_Stage : MonoBehaviour
     public void GrabKnife(Transform knife)
     {
         knife.SetParent(rightHand);
-        knife.SetLocalPositionAndRotation(0.15f * Vector3.forward, Quaternion.Euler(new Vector3(0,0,180)));
+        knife.SetLocalPositionAndRotation(0.15f * Vector3.forward, Quaternion.Euler(new Vector3(0,0,180))); // [임시]
         knife.gameObject.SetActive(true);
     }
 
@@ -443,7 +473,8 @@ public class PlayerController_Stage : MonoBehaviour
         item.SetParent(pivot);
         pickedItem = item;
         
-        PlayAnim(animData.PickHash);
+        // PlayAnim(animData.PickHash);
+        PlayAnim(_animParams.GetHash("Pick"));
         
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.AttachSfx)
@@ -458,7 +489,8 @@ public class PlayerController_Stage : MonoBehaviour
         item.RemoveParent();
         pickedItem = null;
         
-        StopAnim(animData.PickHash);
+        // StopAnim(animData.PickHash);
+        StopAnim(_animParams.GetHash("Pick"));
         
         return item;
     }
@@ -471,7 +503,6 @@ public class PlayerController_Stage : MonoBehaviour
     #endregion
 
     #region Animation
-
     public void PlayAnim(int hash)
     {
         _anim.SetBool(hash, true);
@@ -481,5 +512,11 @@ public class PlayerController_Stage : MonoBehaviour
     {
         _anim.SetBool(hash, false);
     }
+
+    private void ApplyMoveSpeedToAnim()
+    {
+        _anim.SetFloat(_animParams.GetHash("MoveSpeed"), _moveSpeedModifier);
+    }
+
     #endregion
 }
