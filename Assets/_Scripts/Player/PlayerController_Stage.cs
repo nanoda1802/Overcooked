@@ -9,12 +9,10 @@ using SF = UnityEngine.SerializeField;
 
 public class PlayerController_Stage : MonoBehaviour
 {
-    /* 컴포넌트 */
-    private Rigidbody _rb;
-    private Animator _anim;
     [SF] private StageManager stageManager;
     /* 이동 */
     [Header("[ Move ]")] 
+    private Rigidbody _rb;
     [SF] private PlayerMovementData moveData;
     [SF] private ParticleSystem dashVfx;
     private Vector3 _moveDir;
@@ -37,41 +35,14 @@ public class PlayerController_Stage : MonoBehaviour
     /* SFX */
     [SF] private PlayerSfxData sfxData;
     /* Anim */
+    private Animator _anim;
     private AnimParams _animParams;
     // [SF] private PlayerAnimData animData;
     
-    #region 유니티 이벤트 메서드
+    #region Unity Event Methods
     private void Awake()
     {
-        if (!TryGetComponent(out _rb))
-        {  
-            #if UNITY_EDITOR
-            Debug.LogError("본인에게 부착된 RigidBody가 없슴다. [PlayerController_Stage.Awake]");
-            #endif
-        }
-        
-        if (this.TryGetComponentInChildren(out _anim)) // 확장 메서드 사용부
-        {
-            _animParams = new AnimParams(_anim);
-        }
-        else
-        {
-            #if UNITY_EDITOR
-            Debug.LogError("본인과 모든 자식들 중, 발견된 Animator가 없슴다. [PlayerController_Stage.Awake]");
-            #endif
-        }
-        
-        // [메모] 이거 Player RB Data든 뭐든 해서 빼놓자
-        // if (!TryGetComponent(out _rb))
-        // {
-        //     _rb = gameObject.AddComponent<Rigidbody>();
-        //     _rb.freezeRotation = true;
-        //     _rb.mass = 100;
-        //     _rb.drag = 1.5f;
-        //     _rb.angularDrag = 0.05f;
-        // }
-        
-        // _anim = GetComponentInChildren<Animator>(); // [임시]
+        InitComponents();
     }
 
     private void OnEnable()
@@ -82,8 +53,8 @@ public class PlayerController_Stage : MonoBehaviour
 
     private void Start()
     {
-        _waitInertiaDecay = new WaitForSeconds(moveData.InertiaDecayTime);
         // animData.Init();
+        InitFields();
     }
 
     private void FixedUpdate()
@@ -115,8 +86,47 @@ public class PlayerController_Stage : MonoBehaviour
     }
     #endregion
 
-    #region 인풋 이벤트 메서드
+    #region Initialize Methods
+    private void InitComponents()
+    {
+        if (!TryGetComponent(out _rb))
+        {  
+            #if UNITY_EDITOR
+            Debug.LogError("본인에게 부착된 RigidBody가 없슴다. [PlayerController_Stage.Awake]");
+            #endif
+        }
+        
+        if (this.TryGetComponentInChildren(out _anim)) // 확장 메서드 사용부
+        {
+            _animParams = new AnimParams(_anim);
+            _anim.GetBehaviour<CheckAfk>().Init(_animParams.GetHash("AFK"),3);
+        }
+        else
+        {
+            #if UNITY_EDITOR
+            Debug.LogError("본인과 모든 자식들 중, 발견된 Animator가 없슴다. [PlayerController_Stage.Awake]");
+            #endif
+        }
+        
+        // [메모] 이거 Player RB Data든 뭐든 해서 빼놓자
+        // if (!TryGetComponent(out _rb))
+        // {
+        //     _rb = gameObject.AddComponent<Rigidbody>();
+        //     _rb.freezeRotation = true;
+        //     _rb.mass = 100;
+        //     _rb.drag = 1.5f;
+        //     _rb.angularDrag = 0.05f;
+        // }
+    }
 
+    private void InitFields()
+    {
+        _waitInertiaDecay = new WaitForSeconds(moveData.InertiaDecayTime);
+    }
+
+    #endregion
+    
+    #region Input Event Methods
     private void OnMoveStarted(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
@@ -124,7 +134,7 @@ public class PlayerController_Stage : MonoBehaviour
         // StopAnim(animData.DashHash);
         // PlayAnim(animData.MoveHash);
         StopAnim(_animParams.GetHash("Dash"));
-        PlayAnim(_animParams.GetHash("Move"));
+        StartAnim(_animParams.GetHash("Move"));
     }
 
     private void OnMovePerformed(InputAction.CallbackContext ctx)
@@ -266,7 +276,7 @@ public class PlayerController_Stage : MonoBehaviour
     }
     #endregion
 
-    #region 이동 메서드
+    #region Movement Methods
     private void Move()
     {
         Vector3 moveOffset = (moveData.MoveSpeed * _moveSpeedModifier * Time.fixedDeltaTime) * _moveDir;
@@ -294,7 +304,7 @@ public class PlayerController_Stage : MonoBehaviour
         _rb.AddForce(moveData.DashForce * _moveDir, ForceMode.VelocityChange);
         
         // PlayAnim(animData.DashHash);
-        PlayAnim(_animParams.GetHash("Dash"));
+        StartAnim(_animParams.GetHash("Dash"));
         
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.DashSfx)
@@ -329,7 +339,7 @@ public class PlayerController_Stage : MonoBehaviour
 
     #endregion
 
-    #region 리스폰 메서드
+    #region ReSpawn/Despawn Methods
     public Vector3 DespawnPlayer()
     {
         _rb.Sleep();
@@ -353,7 +363,7 @@ public class PlayerController_Stage : MonoBehaviour
     }
     #endregion
     
-    #region 테이블 상호작용 메서드
+    #region Table Handling Methods
     private bool DetectTable()
     {
         Vector3 offset = Vector3.up * detectData.DetectRayOffsetY;
@@ -405,7 +415,7 @@ public class PlayerController_Stage : MonoBehaviour
     }
     #endregion
 
-    #region 아이템 들기 놓기 던지기 메서드
+    #region Item Handling Methods
     private bool DetectItem()
     {
         Array.Clear(_detectedItems, 0, _detectedItems.Length);
@@ -474,7 +484,7 @@ public class PlayerController_Stage : MonoBehaviour
         pickedItem = item;
         
         // PlayAnim(animData.PickHash);
-        PlayAnim(_animParams.GetHash("Pick"));
+        StartAnim(_animParams.GetHash("Pick"));
         
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.AttachSfx)
@@ -502,9 +512,10 @@ public class PlayerController_Stage : MonoBehaviour
     }
     #endregion
 
-    #region Animation
-    public void PlayAnim(int hash)
+    #region Animation Methods
+    public void StartAnim(int hash)
     {
+        StopAnim(_animParams.GetHash("AFK"));
         _anim.SetBool(hash, true);
     }
     
@@ -513,10 +524,14 @@ public class PlayerController_Stage : MonoBehaviour
         _anim.SetBool(hash, false);
     }
 
+    private void TriggerAnim(int hash)
+    {
+        _anim.SetTrigger(hash);
+    }
+
     private void ApplyMoveSpeedToAnim()
     {
         _anim.SetFloat(_animParams.GetHash("MoveSpeed"), _moveSpeedModifier);
     }
-
     #endregion
 }

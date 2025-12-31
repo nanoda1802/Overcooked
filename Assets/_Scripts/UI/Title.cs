@@ -13,17 +13,11 @@ public class Title : MonoBehaviour
 
     private void OnEnable()
     {
-        // selectStageBtn.SubscribeEvent(OnSelectStage);
-        // settingsBtn.SubscribeEvent(OnSettings);
-        // exitBtn.SubscribeEvent(OnExit);
         SubscribeEvents();
     }
 
     private void OnDisable()
     {
-        // selectStageBtn.UnsubscribeEvent(OnSelectStage);
-        // settingsBtn.UnsubscribeEvent(OnSettings);
-        // exitBtn.UnsubscribeEvent(OnExit);
         UnsubscribeEvents();
     }
 
@@ -46,6 +40,7 @@ public class Title : MonoBehaviour
         gameObject.SetActive(false);
         GameManager.Instance.InputManager.EnterOutStage();
         titleCam.Priority = 0;
+        // 여기서 플레이어의 Pose를 -1로 바꿔줘야하는디.......
     }
 
     private void OnSettingsClicked()

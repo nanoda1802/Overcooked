@@ -215,13 +215,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a09ecaf8189e9a5499c23eb4b6ec1842, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 0}
-  agent: {fileID: 0}
   mainCam: {fileID: 0}
   cineBrain: {fileID: 0}
-  arrivalDistanceThreshold: 0.3
-  curTargetEatery: {fileID: 0}
   maxCamPriority: 10
+  agent: {fileID: 0}
+  arrivalDistanceThreshold: 0.3
+  selectedLandmark: {fileID: 0}
   bgm:
     clip: {fileID: 0}
     mixerGroup: {fileID: 0}
@@ -422,7 +421,7 @@ PrefabInstance:
     - target: {fileID: 8556858493818309525, guid: 12348fc04884c514184365cc4df792af, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: e90b229b8f0ea8344a16c2e08f4753a6, type: 2}
+      objectReference: {fileID: 9100000, guid: 6cdd69a33ea404d4f896f118707a7b10, type: 2}
     - target: {fileID: 8556858493818309525, guid: 12348fc04884c514184365cc4df792af, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0

@@ -77,7 +77,7 @@ public class Sink : WorkTable, IPool<Item>
         
         base.BeginWork();
         
-        player.PlayAnim(animHash);
+        player.StartAnim(animHash);
         OnStopped += () => player.StopAnim(animHash);
         
         player.OnWorkStopped += StopWork;

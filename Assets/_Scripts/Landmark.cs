@@ -2,7 +2,7 @@ using Cinemachine;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public class Eatery : MonoBehaviour
+public class Landmark : MonoBehaviour
 {
     [SF] private StageInfoData stageInfo;
     [SF] private StageSelectPopUp popUpUI;
@@ -11,7 +11,7 @@ public class Eatery : MonoBehaviour
     [SF] private Transform marker;
     public Transform Marker => marker;
 
-    public bool IsDummyEatery()
+    public bool IsDummy()
     {
         return stageInfo is null;
     }

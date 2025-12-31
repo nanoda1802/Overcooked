@@ -44,7 +44,7 @@ public class ChoppingBoard : WorkTable
         
         player.GrabKnife(knife);
         
-        player.PlayAnim(animHash);
+        player.StartAnim(animHash);
         OnStopped += () => player.StopAnim(animHash);
         OnStopped += ReturnKnife;
         

@@ -100,7 +100,7 @@ public class StageManager : MonoBehaviour
         gameManager.InputManager.ExitInStage();
         gameManager.SoundManager.TurnOffCurrentBgm(true);
         gameManager.SoundManager.TurnOffActiveSfx();
-        gameManager.ChangeScene("InStage");
+        gameManager.ChangeScene("Stage");
     }
 
     public void QuitStage() // [임시] 이 retry quit end 삼형제 어케... 개선해봐... 

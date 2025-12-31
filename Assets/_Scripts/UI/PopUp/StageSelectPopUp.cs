@@ -49,16 +49,16 @@ public class StageSelectPopUp : PopUpUI
     private void SubscribeEvents(PlayerController_Lobby player)
     {
         enterBtn.OnClicked += EnterStage;
-        closeBtn.OnClicked += player.DeselectEatery;
-        OnBgClicked += player.DeselectEatery;
+        closeBtn.OnClicked += player.DeselectLandmark;
+        OnBgClicked += player.DeselectLandmark;
         dontShowTutorialToggle.onValueChanged.AddListener(OnToggleChanged);
     }
 
     private void UnsubscribeEvents(PlayerController_Lobby player)
     {
         enterBtn.OnClicked -= EnterStage;
-        closeBtn.OnClicked -= player.DeselectEatery;
-        OnBgClicked -= player.DeselectEatery;
+        closeBtn.OnClicked -= player.DeselectLandmark;
+        OnBgClicked -= player.DeselectLandmark;
         dontShowTutorialToggle.onValueChanged.RemoveAllListeners();
     }
 
@@ -84,7 +84,7 @@ public class StageSelectPopUp : PopUpUI
     {
         if (_stageInfo.StageId <= 0) return; // [임시]
         GameManager.Instance.InputManager.ExitOutStage();
-        GameManager.Instance.ChangeScene("InStage");
+        GameManager.Instance.ChangeScene("Stage");
     }
 
     private void OnToggleChanged(bool value)

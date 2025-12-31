@@ -139,13 +139,13 @@ public class StageResult : MonoBehaviour
     #region UI Event Methods
     private void OnRetryClicked()
     {
-        GameManager.Instance.ChangeScene("InStage");
+        GameManager.Instance.ChangeScene("Stage");
         Deactivate();
     }
     
     private void OnLobbyClicked()
     {
-        GameManager.Instance.ChangeScene("OutStage");
+        GameManager.Instance.ChangeScene("Lobby");
         Deactivate();
     }
     #endregion
