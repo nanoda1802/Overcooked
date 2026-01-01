@@ -5609,8 +5609,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d20dd6fb6fbd3ab45a22670365a54b44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inStagePlayerInStage: {fileID: 0}
-  playerOutStage: {fileID: 0}
+  player_stage: {fileID: 0}
+  player_lobby: {fileID: 0}
 --- !u!4 &770907315
 Transform:
   m_ObjectHideFlags: 0

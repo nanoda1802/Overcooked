@@ -70,5 +70,11 @@ public class ChoppingBoard : WorkTable
     {
         knife.SetParent(transform);
         knife.SetLocalPositionAndRotation(knifeLocalPos, Quaternion.identity);
+        SwitchKnifeState(placedItem is null);
+    }
+
+    private void SwitchKnifeState(bool isActive)
+    {
+        knife.gameObject.SetActive(isActive);
     }
 }

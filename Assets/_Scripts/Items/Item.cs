@@ -9,6 +9,8 @@ public class Item : MonoBehaviour, IPoolable
     private Collider _col;
     private TrailRenderer _trail;
     private MeshRenderer _mesh;
+    [field:SF] public Transform LeftHandPoint { get; private set; }
+    [field:SF] public Transform RightHandPoint { get; private set; }
     /* 아이템 데이터 */
     [SF] protected ItemData data;
     public ItemData Data => data;
@@ -113,7 +115,7 @@ public class Item : MonoBehaviour, IPoolable
         IsFalling = true;
     }
     
-    public void SetParent(Transform parent)
+    public void SetParent(Transform parent, Vector3 localPos = default, Vector3 localRot = default)
     {
         IsThrown = IsFalling = false;
         
@@ -121,7 +123,7 @@ public class Item : MonoBehaviour, IPoolable
         DeactivatePhysics();
         
         transform.SetParent(parent);
-        transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        transform.SetLocalPositionAndRotation(localPos, Quaternion.Euler(localRot));
     }
 
     public void RemoveParent()

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 using SF = UnityEngine.SerializeField;
@@ -26,8 +27,10 @@ public class PlayerController_Stage : MonoBehaviour
     private Table _detectedTable;
     /* 아이템 줍기 내려놓기 */
     [Header("[ Pick & Drop ]")] 
-    [SF] private Transform pivot;
+    [SF] private Transform pivot; // spine03의 child, pos : (-0.15, 0.7, 0), rot : (0, 0, 110)
     [SF] private Transform rightHand;
+    // [SF] private Vector3 itemLocalPos = new (0.3f, -0.11f, 0.1f); 
+    // [SF] private Vector3 itemLocalRot = new (80, 0, 0);
     public Item pickedItem;
     /* 작업 */
     public event Action OnWorkStopped;
@@ -37,6 +40,7 @@ public class PlayerController_Stage : MonoBehaviour
     /* Anim */
     private Animator _anim;
     private AnimParams _animParams;
+    private HandIK _handIK;
     // [SF] private PlayerAnimData animData;
     
     #region Unity Event Methods
@@ -87,24 +91,26 @@ public class PlayerController_Stage : MonoBehaviour
     #endregion
 
     #region Initialize Methods
+
     private void InitComponents()
     {
         if (!TryGetComponent(out _rb))
-        {  
+        {
             #if UNITY_EDITOR
-            Debug.LogError("본인에게 부착된 RigidBody가 없슴다. [PlayerController_Stage.Awake]");
+            Debug.LogError("본인에게 부착된 RigidBody가 없슴다. [PlayerController_Stage.InitComponents]");
             #endif
         }
-        
+
         if (this.TryGetComponentInChildren(out _anim)) // 확장 메서드 사용부
         {
             _animParams = new AnimParams(_anim);
-            _anim.GetBehaviour<CheckAfk>().Init(_animParams.GetHash("AFK"),3);
+            _anim.GetBehaviour<CheckAfk>()?.Init(_animParams.GetHash("AFK"), 3);
+            _handIK = _anim.GetBehaviour<HandIK>();
         }
         else
         {
             #if UNITY_EDITOR
-            Debug.LogError("본인과 모든 자식들 중, 발견된 Animator가 없슴다. [PlayerController_Stage.Awake]");
+            Debug.LogError("본인과 모든 자식들 중, 발견된 Animator가 없슴다. [PlayerController_Stage.InitComponents]");
             #endif
         }
         
@@ -216,7 +222,7 @@ public class PlayerController_Stage : MonoBehaviour
                 // 홀드 시간 동안 방향 조절, 키 떼거나 시간 초과시 마지막 방향으로 던짐
                 break;
             case PressInteraction:
-                Throw(pivot.forward);
+                Throw(transform.forward);
                 break;
         }
     }
@@ -480,9 +486,12 @@ public class PlayerController_Stage : MonoBehaviour
 
     public void AttachItem(Item item)
     {
-        item.SetParent(pivot);
+        if (item.Data.ItemType != ItemType.Cheese) item.SetParent(pivot); // [임시......]
+        else item.SetParent(pivot,Vector3.zero,new Vector3(0,90,0)); // 이렇게 하긴 정말 싫은데 달리 말끔한 방법ㅇ...
+        
         pickedItem = item;
         
+        _handIK.SetHandPoints(item.LeftHandPoint, item.RightHandPoint);
         // PlayAnim(animData.PickHash);
         StartAnim(_animParams.GetHash("Pick"));
         
@@ -498,7 +507,8 @@ public class PlayerController_Stage : MonoBehaviour
         Item item = pickedItem;
         item.RemoveParent();
         pickedItem = null;
-        
+
+        _handIK.ClearHandPoints();
         // StopAnim(animData.PickHash);
         StopAnim(_animParams.GetHash("Pick"));
         
