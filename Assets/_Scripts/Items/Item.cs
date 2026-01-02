@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
@@ -41,7 +42,6 @@ public class Item : MonoBehaviour, IPoolable
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Player")) return; // [임시]
-        
         if (IsThrown) StopThrowing();
         else if (IsFalling)
         {

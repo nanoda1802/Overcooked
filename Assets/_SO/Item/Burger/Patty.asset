@@ -22,6 +22,6 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 37c6e0d9defdae748b9708752b0bd42a, type: 2}
   throwForce: 18
   throwDamp: 0.5
-  maxThrowDistance: 2
+  maxThrowDistance: 5
   ingredientOffsetY: 0
   ingredientPrefab: {fileID: 0}

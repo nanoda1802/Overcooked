@@ -29,8 +29,6 @@ public class PlayerController_Stage : MonoBehaviour
     [Header("[ Pick & Drop ]")] 
     [SF] private Transform pivot; // spine03의 child, pos : (-0.15, 0.7, 0), rot : (0, 0, 110)
     [SF] private Transform rightHand;
-    // [SF] private Vector3 itemLocalPos = new (0.3f, -0.11f, 0.1f); 
-    // [SF] private Vector3 itemLocalRot = new (80, 0, 0);
     public Item pickedItem;
     /* 작업 */
     public event Action OnWorkStopped;
@@ -112,6 +110,7 @@ public class PlayerController_Stage : MonoBehaviour
             #if UNITY_EDITOR
             Debug.LogError("본인과 모든 자식들 중, 발견된 Animator가 없슴다. [PlayerController_Stage.InitComponents]");
             #endif
+            return;
         }
         
         // [메모] 이거 Player RB Data든 뭐든 해서 빼놓자
@@ -136,7 +135,6 @@ public class PlayerController_Stage : MonoBehaviour
     private void OnMoveStarted(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
-        if (_isWorking) return; 
         // StopAnim(animData.DashHash);
         // PlayAnim(animData.MoveHash);
         StopAnim(_animParams.GetHash("Dash"));
@@ -146,7 +144,6 @@ public class PlayerController_Stage : MonoBehaviour
     private void OnMovePerformed(InputAction.CallbackContext ctx)
     {
         if (!gameObject.activeSelf) return;
-        if (_isWorking) return;  
         Vector2 input = ctx.ReadValue<Vector2>();  
         _moveDir.x = input.x;  
         _moveDir.z = input.y;
@@ -285,6 +282,7 @@ public class PlayerController_Stage : MonoBehaviour
     #region Movement Methods
     private void Move()
     {
+        if (_isWorking) return;  
         Vector3 moveOffset = (moveData.MoveSpeed * _moveSpeedModifier * Time.fixedDeltaTime) * _moveDir;
         _rb.MovePosition(_rb.position + moveOffset);
         // [sfx] 걷는 소리
@@ -292,6 +290,7 @@ public class PlayerController_Stage : MonoBehaviour
 
     private void Rotate()
     {
+        if (_isWorking) return;  
         Quaternion smoothRot = Quaternion.Slerp(_rb.rotation, Quaternion.LookRotation(_moveDir), moveData.RotRatio);
         _rb.MoveRotation(smoothRot);
     }

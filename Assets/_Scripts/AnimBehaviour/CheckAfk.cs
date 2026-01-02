@@ -28,7 +28,7 @@ public class CheckAfk : StateMachineBehaviour
     public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (!_isInit) return;
-        
+
         _timer += Time.deltaTime;
         
         if (_timer > _transitionThreshold)

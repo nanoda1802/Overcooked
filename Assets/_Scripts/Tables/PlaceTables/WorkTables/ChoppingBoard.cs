@@ -30,6 +30,7 @@ public class ChoppingBoard : WorkTable
     public override Item DisplaceItem()
     {
         DeactivateUI();
+        SwitchKnifeState(true);
         return base.DisplaceItem();
     }
 

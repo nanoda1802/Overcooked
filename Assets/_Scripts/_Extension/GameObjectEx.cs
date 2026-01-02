@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public static class ExGameObject
+public static class GameObjectEx
 {
     /// <summary>
     /// 호출한 게임오브젝트의 자식 오브젝트들 대상으로, 특정 컴포넌트를 탐색 시도하는 확장 메서드 
