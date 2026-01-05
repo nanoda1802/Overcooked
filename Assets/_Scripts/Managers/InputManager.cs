@@ -11,7 +11,6 @@ public class InputManager : MonoBehaviour
     private PlayerInput _inputs;
     private PlayerInput.InStageActions _inStageActionMap;
     private PlayerInput.OutStageActions _outStageActionMap;
-    public PlayerInput.OutStageActions OutStageActionMap => _outStageActionMap;
 
     [SF] private PlayerController_Stage player_stage;
     [SF] private PlayerController_Lobby player_lobby;

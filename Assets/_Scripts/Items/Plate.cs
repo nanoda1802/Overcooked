@@ -12,11 +12,6 @@ public class Plate : Item
 
     private void OnTriggerEnter(Collider other)
     {
-        // if (!IsPlaced || IsInDishRack || !IsMaxDone()) return;
-        // if (!other.CompareTag("Item")) return;
-        // if (!other.TryGetComponent(out Item item)) return;
-        // if (item is Plate || !item.IsWellDone()) return;
-
         if (!other.CompareTag("Item")) return;
         if (!other.TryGetComponent(out Item item)) return;
         
@@ -45,16 +40,16 @@ public class Plate : Item
         
         item.Deactivate();
         
-        GameObject ingObj = Instantiate(data.IngredientPrefab, pivot); // [임시]
-        if (!ingObj.TryGetComponent(out Ingredient ing))
-        {
-            Destroy(ingObj);
-            return;
-        }
-        ing.SetInfo(item.Data.ItemType, item.CurDoneness); 
+        Ingredient ingredient = Instantiate(data.IngredientPrefab, pivot); // [임시] pool로 바꿔야
+        // if (!ingObj.TryGetComponent(out Ingredient ing))
+        // {
+        //     Destroy(ingObj);
+        //     return;
+        // }
+        ingredient.SetInfo(item.Data.ItemType, item.CurDoneness); 
         
-        _ingredientsInfo.AddIngredient(ing);
-        SetLocalPos(item.Data.ItemType, ingObj);
+        _ingredientsInfo.AddIngredient(ingredient);
+        SetLocalPos(item.Data.ItemType, ingredient);
     }
 
     public bool HasIngredient()
@@ -67,18 +62,18 @@ public class Plate : Item
         return _ingredientsInfo.GetIngredientList();
     }
 
-    private void SetLocalPos(ItemType itemType, GameObject ingObj)
+    private void SetLocalPos(ItemType itemType, Ingredient ingredient)
     {
         if (itemType is ItemType.Bun)
         {
-            ingObj.transform.localPosition += data.IngredientOffsetY * Vector3.up;
+            ingredient.transform.localPosition += data.IngredientOffsetY * Vector3.up;
         }
         else
         {
             int floor = _ingredientsInfo.HasBun
                 ? _ingredientsInfo.GetIngredientCount()
                 : _ingredientsInfo.GetIngredientCount() + 1;
-            ingObj.transform.localPosition += (data.IngredientOffsetY * floor) * Vector3.up;
+            ingredient.transform.localPosition += (data.IngredientOffsetY * floor) * Vector3.up;
         }
     }
     

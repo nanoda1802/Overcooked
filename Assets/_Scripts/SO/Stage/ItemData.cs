@@ -33,12 +33,12 @@ public class ItemData : ScriptableObject
 
     [Header("[Plate Only]")]
     [SF] [Range(0f,1f)] private float ingredientOffsetY;
-    [SF] private GameObject ingredientPrefab;
+    [SF] private Ingredient ingredientPrefab;
     public float IngredientOffsetY => ingredientOffsetY;
-    public GameObject IngredientPrefab => ingredientPrefab;
+    public Ingredient IngredientPrefab => ingredientPrefab;
     
     // 미리 준비해둔...
-    public void InitValues(ItemType itemType, ItemStatus initialDoneness, ItemStatus maxDoneness, float maxProgress, Material[] mats, float throwDamp, float maxThrowDistance, float ingredientOffsetY = 0, GameObject ingredientPrefab = null)
+    public void InitValues(ItemType itemType, ItemStatus initialDoneness, ItemStatus maxDoneness, float maxProgress, Material[] mats, float throwDamp, float maxThrowDistance, float ingredientOffsetY = 0, Ingredient ingredientPrefab = null)
     {
         this.itemType = itemType;
         this.initialDoneness = initialDoneness;
