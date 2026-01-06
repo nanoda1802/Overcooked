@@ -50,7 +50,7 @@ public class PlaceTable : Table
         if (!other.CompareTag("Item")) return false;
         if (!other.TryGetComponent(out Item item)) return false;
         if (!availableItems.Contains(item.Data.ItemType)) return false;
-        if (!item.IsFalling) return false;
+        if (!(item.IsFalling || item.IsThrown)) return false;
         
         checkedItem = item;
         return true;

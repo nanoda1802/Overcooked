@@ -9,6 +9,7 @@ TagManager:
   - Ground
   - Table
   - Mob
+  - Floor
   layers:
   - Default
   - TransparentFX
