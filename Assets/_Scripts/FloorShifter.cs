@@ -6,6 +6,25 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
 
+[Serializable] // [임시 위치]
+public struct MinMax<T> where T : IComparable<T>
+{
+    [SF] private T min;
+    [SF] private T max;
+
+    public T Min => min;
+    public T Max => max;
+
+    public MinMax(T min, T max)
+    {
+        if (min.CompareTo(max) > 0)
+        {
+            Debug.LogWarning($"입력하신 최소값 {min}가 최대값 {max}보다 큽니다. [MinMax<{nameof(T)}>]");
+        }
+        this.min = min;
+        this.max = max;
+    }
+}
 
 public class FloorShifter : MonoBehaviour
 {
@@ -13,9 +32,10 @@ public class FloorShifter : MonoBehaviour
     [Header("[ Find Shiftable Floors ]")]
     [SF] private Transform floorParent;
     [SF] private string floorTagName = "Floor";
-    [SF] private float detectDistance = 5f;
     [SF] private LayerMask tableLayer = 1 << 6;
+    [SF] private float tableDetectDistance = 5f;
     [SF] private LayerMask playerLayer = 1 << 8;
+    [SF] private Vector3 playerDetectBoxSize = new Vector3(0.25f, 2f, 0.25f);
     /* Tween */
     [Header("[ Tween Values ]")]
     [SF] private float originY = 0f;
@@ -23,14 +43,14 @@ public class FloorShifter : MonoBehaviour
     [SF,Range(1,10)] private float tweenDuration = 8f;
     private int _instanceId;
     /* Shifting */
-    [Header("[ Shifting Values ]")]
-    [SF] private int maxShiftingCount = 12;
-    [SF] private Vector3 playerDetectBoxSize = new Vector3(0.25f, 2f, 0.25f);
+    [Header("[ Shifting Values ]")] 
+    [SF] private MinMax<int> shiftingCount = new MinMax<int>(6,10);
+    [SF] private float shiftInterval = 12;
     private List<Transform> _shiftableFloors;
     private Queue<Transform> _submergedFloors;
     /* Coroutine */
     private Coroutine _coShiftingCycle;
-    private WaitForSeconds _shiftInterval;
+    private WaitForSeconds _waitInterval;
 
     #region Unity Event Methods
     private void Awake() 
@@ -75,14 +95,14 @@ public class FloorShifter : MonoBehaviour
         }
 
         _instanceId = GetInstanceID();
-        _shiftInterval = new WaitForSeconds(tweenDuration * 1.2f);
+        _waitInterval = new WaitForSeconds(shiftInterval);
         _shiftableFloors = new List<Transform>(floorParent.childCount);
-        _submergedFloors = new Queue<Transform>(maxShiftingCount);
+        _submergedFloors = new Queue<Transform>(shiftingCount.Max);
         
         foreach (Transform floor in floorParent)
         {
             if (!floor.CompareTag(floorTagName)) continue;
-            if (Physics.Raycast(floor.position, Vector3.up, out var hit, detectDistance,tableLayer)) continue;
+            if (Physics.Raycast(floor.position, Vector3.up, tableDetectDistance,tableLayer)) continue;
             
             _shiftableFloors.Add(floor);
         }
@@ -92,14 +112,14 @@ public class FloorShifter : MonoBehaviour
     #region Shifting Methods
     private IEnumerator CycleShifting()
     {
-        yield return _shiftInterval; // 게임 시작 전에 발동 막기 위한...!
+        yield return _waitInterval; // 게임 시작 전에 발동 막기 위한...!
         
         while (gameObject.activeSelf)
         {
             SubmergeRandomFloors();
-            yield return _shiftInterval;
+            yield return _waitInterval;
             EmergeFloors();
-            yield return _shiftInterval;
+            yield return _waitInterval;
         }
     }
 
@@ -107,7 +127,7 @@ public class FloorShifter : MonoBehaviour
     {
         Shuffle();
         
-        int rnd = Random.Range(maxShiftingCount - 3, maxShiftingCount);
+        int rnd = Random.Range(shiftingCount.Min, shiftingCount.Max);
 
         for (int i = 0; i < rnd; i++)
         {
@@ -138,14 +158,26 @@ public class FloorShifter : MonoBehaviour
             Debug.Log($"{floor.name}({floor.GetInstanceID()}) 위엔 플레이어가 서있슴다.");
             return;
         }
-
+        
         DOTween.Sequence()
-            .Append(floor.DOLocalMoveY(targetY, tweenDuration))
-            .Join(floor.DOScale(0.2f, tweenDuration))
-            .SetEase(Ease.InBack)
-            .SetDelay(delay)
+            .Append(floor.DOShakePosition(2,0.1f))
+            .Append(floor.DOLocalMoveY(targetY, tweenDuration)
+                .SetEase(Ease.InBack,0.7f)
+                .SetDelay(delay))
             .SetId(_instanceId)
             .OnComplete(()=>floor.gameObject.SetActive(false));
+        
+        // floor.DOLocalMoveY(targetY, tweenDuration)
+        //     .SetEase(Ease.InBack,0.7f)
+        //     .SetDelay(delay)
+        //     .SetId(_instanceId)
+        //     .OnComplete(()=>floor.gameObject.SetActive(false));
+        
+        // DOTween.Sequence()
+        //     .Append(floor.DOLocalMoveY(targetY, tweenDuration).SetEase(Ease.InBack,0.5f))
+        //     .SetDelay(delay)
+        //     .SetId(_instanceId)
+        //     .OnComplete(()=>floor.gameObject.SetActive(false));
     }
 
     private void Emerge(Transform floor)
@@ -153,11 +185,13 @@ public class FloorShifter : MonoBehaviour
         if (floor.gameObject.activeSelf) return;
         floor.gameObject.SetActive(true);
 
-        DOTween.Sequence()
-            .Append(floor.DOScale(1f, tweenDuration))
-            .Join(floor.DOLocalMoveY(originY, tweenDuration))
-            .SetEase(Ease.OutBack)
+        floor.DOLocalMoveY(originY, tweenDuration)
+            .SetEase(Ease.OutBack, 0.7f)
             .SetId(_instanceId);
+        
+        // DOTween.Sequence()
+        //     .Append(floor.DOLocalMoveY(originY, tweenDuration).SetEase(Ease.OutBack,0.5f))
+        //     .SetId(_instanceId);
     }
     #endregion
 

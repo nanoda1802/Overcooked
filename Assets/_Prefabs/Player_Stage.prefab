@@ -525,6 +525,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 7102077388945321086}
     m_Modifications:
     - target: {fileID: 891741913274512963, guid: 69e70b44031e5d5429f823b67a67b290, type: 3}
+      propertyPath: looping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 891741913274512963, guid: 69e70b44031e5d5429f823b67a67b290, type: 3}
       propertyPath: cullingMode
       value: 0
       objectReference: {fileID: 0}
@@ -622,11 +626,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2368051631843811436, guid: 69e70b44031e5d5429f823b67a67b290, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 2368051631843811436, guid: 69e70b44031e5d5429f823b67a67b290, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2368051631843811436, guid: 69e70b44031e5d5429f823b67a67b290, type: 3}
       propertyPath: m_LocalRotation.w

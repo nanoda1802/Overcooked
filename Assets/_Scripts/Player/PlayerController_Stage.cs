@@ -164,6 +164,7 @@ public class PlayerController_Stage : MonoBehaviour
         _dashCoroutine = StartCoroutine(Dash());  
         
         _moveSpeedModifier = moveData.RunSpeedMultiplier;
+        PlayDashVfx();
         // _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
         ApplyMoveSpeedToAnim();
     }
@@ -171,6 +172,7 @@ public class PlayerController_Stage : MonoBehaviour
     private void OnDashCanceled(InputAction.CallbackContext ctx)
     {
         _moveSpeedModifier = 1f;
+        StopDashVfxSmoothly();
         // _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
         ApplyMoveSpeedToAnim();
     }
@@ -317,7 +319,7 @@ public class PlayerController_Stage : MonoBehaviour
             .WithRandomPitch()
             .Play();
         
-        PlayDashVfx();
+        // PlayDashVfx();
         
         yield return _waitInertiaDecay;
         StopMoveImmediately();
