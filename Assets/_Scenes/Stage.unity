@@ -695,7 +695,7 @@ GameObject:
   - component: {fileID: 113686207}
   - component: {fileID: 113686206}
   m_Layer: 0
-  m_Name: Table
+  m_Name: Tables
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5688,6 +5688,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiPool: {fileID: 1639228157}
   stageManager: {fileID: 992935538}
+  floorShifter: {fileID: 1112982397}
+  floorDetectRadius: 1.5
+  floorLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  respawnTimerPrefab: {fileID: 5554909009112923677, guid: 0289fcb657259ec43a168263fdbdfa38, type: 3}
 --- !u!1001 &983922011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6447,19 +6453,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f623c700ee87f5145aa94ba7990bf00e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  floorData: {fileID: 11400000, guid: 8ce44ae784ca55d4cbfeb5ed14858eb5, type: 2}
   floorParent: {fileID: 1825594441}
   floorTagName: Floor
-  tableLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  tableDetectDistance: 5
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  playerDetectBoxSize: {x: 0.25, y: 2, z: 0.25}
-  originY: 0
-  targetY: -5
-  tweenDuration: 2
   shiftingCount:
     min: 6
     max: 10
@@ -9701,7 +9697,7 @@ GameObject:
   - component: {fileID: 1825594443}
   - component: {fileID: 1825594442}
   m_Layer: 0
-  m_Name: Floor
+  m_Name: Floors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
