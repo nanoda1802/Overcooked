@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using SF = UnityEngine.SerializeField;
@@ -255,9 +254,14 @@ public class FloorShifter : MonoBehaviour
     {
         foreach (Floor floor in _shiftableFloors)
         {
-            if (floor.CurState == FloorState.Idle) return floor;
+            if (floor.CurState == FloorState.Idle)
+            {
+                Debug.Log("FloorShifter에서 찾아줌!");
+                return floor;
+            }
         }   
-        return floorData.DefaultFloor; // [임시] StageManger나 StageData에 default Respawn Point를 해두고, 그거 반환하자
+        Debug.Log("FloorShifter에서도 못 찾음!");
+        return null; // [임시] StageManger나 StageData에 default Respawn Point를 해두고, 그거 반환하자
     }
 
     #endregion

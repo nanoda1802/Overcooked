@@ -3085,7 +3085,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7102077388945321086, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7102077388945321086, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3093,7 +3093,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7102077388945321086, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7102077388945321086, guid: 7b03811683539ff46b6493e4f411f38f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5689,11 +5689,12 @@ MonoBehaviour:
   uiPool: {fileID: 1639228157}
   stageManager: {fileID: 992935538}
   floorShifter: {fileID: 1112982397}
-  floorDetectRadius: 1.5
+  floorDetectRadius: 1
   floorLayer:
     serializedVersion: 2
     m_Bits: 8
   respawnTimerPrefab: {fileID: 5554909009112923677, guid: 0289fcb657259ec43a168263fdbdfa38, type: 3}
+  defaultRespawnPoint: {fileID: 1801219844}
 --- !u!1001 &983922011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9561,6 +9562,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8999055361515015736, guid: 043f898391d4f87449242b2e8e8d2880, type: 3}
   m_PrefabInstance: {fileID: 1801219842}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1801219844 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8168386479917733330, guid: 043f898391d4f87449242b2e8e8d2880, type: 3}
+  m_PrefabInstance: {fileID: 1801219842}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91b690d5df06d164a96823ddd66fb8e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1813141033
 PrefabInstance:
   m_ObjectHideFlags: 0

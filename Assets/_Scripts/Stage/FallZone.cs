@@ -1,23 +1,27 @@
-using System;
-using System.Linq;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public class FallZone : MonoBehaviour
 {
-    [SF] private MovableUIPool uiPool;
-    [SF] private StageManager stageManager;
+    [SF] private MovableUIPool uiPool; // [안 쓸 듯?]
+    [SF] private StageManager stageManager; // [안 쓸 듯?]
 
     [SF] private FloorShifter floorShifter;
     
-    [SF] private float floorDetectRadius = 1.5f; // 너무 넓으면 안 돼
+    [SF,Range(0,2)] private float floorDetectRadius = 1f; // 너무 넓으면 오히려 안 돼
     [SF] private LayerMask floorLayer = 1<<3;
     private readonly Collider[] _detectedFloors = new Collider[5];
     
     [SF] private RespawnTimer2 respawnTimerPrefab;
+    private RespawnTimer2 _respawnTimer;
+    
+    [SF] private Floor defaultRespawnPoint;
     
     private void Start()
     {
+        _respawnTimer = Instantiate(respawnTimerPrefab, defaultRespawnPoint.transform);
+        _respawnTimer.Init();
+        
         if (uiPool is not null) return;
         uiPool = GameObject.Find("SubCanvas").GetComponent<MovableUIPool>();
     }
@@ -32,7 +36,6 @@ public class FallZone : MonoBehaviour
 
         if (other.CompareTag("Player") && other.TryGetComponent(out PlayerController_Stage player))
         {
-            Vector3 despawnPos = player.DespawnPlayer();
             // Vector3 respawnPos = stageManager.StageInfo.GetClosestRespawnPoint(despawnPos);
             //
             // if (!uiPool.TryGetItem(out RespawnTimer ui)) return;
@@ -42,11 +45,15 @@ public class FallZone : MonoBehaviour
             // 반환 받은 Floor의 position에 y localScale 더한 벡터값이 respawnPos
             // 리스폰타이머2는 Floor의 자식으로 넣고 Activate
             
-            Floor respawnPoint = FindRespawnPoint(despawnPos);
-            respawnPoint.ReserveRespawn();
-            RespawnTimer2 respawnTimer = Instantiate(respawnTimerPrefab, respawnPoint.transform); // [임시]
-            respawnTimer.SubscribeEvent(respawnPoint.OnRespawnDone);
-            respawnTimer.SubscribeEvent(()=>player.Respawn(respawnPoint.GetRespawnPosition()));
+            Vector3 despawnPos = player.Despawn();
+            Floor respawnFloor = FindRespawnPoint(despawnPos) ?? defaultRespawnPoint;
+            
+            respawnFloor.ReserveRespawn();
+            // RespawnTimer2 respawnTimer = Instantiate(respawnTimerPrefab, respawnFloor.transform); // [임시]
+            _respawnTimer.Activate(respawnFloor.transform.position);
+            
+            _respawnTimer.OnTimerDone += respawnFloor.OnRespawnDone;
+            _respawnTimer.OnTimerDone += () => player.Respawn(respawnFloor.GetRespawnPosition());
         }
     }
 
@@ -57,25 +64,18 @@ public class FallZone : MonoBehaviour
         // size 변수를 활용해 순회 범위를 제한한다면 이전 감지 데이터에 접근할 일이 없음
         // Array.Clear(_detectedFloors,0,_detectedFloors.Length);
         
-        // 가장 가까운 floor 반환, 설마 감지 실패했으면(size가 0보다 작으면) FloorShifter가 그냥 안전한 위치 찾아서 반환 
         // int size = Physics.SphereCastNonAlloc(despawnPos, floorDetectRadius, Vector3.zero, _detectedFloors,0,floorMask);
+        // 어차피 maxDistance를 0으로 둘거라면 OverlapSphere와 똑같드ㅏ
+        // Cast는 아무튼 특정 방향으로 발사하는 것
         
-        int size = Physics.OverlapSphereNonAlloc(despawnPos, floorDetectRadius, _detectedFloors, floorLayer);
-        Debug.Log(size);
-        float minDist = float.MaxValue;
-        int minIdx = -1;
+        int detectedCount = Physics.OverlapSphereNonAlloc(despawnPos, floorDetectRadius, _detectedFloors, floorLayer);
+        Debug.Log($"감지된 Floor 수 : {detectedCount}");
+        if (detectedCount <= 0 || detectedCount > _detectedFloors.Length) return floorShifter.GetSafeFloor();
         
-        for (int i = 0; i < size; i++)
-        {
-            if (_detectedFloors[i] is null) continue;
-            
-            float dist = (despawnPos - _detectedFloors[i].transform.position).sqrMagnitude;
-            
-            if (minDist <= dist) continue;
-            minDist = dist;
-            minIdx = i;
-        }
+        int rndIdx = Random.Range(0, detectedCount);
+        if (!_detectedFloors[rndIdx].TryGetComponent(out Floor targetFloor)) return floorShifter.GetSafeFloor();
         
-        return minIdx < 0 ? floorShifter.GetSafeFloor() : _detectedFloors[minIdx].GetComponent<Floor>();
+        Debug.Log("근처 Floor 감지함!");
+        return targetFloor;
     }
 }

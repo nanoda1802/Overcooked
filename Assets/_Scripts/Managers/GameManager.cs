@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
             _instance = this;
             DontDestroyOnLoad(this);
             
-            DOTween.Init(true,true).SetCapacity(100,50);
+            DOTween.Init(true,true).SetCapacity(500,100);
             settingsData.Init(""); // [임시]
             soundManager.Init(settingsData);
         }

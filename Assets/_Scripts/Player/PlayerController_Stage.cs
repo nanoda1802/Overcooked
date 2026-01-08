@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
+// using UnityEngine.Animations.Rigging;
 using SF = UnityEngine.SerializeField;
 
 // 참고 링크 https://rito15.github.io/posts/unity-rigidbody-move-and-jump/
@@ -347,7 +347,7 @@ public class PlayerController_Stage : MonoBehaviour
     #endregion
 
     #region ReSpawn/Despawn Methods
-    public Vector3 DespawnPlayer()
+    public Vector3 Despawn()
     {
         _rb.Sleep();
         gameObject.SetActive(false);
