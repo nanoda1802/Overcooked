@@ -211,7 +211,7 @@ MonoBehaviour:
   bgRect: {fileID: 107046509164760716}
   timerTxt: {fileID: 687873743416130239}
   respawnTime: 5
-  originAnchoredPos: {x: 0, y: 1.01}
+  offsetY: {x: 0, y: 0.01, z: 0}
   originLocalRot: {x: 90, y: 0, z: 0}
   originLocalScale: {x: 0.9, y: 0.9, z: 0.9}
 --- !u!223 &5442718444009692353
@@ -259,7 +259,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &3497105206529575013
 MonoBehaviour:
   m_ObjectHideFlags: 0

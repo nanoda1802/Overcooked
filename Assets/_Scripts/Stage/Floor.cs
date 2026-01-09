@@ -31,8 +31,6 @@ public class Floor : MonoBehaviour
     {
         _shiftSeq?.Kill();
         _shiftSeq = null;
-        
-        _tr.localPosition = _originPos;
     }
 
     public void Submerge(float delay)

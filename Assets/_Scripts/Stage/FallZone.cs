@@ -11,8 +11,8 @@ public class FallZone : MonoBehaviour
     [SF] private LayerMask floorLayer = 1<<3;
     private readonly Collider[] _detectedFloors = new Collider[5];
     
-    [SF] private RespawnTimer2 respawnTimerPrefab;
-    private RespawnTimer2 _respawnTimer;
+    [SF] private RespawnTimer respawnTimerPrefab;
+    private RespawnTimer _respawnTimer;
     
     private void Start()
     {
