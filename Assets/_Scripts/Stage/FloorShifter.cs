@@ -28,7 +28,6 @@ public struct MinMax<T> where T : IComparable<T>
 
 public enum FloorState
 {
-    Default,
     Idle,
     Shifting,
     RespawnReserved
@@ -37,24 +36,17 @@ public enum FloorState
 public class FloorShifter : MonoBehaviour
 {
     [SF] private FloorData floorData;
+    public Floor DefaultRespawnPoint { get; private set; }
+
     /* Find Floors */
     [Header("[ Find Shiftable Floors ]")]
     [SF] private Transform floorParent;
     [SF] private string floorTagName = "Floor";
-    // [SF] private LayerMask tableLayer = 1 << 6;
-    // [SF] private float tableDetectDistance = 5f;
-    // [SF] private LayerMask playerLayer = 1 << 8;
-    // [SF] private Vector3 playerDetectBoxSize = new Vector3(0.25f, 2f, 0.25f);
-    // /* Tween */
-    // [Header("[ Tween Values ]")]
-    // [SF] private float originY = 0f;
-    // [SF] private float targetY = -10f;
-    // [SF,Range(1,10)] private float tweenDuration = 8f;
-    // private int _instanceId;
     /* Shifting */
     [Header("[ Shifting Values ]")] 
-    [SF] private MinMax<int> shiftingCount = new MinMax<int>(6,10);
+    [SF] private MinMax<int> shiftableCount = new MinMax<int>(6,10);
     [SF] private float shiftInterval = 12;
+    [SF,Range(0f,0.1f)] private float submergeDelay = 0.02f;
     private List<Floor> _shiftableFloors;
     private Queue<Floor> _submergedFloors;
     /* Coroutine */
@@ -89,15 +81,6 @@ public class FloorShifter : MonoBehaviour
         _submergedFloors.Clear();
     }
 
-    private void OnDrawGizmos()
-    {
-        // foreach (Transform floor in _shiftableFloors)
-        // {
-        //     Gizmos.color = Color.red;
-        //     Gizmos.DrawCube(floor.position, playerDetectBoxSize*2);
-        // }
-    }
-
     #endregion
 
     #region Initialize Methods
@@ -109,19 +92,30 @@ public class FloorShifter : MonoBehaviour
             return;
         }
 
-        // _instanceId = GetInstanceID();
         _waitInterval = new WaitForSeconds(shiftInterval);
         _shiftableFloors = new List<Floor>(floorParent.childCount);
-        _submergedFloors = new Queue<Floor>(shiftingCount.Max);
+        _submergedFloors = new Queue<Floor>(shiftableCount.Max);
         
         foreach (Transform floorTransform in floorParent)
         {
             if (!floorTransform.CompareTag(floorTagName)) continue;
-            if (floorData.HasTable(floorTransform)) continue;
             if (!floorTransform.TryGetComponent(out Floor floor)) continue;
-            // if (Physics.Raycast(floor.position, Vector3.up, tableDetectDistance,tableLayer)) continue;
+            if (floorData.HasTable(floorTransform))
+            {
+                floorTransform.gameObject.layer = floorData.IgnoreRaycastLayerIdx;
+                floor.enabled = false;
+                continue;
+            }
             
             floor.Init(floorData);
+            
+            if (floorData.HasPlayer(floorTransform))
+            {
+                DefaultRespawnPoint = floor;
+                Debug.Log($"Default Floor Selected {floor.name}({floor.transform.position})");
+                continue;
+            }
+            
             _shiftableFloors.Add(floor);
         }
     }
@@ -130,7 +124,7 @@ public class FloorShifter : MonoBehaviour
     #region Shifting Methods
     private IEnumerator CycleShifting()
     {
-        yield return _waitInterval; // 게임 시작 전에 발동 막기 위한...!
+        yield return _waitInterval; // TimeScale 정상 가동하기 전에는 시작 않도록...
         
         while (gameObject.activeSelf)
         {
@@ -143,42 +137,20 @@ public class FloorShifter : MonoBehaviour
 
     private void SubmergeRandomFloors()
     {
-        Shuffle();
+        ShuffleFloors();
         
-        int rnd = Random.Range(shiftingCount.Min, shiftingCount.Max);
+        int randomCount = Random.Range(shiftableCount.Min, shiftableCount.Max);
+        int startIdx = _shiftableFloors.Count - 1;
+        int endIdx = Mathf.Clamp(startIdx - randomCount, 0, startIdx);
 
-        // for (int i = 0; i < rnd; i++)
-        // {
-        //     int lastIdx = _shiftableFloors.Count - 1; // 뒤에서부터 추출하기 위함!
-        //     Floor targetFloor = _shiftableFloors[lastIdx];
-        //
-        //     targetFloor.Submerge(i * 0.02f);
-        //     // Submerge(targetFloor, i * 0.02f);
-        //
-        //     _shiftableFloors.RemoveAt(lastIdx);
-        //     _submergedFloors.Enqueue(targetFloor);
-        // }
-        //
-        // foreach (Floor floor in _shiftableFloors)
-        // {
-        //     if (floor.CurState != FloorState.Idle) continue;
-        //     floor.Submerge(rnd * 0.02f);
-        //     _submergedFloors.Enqueue(floor);
-        //     rnd--;
-        // }
-
-        while (rnd > 0)
+        for (int i = startIdx; i >= endIdx; i--)
         {
-            if (rnd >= _shiftableFloors.Count)
-            {
-                Debug.LogWarning($"움직일 Floor의 개수 {rnd}가 전체 Floor의 개수 {_shiftableFloors.Count} 보다 큽니다. [FloorShifter.SubmergeRandomFloors]");
-                break;
-            }
-            Floor targetFloor = _shiftableFloors[rnd];
-            if (targetFloor.CurState != FloorState.Idle) continue;
-            targetFloor.Submerge(rnd * 0.02f);
+            Floor targetFloor = _shiftableFloors[i];
+            if (!targetFloor.CanShift) continue;
+            
+            targetFloor.Submerge(i * submergeDelay);
+            _shiftableFloors.RemoveAt(i);
             _submergedFloors.Enqueue(targetFloor);
-            rnd--;
         }
     }
 
@@ -188,64 +160,20 @@ public class FloorShifter : MonoBehaviour
         {
             Floor targetFloor = _submergedFloors.Dequeue();
             targetFloor.Emerge();
-            // Emerge(targetFloor);
             _shiftableFloors.Add(targetFloor);
         }
     }
-
-    // private void Submerge(Transform floor, float delay)
-    // {        
-    //     if (Physics.CheckBox(floor.position, playerDetectBoxSize, Quaternion.identity, playerLayer))
-    //     {
-    //         Debug.Log($"{floor.name}({floor.GetInstanceID()}) 위엔 플레이어가 서있슴다.");
-    //         return;
-    //     }
-    //     
-    //     DOTween.Sequence()
-    //         .Append(floor.DOShakePosition(2,0.1f))
-    //         .Append(floor.DOLocalMoveY(targetY, tweenDuration)
-    //             .SetEase(Ease.InBack,0.7f)
-    //             .SetDelay(delay))
-    //         .SetId(_instanceId)
-    //         .OnComplete(()=>floor.gameObject.SetActive(false));
-    //     
-    //     // floor.DOLocalMoveY(targetY, tweenDuration)
-    //     //     .SetEase(Ease.InBack,0.7f)
-    //     //     .SetDelay(delay)
-    //     //     .SetId(_instanceId)
-    //     //     .OnComplete(()=>floor.gameObject.SetActive(false));
-    //     
-    //     // DOTween.Sequence()
-    //     //     .Append(floor.DOLocalMoveY(targetY, tweenDuration).SetEase(Ease.InBack,0.5f))
-    //     //     .SetDelay(delay)
-    //     //     .SetId(_instanceId)
-    //     //     .OnComplete(()=>floor.gameObject.SetActive(false));
-    // }
-    //
-    // private void Emerge(Transform floor)
-    // {
-    //     if (floor.gameObject.activeSelf) return;
-    //     floor.gameObject.SetActive(true);
-    //
-    //     floor.DOLocalMoveY(originY, tweenDuration)
-    //         .SetEase(Ease.OutBack, 0.7f)
-    //         .SetId(_instanceId);
-    //     
-    //     // DOTween.Sequence()
-    //     //     .Append(floor.DOLocalMoveY(originY, tweenDuration).SetEase(Ease.OutBack,0.5f))
-    //     //     .SetId(_instanceId);
-    // }
     #endregion
 
     #region Helper Methods
-    private void Shuffle()
+    private void ShuffleFloors()
     {
         int floorCount = _shiftableFloors.Count;
         if (floorCount <= 1) return;
         
         for (int i = floorCount - 1; i > 0; i--) // Fisher-Yates는 뒤에서부터 섞는게 정석이래유 (한번 결정된 자리를 다시 조작하는 경우를 최소화하기 위함!)
         {
-            int rndIdx = Random.Range(0, i + 1); // 완전 무작위로 하려면 본인 포함 (i+1)이 맞고, 이전 경우를 완벽 제거하고 싶으면 본인 제외 (i)가 맞고...
+            int rndIdx = Random.Range(0, i+1); // 완전 무작위로 하려면 본인 포함 (i+1)이 맞고, 이전 경우를 완벽 제거하고 싶으면 본인 제외 (i)가 맞고...
             (_shiftableFloors[i], _shiftableFloors[rndIdx]) = (_shiftableFloors[rndIdx], _shiftableFloors[i]);
         }
     }
@@ -254,15 +182,9 @@ public class FloorShifter : MonoBehaviour
     {
         foreach (Floor floor in _shiftableFloors)
         {
-            if (floor.CurState == FloorState.Idle)
-            {
-                Debug.Log("FloorShifter에서 찾아줌!");
-                return floor;
-            }
+            if (floor.CurState == FloorState.Idle) return floor;
         }   
-        Debug.Log("FloorShifter에서도 못 찾음!");
-        return null; // [임시] StageManger나 StageData에 default Respawn Point를 해두고, 그거 반환하자
+        return DefaultRespawnPoint; // 그냥 바로 default 줄까...?
     }
-
     #endregion
 }

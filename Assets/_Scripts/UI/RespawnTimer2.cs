@@ -16,44 +16,14 @@ public class RespawnTimer2 : MonoBehaviour
 
     [SF] private float respawnTime = 5;
     private float _timerCount;
-    
-    [SF] private Vector2 originAnchoredPos = new Vector2(0, 1.01f); // 이거 안 쓰므므
+    private int _prevSecond;
+
+    [SF] private Vector3 offsetY = new Vector3(0,0.01f,0);
     [SF] private Vector3 originLocalRot = new Vector3(90, 0, 0);
     [SF] private Vector3 originLocalScale = new Vector3(0.9f, 0.9f, 0.9f);
     
     private Sequence _transitionSeq;
-
     public event Action OnTimerDone;
-    
-    // private void Awake()
-    // {
-    //     _canvasRect = GetComponent<RectTransform>();
-    //     _canvasGroup = GetComponent<CanvasGroup>();
-    // }
-
-    // private void OnEnable()
-    // {
-    //     if (_canvas is null) return;
-    //     
-    //     _timerCount = respawnTime;
-    //     _isTimerDone = false;
-    //
-    //     OnTimerDone += FinishTimer;
-    //     
-    //     // [임시] 등장 트윈
-    //     _transitionSeq?.Kill(true);
-    //     _transitionSeq = DOTween.Sequence()
-    //         .Append(bgRect.DOScale(1, 0.5f).From(0))
-    //         .Join(_canvasGroup.DOFade(1, 0.5f).From(0))
-    //         .OnKill(OnKillTransitionSequence);
-    // }
-
-    // private void OnDisable()
-    // {
-    //     // 정리
-    //     OnTimerDone = null;
-    //     _transitionSeq?.Kill(true);
-    // }
 
     private void Update()
     {
@@ -72,6 +42,7 @@ public class RespawnTimer2 : MonoBehaviour
     public void Activate(Vector3 respawnPos)
     {
         InitRectValues(respawnPos);
+        InitTimerValues();
         _canvas.enabled = true;
         
         // [메모] 캔버스든 UI 요소든 SetParent는 그냥 하지마쇼 아무튼 하지마쇼
@@ -81,9 +52,7 @@ public class RespawnTimer2 : MonoBehaviour
         // _canvasRect.SetParent(parent);
         // InitRectValues();
         // gameObject.SetActive(true);
-        
-        
-        _timerCount = respawnTime;
+
         
         // [임시] 등장 트윈
         _transitionSeq?.Kill(true);
@@ -106,18 +75,35 @@ public class RespawnTimer2 : MonoBehaviour
 
     private void InitRectValues(Vector3 respawnPos)
     {
-        Vector3 pos = new Vector3(respawnPos.x, transform.position.y, respawnPos.z);
-        
-        transform.position = pos;
-        // _canvasRect.anchoredPosition = originAnchoredPos;
+        transform.position = respawnPos + offsetY;
+        // 아래는 사실 안 해도 되지만...
         _canvasRect.localRotation = Quaternion.Euler(originLocalRot);
         _canvasRect.localScale = originLocalScale;
+    }
+
+    private void InitTimerValues()
+    {
+        _timerCount = respawnTime;
+        _prevSecond = (int)respawnTime;
+        UpdateTimerText(_prevSecond);
+    }
+
+    private void UpdateTimerText(int value)
+    {
+        timerTxt.text = value.ToString();
     }
 
     private void UpdateTimer()
     {
         _timerCount -= Time.deltaTime;
-        timerTxt.text = $"{_timerCount:F0}";
+        
+        int curSecond = (int)_timerCount;
+        
+        if (_prevSecond > curSecond)
+        {
+            UpdateTimerText(curSecond);
+            _prevSecond = curSecond;
+        }
 
         if (_timerCount > 0) return;
         // OnTimerDone?.Invoke();

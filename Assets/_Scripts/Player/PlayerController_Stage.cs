@@ -13,6 +13,7 @@ public class PlayerController_Stage : MonoBehaviour
     [SF] private StageManager stageManager;
     /* 이동 */
     [Header("[ Move ]")] 
+    private Transform _tr;
     private Rigidbody _rb;
     [SF] private PlayerMovementData moveData;
     [SF] private ParticleSystem dashVfx;
@@ -38,8 +39,10 @@ public class PlayerController_Stage : MonoBehaviour
     /* Anim */
     private Animator _anim;
     private AnimParams _animParams;
+    private AfkCheck _afkCheck;
     private HandIK _handIK;
-    // [SF] private PlayerAnimData animData;
+    /* Respawn */
+    private Floor _respawnReservedFloor;
     
     #region Unity Event Methods
     private void Awake()
@@ -50,6 +53,7 @@ public class PlayerController_Stage : MonoBehaviour
     private void OnEnable()
     {
         // _anim.SetFloat(animData.MoveSpeedHash, _moveSpeedModifier);
+        _afkCheck?.Init(_animParams.GetHash("AFK"), 3);
         ApplyMoveSpeedToAnim();
     }
 
@@ -80,8 +84,8 @@ public class PlayerController_Stage : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 offset = (transform.forward + Vector3.up) * detectData.DetectBoxOffset;
-        Matrix4x4 tableMatrix = Matrix4x4.TRS(transform.position + offset, transform.rotation, Vector3.one);
+        Vector3 offset = (_tr.forward + Vector3.up) * detectData.DetectBoxOffset;
+        Matrix4x4 tableMatrix = Matrix4x4.TRS(_tr.position + offset, _tr.rotation, Vector3.one);
         Gizmos.matrix = tableMatrix;
         Gizmos.DrawWireCube(Vector3.zero, detectData.DetectBoxSize * 2);
         Gizmos.matrix = Matrix4x4.identity; // 매트릭스를 리셋하여 다른 Gizmos에 영향 안 미치도록 함
@@ -92,6 +96,8 @@ public class PlayerController_Stage : MonoBehaviour
 
     private void InitComponents()
     {
+        _tr = this.transform;
+        
         if (!TryGetComponent(out _rb))
         {
             #if UNITY_EDITOR
@@ -102,7 +108,7 @@ public class PlayerController_Stage : MonoBehaviour
         if (this.TryGetComponentInChildren(out _anim)) // 확장 메서드 사용부
         {
             _animParams = new AnimParams(_anim);
-            _anim.GetBehaviour<CheckAfk>()?.Init(_animParams.GetHash("AFK"), 3);
+            _afkCheck = _anim.GetBehaviour<AfkCheck>();
             _handIK = _anim.GetBehaviour<HandIK>();
         }
         else
@@ -221,7 +227,7 @@ public class PlayerController_Stage : MonoBehaviour
                 // 홀드 시간 동안 방향 조절, 키 떼거나 시간 초과시 마지막 방향으로 던짐
                 break;
             case PressInteraction:
-                Throw(transform.forward);
+                Throw(_tr.forward);
                 break;
         }
     }
@@ -315,7 +321,7 @@ public class PlayerController_Stage : MonoBehaviour
         
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.DashSfx)
-            .WithPos(transform.position)
+            .WithPos(_tr.position)
             .WithRandomPitch()
             .Play();
         
@@ -347,26 +353,27 @@ public class PlayerController_Stage : MonoBehaviour
     #endregion
 
     #region ReSpawn/Despawn Methods
-    public Vector3 Despawn()
+    public void Despawn(Floor safeFloor)
     {
+        _respawnReservedFloor = safeFloor;
+        
         _rb.Sleep();
         gameObject.SetActive(false);
         
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.DespawnSfx)
-            .WithPos(transform.position)
+            .WithPos(_tr.position)
             .Play();
 
         if (pickedItem is not null) DetachItem().Deactivate();
-        
-        return transform.position;
     }
 
-    public void Respawn(Vector3 respawnPos)
+    public void Respawn()
     {
         gameObject.SetActive(true);
-        transform.position = respawnPos;
+        _tr.position = _respawnReservedFloor.GetRespawnPosition();
         _rb.WakeUp();
+        _respawnReservedFloor = null;
     }
     #endregion
     
@@ -374,9 +381,8 @@ public class PlayerController_Stage : MonoBehaviour
     private bool DetectTable()
     {
         Vector3 offset = Vector3.up * detectData.DetectRayOffsetY;
-        bool isHit = Physics.Raycast(transform.position + offset, transform.forward, out RaycastHit hit, detectData.DetectRayDistance,
+        bool isHit = Physics.Raycast(_tr.position + offset, _tr.forward, out RaycastHit hit, detectData.DetectRayDistance,
             detectData.TableLayer);
-        Debug.DrawRay(transform.position + offset, transform.forward, isHit ? Color.red : Color.green);
         return isHit && hit.collider.gameObject.TryGetComponent(out _detectedTable);
     }
 
@@ -390,13 +396,12 @@ public class PlayerController_Stage : MonoBehaviour
         {
             GameManager.Instance.SoundManager.BuildSfx()
                 .WithSfxInfo(sfxData.ActionBlockedSfx)
-                .WithPos(transform.position)
+                .WithPos(_tr.position)
                 .WithRandomPitch()
                 .Play();
             return false;
         }
         
-        // RotateImmediately(_detectedTable.transform.position);
         _detectedTable = null;
         return true;
     }
@@ -404,7 +409,6 @@ public class PlayerController_Stage : MonoBehaviour
     private void BeginWork(WorkTable table)
     {
         StopMoveImmediately();
-        // RotateImmediately(table.transform.position);
         _isWorking = table.BeginWork(this);
     }
 
@@ -427,9 +431,9 @@ public class PlayerController_Stage : MonoBehaviour
     {
         Array.Clear(_detectedItems, 0, _detectedItems.Length);
         
-        Vector3 offset = (transform.forward + Vector3.up) * detectData.DetectBoxOffset;
-        int hits = Physics.OverlapBoxNonAlloc(transform.position + offset, detectData.DetectBoxSize, _detectedItems,
-            transform.rotation, detectData.ItemLayer);
+        Vector3 offset = (_tr.forward + Vector3.up) * detectData.DetectBoxOffset;
+        int hits = Physics.OverlapBoxNonAlloc(_tr.position + offset, detectData.DetectBoxSize, _detectedItems,
+            _tr.rotation, detectData.ItemLayer);
         return hits > 0;
     }
 
@@ -473,7 +477,7 @@ public class PlayerController_Stage : MonoBehaviour
         // 근데 바로 플레이어와 충돌해서 안 던져질 수 있음... 플레이어랑도 충돌할 거니까
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.ThrowSfx)
-            .WithPos(transform.position)
+            .WithPos(_tr.position)
             .WithRandomPitch()
             .Play();
     }
@@ -492,13 +496,13 @@ public class PlayerController_Stage : MonoBehaviour
         
         pickedItem = item;
         
-        _handIK.SetHandPoints(item.LeftHandPoint, item.RightHandPoint);
+        _handIK?.SetHandPoints(item.LeftHandPoint, item.RightHandPoint);
         // PlayAnim(animData.PickHash);
         StartAnim(_animParams.GetHash("Pick"));
         
         GameManager.Instance.SoundManager.BuildSfx()
             .WithSfxInfo(sfxData.AttachSfx)
-            .WithPos(transform.position)
+            .WithPos(_tr.position)
             .WithRandomPitch()
             .Play();
     }
@@ -509,7 +513,7 @@ public class PlayerController_Stage : MonoBehaviour
         item.RemoveParent();
         pickedItem = null;
 
-        _handIK.ClearHandPoints();
+        _handIK?.ClearHandPoints();
         // StopAnim(animData.PickHash);
         StopAnim(_animParams.GetHash("Pick"));
         

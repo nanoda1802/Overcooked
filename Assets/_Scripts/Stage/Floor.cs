@@ -1,29 +1,30 @@
+using System;
 using DG.Tweening;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
 public class Floor : MonoBehaviour
 {
+    public FloorState CurState { get; private set; }
     private FloorData _floorData;
-    // private int _instanceId;
+    private Transform _tr;
+    
     private Vector3 _originPos;
     private Vector3 _targetPos;
+    
     private Sequence _shiftSeq;
-
-    private Transform _tr;
-
-    public FloorState CurState { get; private set; }
+    
+    public bool CanShift => (CurState == FloorState.Idle) && (!_floorData.HasPlayer(_tr));
     
     public void Init(FloorData data)
     {
+        CurState = FloorState.Idle;
+    
         _floorData = data;
-        // _instanceId = GetInstanceID();
         _tr = this.transform;
         
         _originPos = _tr.localPosition;
         _targetPos = new Vector3(_tr.localPosition.x, _tr.localPosition.y + _floorData.TargetY, _tr.localPosition.z);
-        
-        CurState = FloorState.Idle;
     }
 
     public void Deactivate()
@@ -36,47 +37,37 @@ public class Floor : MonoBehaviour
 
     public void Submerge(float delay)
     {        
-        if (_floorData.HasPlayer(_tr))
-        {
-            Debug.Log($"{this.name} 위엔 플레이어가 서있슴다.");
-            return;
-        }
-
-        if (CurState == FloorState.RespawnReserved)
-        {
-            Debug.Log($"{this.name}은 플레이어 리스폰 대기중임다.");
-            return;
-        }
-
-        _shiftSeq?.Kill(true);
+        _shiftSeq?.Kill();
         
         _shiftSeq = DOTween.Sequence()
-            .AppendCallback(() => CurState = FloorState.Shifting)
-            .Append(_tr.DOShakePosition(2, 0.1f))
+            .AppendCallback(SwitchToShiftingState)
+            .Append(_tr.DOShakePosition(_floorData.TweenDuration, 0.1f))
             .Append(_tr.DOLocalMoveY(_floorData.TargetY, _floorData.TweenDuration)
                 .SetEase(Ease.InBack, 0.7f)
                 .SetDelay(delay))
-            .OnComplete(() => gameObject.SetActive(false))
-            .OnKill(() => OnKillShiftSequence(_targetPos));
+            .OnKill(OnKillSubmergeSequence);
     }
     
     public void Emerge()
     {
-        if (gameObject.activeSelf) return;
-        
-        _shiftSeq?.Kill(true);
+        _shiftSeq?.Kill();
         
         _shiftSeq = DOTween.Sequence()
-            .AppendCallback(()=>gameObject.SetActive(true))
             .Append(_tr.DOLocalMoveY(_floorData.OriginY, _floorData.TweenDuration)
                 .SetEase(Ease.OutBack, 0.7f))
-            .OnComplete(() => CurState = FloorState.Idle)
-            .OnKill(()=>OnKillShiftSequence(_originPos));
+            .OnComplete(SwitchToIdleState)
+            .OnKill(OnKillEmergeSequence);
     }
-    
-    private void OnKillShiftSequence(Vector3 pos)
+
+    private void OnKillSubmergeSequence()
     {
-        _tr.localPosition = pos;
+        _tr.localPosition = _targetPos;
+        _shiftSeq = null;
+    }
+
+    private void OnKillEmergeSequence()
+    {
+        _tr.localPosition = _originPos;
         _shiftSeq = null;
     }
 
@@ -86,13 +77,21 @@ public class Floor : MonoBehaviour
         return _tr.position + offset;
     }
 
-    public void ReserveRespawn()
+    private void SwitchToShiftingState()
     {
-        CurState = FloorState.RespawnReserved;
+        CurState = FloorState.Shifting;
+        gameObject.layer = _floorData.IgnoreRaycastLayerIdx;
     }
 
-    public void OnRespawnDone()
+    public void SwitchToRespawnReservedState()
+    {
+        CurState = FloorState.RespawnReserved;
+        gameObject.layer = _floorData.IgnoreRaycastLayerIdx;
+    }
+
+    public void SwitchToIdleState()
     {
         CurState = FloorState.Idle;
+        gameObject.layer = _floorData.FloorLayerIdx;
     }
 }

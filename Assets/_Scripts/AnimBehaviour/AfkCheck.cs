@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using SF = UnityEngine.SerializeField;
 
-public class CheckAfk : StateMachineBehaviour
+public class AfkCheck : StateMachineBehaviour
 {
     private bool _isInit;
     private int _targetParamHash;

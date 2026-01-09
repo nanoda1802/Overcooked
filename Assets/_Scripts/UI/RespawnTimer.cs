@@ -27,7 +27,7 @@ public class RespawnTimer : MonoBehaviour, IPoolable
         timerText.text = $"{_timerCount:F0}";
 
         if (_timerCount > 0) return;
-        _playerControllerStagePlayer.Respawn(_respawnPos);
+        // _playerControllerStagePlayer.Respawn(_respawnPos);
         Deactivate();
     }
 
