@@ -46,7 +46,7 @@ public class StageManager : MonoBehaviour
     
     private void Init()
     {
-        Application.targetFrameRate = 60; // [임시]
+        // Application.targetFrameRate = 60; // [임시]
         
         gameManager ??= FindObjectOfType(typeof(GameManager)) as GameManager;
         GameManager.Instance.SoundManager.ChangeBgm(stageInfo.Bgm);

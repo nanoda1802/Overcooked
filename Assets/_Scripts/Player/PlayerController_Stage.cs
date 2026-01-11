@@ -84,6 +84,7 @@ public class PlayerController_Stage : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        if (_tr == null) return;
         Vector3 offset = (_tr.forward + Vector3.up) * detectData.DetectBoxOffset;
         Matrix4x4 tableMatrix = Matrix4x4.TRS(_tr.position + offset, _tr.rotation, Vector3.one);
         Gizmos.matrix = tableMatrix;
