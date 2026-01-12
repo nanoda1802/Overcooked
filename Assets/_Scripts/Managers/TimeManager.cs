@@ -9,6 +9,8 @@ public class TimeManager : MonoBehaviour, IManager
 
     [SF] private TimerBoard timerUI;
     
+    public bool IsPaused { get; private set; }
+    
     private event Action OnTimerDone;
     
     private void Update()
@@ -33,11 +35,13 @@ public class TimeManager : MonoBehaviour, IManager
     public void PauseTimer()
     {
         Time.timeScale = 0;
+        IsPaused = true;
     }
 
     public void ResumeTimer()
     {
         Time.timeScale = 1;
+        IsPaused = false;
     }
 
     private void UpdateTimer()
