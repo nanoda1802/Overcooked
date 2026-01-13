@@ -8,7 +8,6 @@ using SF = UnityEngine.SerializeField;
 
 public interface IPopUp
 {
-    
     public Sequence PopSeq { get; protected set; }
 
     public void PopUp();

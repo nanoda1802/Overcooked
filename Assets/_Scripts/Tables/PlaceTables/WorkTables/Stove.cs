@@ -22,7 +22,7 @@ public class Stove : WorkTable
     {
         base.PlaceItem(item);
         BeginWork();
-        ActivateUI();
+        ActivateUI(transform.position);
     }
 
     public override Item DisplaceItem()

@@ -10,21 +10,23 @@ public class ObjPool<T> : MonoBehaviour where T : Component
 
     protected int objIdx;
     [SF] protected string objName;
-    [SF] protected bool collectionCheck = true;
+    [SF] protected bool collectionCheck = true; // "중복 반납" 발생 시 에러 발생시켜줌...
     [SF] protected int defaultCapacity = 10;
     [SF] protected int maxPoolSize = 20;
     public int MaxPoolSize => maxPoolSize;
-    // collectionCheck; true 면 "중복 반납" 발생 시 에러 발생시켜줌...
+    
     
     [SF] private T prefab;
 
-    public virtual void InitPool()
+    public virtual ObjectPool<T> InitPool()
     {
         // mobPrefab = Resources.Load<GameObject>("Prefabs/Mob");
         Pool = new ObjectPool<T>(CreateObj, OnGot, OnReleased, OnDestroyed, collectionCheck, defaultCapacity,
             maxPoolSize);
         objIdx = 0;
         Prewarm();
+        
+        return Pool;
     }
     
     public void DisposePool()
@@ -45,10 +47,10 @@ public class ObjPool<T> : MonoBehaviour where T : Component
 
     protected virtual T CreateObj()
     {
-        T mob = Instantiate(prefab, transform);
-        mob.name = isPrewarming ? $"{objName}_{objIdx}" : $"{objName}_{objIdx}_Instant";
-        mob.gameObject.SetActive(false);
-        return mob;
+        T obj = Instantiate(prefab, transform);
+        obj.name = isPrewarming ? $"{objName}_{objIdx}" : $"{objName}_{objIdx}_Instant";
+        obj.gameObject.SetActive(false);
+        return obj;
     }
 
     protected virtual void OnGot(T obj)

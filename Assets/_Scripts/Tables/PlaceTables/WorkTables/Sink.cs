@@ -6,6 +6,9 @@ using SF = UnityEngine.SerializeField;
 public class Sink : WorkTable, IPool<Item>
 {
     [SF] private DishRack dishRack;
+    
+    private PlateCount plateCountUI;
+    
     [SF] private Canvas sinkCanvas;
     [SF] private Text sinkText;
 
@@ -13,14 +16,11 @@ public class Sink : WorkTable, IPool<Item>
     [SF] private Transform poolPivot;
     [SF] private int poolSize;
     private Queue<Item> _pool;
-
-    private void Awake()
-    {
-        InitPool();
-    }
+    
 
     protected override void Start()
     {
+        InitPool();
         base.Start();
         UpdatePlateCount();
     }
@@ -72,7 +72,7 @@ public class Sink : WorkTable, IPool<Item>
         {
             if (!TryGetItem(out placedItem)) return false;
             placedItem.Activate();
-            ActivateUI();
+            ActivateUI(dishRack.transform.position);
         }
         
         base.BeginWork();
@@ -114,11 +114,20 @@ public class Sink : WorkTable, IPool<Item>
     {
         if (_pool.Count <= 0)
         {
-            DeactivatePlateCount();
+            // DeactivatePlateCount();
+            movableUIManager.PlateCountPool.Release(plateCountUI);
+            plateCountUI = null;
             return;
         }
-        if (!sinkCanvas.gameObject.activeSelf) ActivatePlateCount();
-        sinkText.text = $"{_pool.Count}";
+        // if (!sinkCanvas.gameObject.activeSelf) ActivatePlateCount();
+        if (plateCountUI is null)
+        {
+            plateCountUI = movableUIManager.PlateCountPool.Get();
+            plateCountUI.SetScreePos(transform.position);
+        }
+        
+        // sinkText.text = $"{_pool.Count}";
+        plateCountUI.UpdateText(_pool.Count);
     }
 
     private bool IsFull()

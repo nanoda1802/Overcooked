@@ -6,18 +6,26 @@ using SF = UnityEngine.SerializeField;
 
 public class WorkTable : PlaceTable
 {
+    [SF] protected MovableUIManager movableUIManager;
+    protected ProgressBar barUI;
+    
     private bool _isWorking;
     
     protected event Action OnFinished;
     protected event Action OnStopped;
     
-    [SF] protected Canvas fillBarCanvas;
-    [SF] protected Image[] barImages;
+    // [SF] protected Canvas fillBarCanvas;
+    // [SF] protected Image[] barImages;
     [SF] protected SfxInfo workSfx;
     [SF] protected ParticleSystem workVfx;
     
     [SF] private string animParamName;
     protected int animHash;
+
+    private void Awake()
+    {
+        movableUIManager = GameObject.Find("Canvas_Movable").GetComponent<MovableUIManager>(); // [임시]
+    }
 
     protected virtual void Start() // [임시] 초기화해주는 함수 만들기... 근데 누가 테이블들을 초기화해줌?
     {
@@ -59,7 +67,8 @@ public class WorkTable : PlaceTable
 
     private void Work()
     {
-        FillBarImg(placedItem.Handle());
+        // FillBarImg(placedItem.Handle());
+        barUI?.Fill(placedItem.Handle());
         if (placedItem.IsMaxDone()) FinishWork();
     }
     
@@ -77,20 +86,26 @@ public class WorkTable : PlaceTable
         workVfx?.Stop(true, ParticleSystemStopBehavior.StopEmitting);
     }
 
-    protected void ActivateUI()
+    protected void ActivateUI(Vector3 tablePos)
     {
-        fillBarCanvas?.gameObject.SetActive(true);
-        foreach (Image img in barImages) img.fillAmount = 0;
+        // fillBarCanvas?.gameObject.SetActive(true);
+        // foreach (Image img in barImages) img.fillAmount = 0;
+        barUI = movableUIManager.ProgressBarPool.Get();
+        barUI.SetScreePos(tablePos);
     }
 
     protected void DeactivateUI()
     {
-        fillBarCanvas?.gameObject.SetActive(false);
+        if (barUI is null) return;
+        // fillBarCanvas?.gameObject.SetActive(false);
+        movableUIManager.ProgressBarPool.Release(barUI);
+        barUI = null;
     }
     
     private void FillBarImg(float ratio)
     {
-        if (ratio >= barImages.Length) return;
-        barImages[(int)ratio].fillAmount = ratio % 1;
+        // if (ratio >= barImages.Length) return;
+        // barImages[(int)ratio].fillAmount = ratio % 1;
+        barUI?.Fill(ratio);
     }
 }

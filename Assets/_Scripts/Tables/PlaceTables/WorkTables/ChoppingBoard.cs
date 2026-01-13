@@ -41,7 +41,8 @@ public class ChoppingBoard : WorkTable
         
         base.BeginWork();
         
-        if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
+        // if (!fillBarCanvas.gameObject.activeSelf) ActivateUI();
+        if (barUI is null) ActivateUI(transform.position);
         
         player.GrabKnife(knife);
         

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Pool;
 using SF = UnityEngine.SerializeField;
 
 public class PedsMobPool : ObjPool<PedsMob>
@@ -12,10 +13,11 @@ public class PedsMobPool : ObjPool<PedsMob>
     [SF] private float pedsAcceleration;
     
     
-    public override void InitPool()
+    public override ObjectPool<PedsMob> InitPool()
     {
         base.InitPool();
         _areaMask = 1 << NavMesh.GetAreaFromName("Peds") | 1 << NavMesh.GetAreaFromName("Both");
+        return Pool;
     }
 
     protected override PedsMob CreateObj()

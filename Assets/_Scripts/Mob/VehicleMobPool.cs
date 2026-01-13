@@ -1,4 +1,5 @@
 using UnityEngine.AI;
+using UnityEngine.Pool;
 using SF = UnityEngine.SerializeField;
 
 public class VehicleMobPool : ObjPool<VehicleMob>
@@ -9,10 +10,11 @@ public class VehicleMobPool : ObjPool<VehicleMob>
     [SF] private float vehicleAngularSpeed;
     [SF] private float vehicleAcceleration;
     
-    public override void InitPool()
+    public override ObjectPool<VehicleMob> InitPool()
     {
         base.InitPool();
         _areaMask = 1 << NavMesh.GetAreaFromName("Vehicle") | 1 << NavMesh.GetAreaFromName("Both");
+        return Pool;
     }
     
     protected override VehicleMob CreateObj()

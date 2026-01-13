@@ -26,7 +26,7 @@ public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
         }
         uiObj.name = $"IngredientsInfo_Instant";
         
-        instantUi.Init(this);
+        // instantUi.Init(this);
         ui = instantUi;
         return true;
     }
@@ -48,8 +48,8 @@ public class MovableUIPool : MonoBehaviour, IPool<IngredientsInfo>
                 continue;
             }
             uiObj.name = $"IngredientsInfo_{i}";
-            ui.Init(this);
-            ui.Deactivate();
+            // ui.Init(this);
+            // ui.Deactivate();
         }
     }
 }

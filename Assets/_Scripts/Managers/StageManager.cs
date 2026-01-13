@@ -56,10 +56,10 @@ public class StageManager : MonoBehaviour
         timeManager.Init(this);
         // poolManager.Init();
         
-        stageCueUI.Init(this);
-        stageResultUI.Init(this);
-        pauseUI.Init(this);
-        tutorialUI.Init(this);
+        stageCueUI?.Init(this);
+        stageResultUI?.Init(this);
+        pauseUI?.Init(this);
+        tutorialUI?.Init(this);
         
         if (stageInfo.ShowTutorial)
         {

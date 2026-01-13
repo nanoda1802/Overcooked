@@ -13,7 +13,7 @@ public class ServingRack : Table
       if (player.pickedItem is not Plate plate) return false;
       if (!plate.HasIngredient()) return false;
       if (!orderManager.HasActiveOrder()) return false;
-      if (!orderManager.FindMatchingOrder(plate.GetIngredients(), out int baseScore, out float ratio))
+      if (!orderManager.FindMatchingOrder(plate.IngredientList, out int baseScore, out float ratio))
       {
          return false;
       }
