@@ -6,6 +6,7 @@ using SF = UnityEngine.SerializeField;
 
 public class StageResult : MonoBehaviour
 {
+    [SF] private Canvas popUpCanvas;
     /* Components */
     [SF] private Transform result;
     /* UI Elements */
@@ -118,6 +119,8 @@ public class StageResult : MonoBehaviour
     public void Activate()
     {
         SetTexts();
+        if (!popUpCanvas.enabled) popUpCanvas.enabled = true;
+        // [메모] 다른 캔버스는 다 꺼버려야해
         gameObject.SetActive(true);
         // [sfx] 결산창 소리
     }
@@ -125,6 +128,7 @@ public class StageResult : MonoBehaviour
     private void Deactivate()
     {
         gameObject.SetActive(false);
+        popUpCanvas.enabled = false;
     }
     
     private void SetTexts() // [임시] 고쳐야해... 인덱스 그대로 넣는 거..

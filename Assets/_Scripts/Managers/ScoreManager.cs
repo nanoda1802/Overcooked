@@ -16,6 +16,7 @@ public class ScoreManager : MonoBehaviour, IManager
         _stageResult.Init();
         
         ResetComboCount();
+        scoreUI.ResetScore();
     }
 
     public void Deinit()

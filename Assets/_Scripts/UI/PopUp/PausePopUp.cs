@@ -4,8 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using SF = UnityEngine.SerializeField;
 
+// [수정!!] 구조가 바뀌어서 Panel_Bg를 클릭할 수 없음 고쳐야....
+
 public class PausePopUp : PopUpUI
 {
+    [SF] private Canvas popUpCanvas;
     /* UI Elements */
     [Header("[ Buttons ]")]
     [SF] private CustomButton pauseBtn; // [임시] 얘를 어디로 보내야할지...
@@ -24,7 +27,8 @@ public class PausePopUp : PopUpUI
     /* Fields */
     private StageManager _stageManager;
     private SettingsData _settings;
-
+    private bool _isQuit;
+    
     #region Unity Event Methods
     protected override void OnEnable()
     {
@@ -35,6 +39,8 @@ public class PausePopUp : PopUpUI
         SubscribeEvents();
         GameManager.Instance.SoundManager.PauseAllSounds(true);
         GameManager.Instance.SoundManager.BuildSfx().WithSfxInfo(pauseSfx).Play();
+
+        _isQuit = false;
     }
 
     protected override void OnDisable()
@@ -44,6 +50,8 @@ public class PausePopUp : PopUpUI
         pauseBtn.OnClicked += PopUp;
         UnsubscribeEvents();
         GameManager.Instance.SoundManager.PauseAllSounds(false);
+
+        if (!_isQuit) popUpCanvas.enabled = false;
     }
     #endregion
 
@@ -57,18 +65,19 @@ public class PausePopUp : PopUpUI
 
     private void SubscribeEvents()
     {
-        resumeBtn.OnClicked += _stageManager.ResumeStage;
         resumeBtn.OnClicked += PopDown;
-        retryBtn.OnClicked += _stageManager.RetryStage;
+        resumeBtn.OnClicked += _stageManager.ResumeStage;
         retryBtn.OnClicked += PopDown;
-        quitBtn.OnClicked += _stageManager.QuitStage;
+        retryBtn.OnClicked += _stageManager.RetryStage;
+        quitBtn.OnClicked += HasQuit;
         quitBtn.OnClicked += PopDown;
+        quitBtn.OnClicked += _stageManager.QuitStage;
 
         bgmSlider.OnValueChanged += _settings.SetBgmVolume;
         sfxSlider.OnValueChanged += _settings.SetSfxVolume;
         
-        OnBgClicked += _stageManager.ResumeStage;
         OnBgClicked += PopDown;
+        OnBgClicked += _stageManager.ResumeStage;
         
         bgmMuteToggle.onValueChanged.AddListener(OnBgmMuteToggleChanged);
         sfxMuteToggle.onValueChanged.AddListener(OnSfxMuteToggleChanged);
@@ -76,18 +85,19 @@ public class PausePopUp : PopUpUI
 
     private void UnsubscribeEvents()
     {
-        resumeBtn.OnClicked -= _stageManager.ResumeStage;
         resumeBtn.OnClicked -= PopDown;
-        retryBtn.OnClicked -= _stageManager.RetryStage;
+        resumeBtn.OnClicked -= _stageManager.ResumeStage;
         retryBtn.OnClicked -= PopDown;
-        quitBtn.OnClicked -= _stageManager.QuitStage;
+        retryBtn.OnClicked -= _stageManager.RetryStage;
+        quitBtn.OnClicked -= HasQuit;
         quitBtn.OnClicked -= PopDown;
+        quitBtn.OnClicked -= _stageManager.QuitStage;
 
         bgmSlider.OnValueChanged -= _settings.SetBgmVolume;
         sfxSlider.OnValueChanged -= _settings.SetSfxVolume;
         
-        OnBgClicked -= _stageManager.ResumeStage;
         OnBgClicked -= PopDown;
+        OnBgClicked -= _stageManager.ResumeStage;
         
         bgmMuteToggle.onValueChanged.RemoveAllListeners();
         sfxMuteToggle.onValueChanged.RemoveAllListeners();
@@ -99,6 +109,7 @@ public class PausePopUp : PopUpUI
     {
         if (IsPopping()) return;
         ApplyDataToUI();
+        popUpCanvas.enabled = true;
         ToggleActiveState(true);
     }
 
@@ -134,4 +145,9 @@ public class PausePopUp : PopUpUI
         _settings.SetIsSfxMute(value);
     }
     #endregion
+
+    private void HasQuit()
+    {
+        _isQuit = true;
+    }
 }

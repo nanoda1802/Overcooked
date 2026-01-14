@@ -14,6 +14,7 @@ public enum CueType
 
 public class StageCue : MonoBehaviour
 {
+    [SF] private Canvas popUpCanvas;
     /* UI Elements */
     [SF] private RectTransform cueRect; // [임시] 본인 Rect이므
     [SF] private Image bg;
@@ -69,17 +70,19 @@ public class StageCue : MonoBehaviour
 
         if (cueTexts is null) return;
 
-        if (!bg.gameObject.activeSelf) bg.gameObject.SetActive(true);
+        // if (!bg.gameObject.activeSelf) bg.gameObject.SetActive(true);
+        if (!popUpCanvas.enabled) popUpCanvas.enabled = true;
         DisplayCue(cueDuration, cueTexts, cueType == CueType.Start);
     }
 
     private void Deactivate(bool isStageStart)
     {
+        gameObject.SetActive(false);
+        // bg.gameObject.SetActive(false);
+        popUpCanvas.enabled = !isStageStart;
+        
         if (isStageStart) _onStageStarted?.Invoke();
         else _onStageEnded?.Invoke();
-        
-        gameObject.SetActive(false);
-        bg.gameObject.SetActive(false);
     }
     
     private void DisplayCue(float duration, string[] cue, bool isStartCue)
@@ -102,7 +105,17 @@ public class StageCue : MonoBehaviour
                 .Append(cueTxt.DOFade(1, duration*0.1f).From(0))
                 .Join(cueRect.DOScale(1, duration*0.6f).From(0).SetEase(Ease.OutBack));
 
-            if (isLastText) _cueSeq.Join(cueRect.DOShakeAnchorPos(duration*0.6f, 50, 10, 90,true,true,ShakeRandomnessMode.Harmonic));
+            if (isLastText)
+            {
+                _cueSeq.Join(cueRect.DOShakeAnchorPos(duration * 0.6f, 50, 10, 90, true, true,
+                    ShakeRandomnessMode.Harmonic));
+            }
+
+            if (!isStartCue)
+            {
+                _cueSeq.AppendInterval(duration*0.4f);
+            }
+            
             _cueSeq.Append(cueTxt.DOFade(0, duration*0.1f).SetDelay(duration*0.4f));
         }
 

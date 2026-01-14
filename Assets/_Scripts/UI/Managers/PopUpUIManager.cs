@@ -19,29 +19,29 @@ public class PopUpUIManager : MonoBehaviour
     private StageManager _stageManager;
     private CanvasManager _canvasManager;
 
-    private PopUpPanel _bg;
+    // private PopUpPanel _bg;
     
-    private PopUp2 _curPopUp;
-    private Dictionary<PopUpType, PopUp2> _popUps;
-
-
-    public void ActivatePopUp(PopUpType type, bool hasBgClicked = false)
-    {
-        if (hasBgClicked) _bg.OnClicked += DeactivatePopUp;
-        _curPopUp = _popUps[type];
-        _curPopUp.PopUp();
-    }
-
-    public void DeactivatePopUp()
-    {
-        _curPopUp?.PopDown();
-        _curPopUp = null;
-        _bg.OnClicked -= DeactivatePopUp;
-    }
-
-    public void ChangePopUp(PopUpType type)
-    {
-        DeactivatePopUp();
-        ActivatePopUp(type);
-    }
+    // private PopUp2 _curPopUp;
+    // private Dictionary<PopUpType, PopUp2> _popUps;
+    //
+    //
+    // public void ActivatePopUp(PopUpType type, bool hasBgClicked = false)
+    // {
+    //     if (hasBgClicked) _bg.OnClicked += DeactivatePopUp;
+    //     _curPopUp = _popUps[type];
+    //     _curPopUp.PopUp();
+    // }
+    //
+    // public void DeactivatePopUp()
+    // {
+    //     _curPopUp?.PopDown();
+    //     _curPopUp = null;
+    //     _bg.OnClicked -= DeactivatePopUp;
+    // }
+    //
+    // public void ChangePopUp(PopUpType type)
+    // {
+    //     DeactivatePopUp();
+    //     ActivatePopUp(type);
+    // }
 }

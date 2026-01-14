@@ -31,6 +31,11 @@ public class ScoreBoard : MonoBehaviour
         _scoreTxtSeq?.Kill(true);
     }
 
+    public void ResetScore()
+    {
+        scoreTxt.text = "0";
+    }
+
     public void UpdateScore(int from, int to, bool hasPoint)
     {
         _scoreTxtSeq?.Kill(true);

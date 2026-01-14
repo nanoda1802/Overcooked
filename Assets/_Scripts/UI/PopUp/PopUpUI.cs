@@ -6,7 +6,7 @@ using SF = UnityEngine.SerializeField;
 
 public class PopUpUI : MonoBehaviour, IPointerClickHandler
 {
-    [SF] protected GameObject bg; // 생각해보니 PopUp인 UI들은 전부 백그라운드 담당이 본인 gameObject인디... 굳이...?
+    [SF] protected GameObject bg;
 
     [SF] protected RectTransform popUpRect;
     [SF] protected float popUpTweenTargetPosY; // 1200

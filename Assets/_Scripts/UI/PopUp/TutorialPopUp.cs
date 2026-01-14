@@ -5,6 +5,7 @@ using SF = UnityEngine.SerializeField;
 
 public class TutorialPopUp : MonoBehaviour
 {
+    [SF] private Canvas popUpCanvas;
     /* Components */
     [SF] private Animator previewAnim; // [임시] GetComponentInChildren 하든가...
     [SF] private TutorialData tutorialData; // [임시] StageManager한테 받아서 init 하기
@@ -38,8 +39,6 @@ public class TutorialPopUp : MonoBehaviour
 
     private void OnDisable()
     {
-        _stageManager.StageCueUI.Activate(CueType.Start); // [임시] 더 좋은 흐름이 없을지 고민해보자
-
         UnsubscribeEvents();
         
         _popUpSequence?.Kill();
@@ -78,13 +77,15 @@ public class TutorialPopUp : MonoBehaviour
         _curPageIdx = 0;
         UpdateContents();
         popUpRect.localScale = Vector3.zero;
-        if (!bg.gameObject.activeSelf) bg.gameObject.SetActive(true);
+        // if (!bg.gameObject.activeSelf) bg.gameObject.SetActive(true);
+        if (!popUpCanvas.enabled) popUpCanvas.enabled = true;
         gameObject.SetActive(true);
     }
 
     private void Deactivate()
     {
         gameObject.SetActive(false);
+        _stageManager.StageCueUI.Activate(CueType.Start); // [임시] 더 좋은 흐름이 없을지 고민해보자
     }
 
     private void UpdateContents()
